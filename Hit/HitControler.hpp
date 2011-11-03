@@ -44,6 +44,7 @@ class HitControler : public HitModel
 	bool in(HitControler const& Hitbis) const;
 	bool over(HitControler const& Hitbis) const;
 	bool over(int start, int stop) const;
+	unsigned int dist_to(HitControler const& Hitbis) const;
 };
 
 

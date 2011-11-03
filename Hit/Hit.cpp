@@ -309,7 +309,7 @@ void Hit::display(ostream &stream) const
 		stream << "+";
 	else
 		stream << "-";
-	stream << "\t" << Hit_start << "\t" << Hit_stop << "\t(" << Hit::size() << ")";
+	stream << "\t" << Hit_start << "\t" << Hit_stop << "\t" << Hit::size();
 }
 
 ostream &operator<<( ostream &stream, Hit const& h)

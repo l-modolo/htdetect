@@ -114,3 +114,11 @@ bool HitControler::over(int start, int stop) const
 	return false;
 }
 
+unsigned int HitControler::dist_to(HitControler const& Hitbis) const
+{
+	if(*this < Hitbis)
+		return Hitbis.start() - stop();
+	else
+		return start() - Hitbis.stop();
+}
+
