@@ -18,6 +18,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "HitModel.hpp"
 
+mutex HitModel::Hit_names_lock;
+map<unsigned int, string> HitModel::Hit_id_names;
+map<string, unsigned int> HitModel::Hit_names_id;
+
 HitModel::HitModel()
 {
 	init(0, "", 0, 0);
@@ -52,7 +56,7 @@ void HitModel::init(int id, string const & name, int start, int stop)
 				Hit_sens = true;
 			}
 			Hit_id = id;
-			Hit_name = name;
+			Hit_name = HitModel::add_name(name);
 			Hit_start = start;
 			Hit_stop = stop;
 		}
@@ -72,7 +76,7 @@ HitModel::HitModel(HitModel const& Hitbis)
 {
 	Hit_id = Hitbis.id();
 	Hit_sens = Hitbis.sens();
-	Hit_name = Hitbis.name();
+	Hit_name = Hitbis.Hit_name;
 	Hit_start = Hitbis.start();
 	Hit_stop = Hitbis.stop();
 }
@@ -83,7 +87,7 @@ HitModel& HitModel::operator=(HitModel const& Hitbis)
 	{
 		Hit_id = Hitbis.id();
 		Hit_sens = Hitbis.sens();
-		Hit_name = Hitbis.name();
+		Hit_name = Hitbis.Hit_name;
 		Hit_start = Hitbis.start();
 		Hit_stop = Hitbis.stop();
 	}
@@ -112,6 +116,29 @@ int HitModel::stop() const
 
 string HitModel::name() const
 {
-	return Hit_name;
+	lock_guard<mutex> lk(Hit_names_lock);
+	return Hit_id_names[Hit_name];
+}
+
+unsigned int HitModel::add_name(string name)
+{
+	lock_guard<mutex> lk(Hit_names_lock);
+	
+	int size = Hit_names_id.size();
+	unsigned int id = Hit_names_id.size();;
+	
+	auto it = Hit_names_id.find(name);
+	
+	if(it == Hit_names_id.end())
+	{
+		Hit_names_id[name] = id;
+		
+		Hit_id_names[id] = name;
+	}
+	else
+	{
+		id = Hit_names_id[name];
+	}
+	return id;
 }
 

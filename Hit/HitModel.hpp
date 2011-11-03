@@ -23,6 +23,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <exception>
 #include <stdexcept>
 #include <iostream>
+#include <map>
+#include <mutex>
 
 using namespace std;
 
@@ -44,12 +46,18 @@ class HitModel {
 	// attributes
 	int Hit_id;
 	bool Hit_sens;
-	string Hit_name;
+	int Hit_name;
 	int Hit_start;
 	int Hit_stop;
 	
+	static mutex Hit_names_lock;
+	static map<unsigned int, string> Hit_id_names;
+	static map<string, unsigned int> Hit_names_id;
+	
 	private:
 	void init(int id, string const & name, int start, int stop);
+	
+	unsigned int add_name(string name);
 };
 
 

@@ -78,7 +78,7 @@ Hit Hit::operator+(Hit const& Hitbis)
 	else
 		stop = Hit_stop;
 	
-	Hit result = Hit(Hit_name, start, stop);
+	Hit result = Hit(name(), start, stop);
 	auto it = Hit_holes.begin();
 	auto itbis = Hitbis.Hit_holes.begin();
 	
@@ -115,7 +115,7 @@ Hit Hit::operator-(Hit const& Hitbis)
 	int hole_start = Hit_start;
 	int hole_stop;
 	
-	Hit result = Hit(Hit_name, Hit_start, Hit_stop);
+	Hit result = Hit(name(), Hit_start, Hit_stop);
 	
 	for(auto & it : Hit_holes)
 	{
@@ -203,7 +203,7 @@ bool Hit::neighbor(Hit const& hitbis) const
 	{
 		if(*this <= hitbis)
 		{
-			if(Hit_name.compare(hitbis.name()) == 0)
+			if(name().compare(hitbis.name()) == 0)
 			{
 				return true;
 			}
@@ -217,7 +217,7 @@ Hit& Hit::operator-=(Hit const& Hitbis)
 	int hole_start = Hit_start;
 	int hole_stop;
 	
-	Hit result = Hit(Hit_name, Hit_start, Hit_stop);
+	Hit result = Hit(name(), Hit_start, Hit_stop);
 	
 	for(auto & it : Hit_holes)
 	{
@@ -304,7 +304,7 @@ void Hit::add_hole(HitControler* hole)
 
 void Hit::display(ostream &stream) const
 {
-	stream << Hit_name << "\t";
+	stream << name() << "\t";
 	if(Hit_sens)
 		stream << "+";
 	else
