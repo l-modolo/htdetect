@@ -39,13 +39,7 @@ using namespace std;
 class BlastControler : public BlastModel
 {
 	public:
-	BlastControler();
-	BlastControler(string const & name, string const & file);
-	BlastControler(string const & name, string const & file, string const & muscle_path);
-	BlastControler(string const & name, string const & file, Fasta* fasta1);
-	BlastControler(string const & name, string const & file, Fasta* fasta1, Fasta* fasta2);
-	BlastControler(string const & name, string const & file, Fasta* fasta1, Fasta* fasta2, string const & muscle_path);
-	
+	BlastControler(bool verbose);
 	
 	void sort();
 	void neighbor();

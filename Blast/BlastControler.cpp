@@ -18,12 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "BlastControler.hpp"
 
-BlastControler::BlastControler(){}
-BlastControler::BlastControler(string const & name, string const & file) : BlastModel::BlastModel(name, file) {}
-BlastControler::BlastControler(string const & name, string const & file, string const & muscle_path) : BlastModel::BlastModel(name, file, muscle_path) {}
-BlastControler::BlastControler(string const & name, string const & file, Fasta* fasta1) : BlastModel::BlastModel(name, file, fasta1) {}
-BlastControler::BlastControler(string const & name, string const & file, Fasta* fasta1, Fasta* fasta2) : BlastModel::BlastModel(name, file, fasta1, fasta2) {}
-BlastControler::BlastControler(string const & name, string const & file, Fasta* fasta1, Fasta* fasta2, string const & muscle_path) : BlastModel::BlastModel(name, file, fasta1, fasta2, muscle_path) {}
+BlastControler::BlastControler(bool verbose) : BlastModel::BlastModel(verbose) {}
 
 void BlastControler::sort()
 {
@@ -32,16 +27,17 @@ void BlastControler::sort()
 
 void BlastControler::remove_overlapping()
 {
-	cout << "removing overlapping for " << Blast_query.size() << " hits." << endl;
+	if(Blast_verbose){ cout << "removing overlapping for " << Blast_query.size() << " hits." << endl; }
 	Blast_query.sort();
 	
 	list<Hit*> tmp;
-	ProgressBar progress(1, 4, 0, Blast_query.size());
+	ProgressBar progress(1, 4, 0, Blast_query.size(), Blast_verbose);
 	
 	for(int i = 0; i < Blast_query.size(); i++)
 	{
 		tmp.push_back(Blast_query.hit(i));
-		progress.inc();
+		if(Blast_verbose)
+			progress.inc();
 	}
 	Blast_query.clear_nodelete();
 	
@@ -98,7 +94,7 @@ void BlastControler::remove_overlapping()
 		
 		progress.inc();
 	}
-	cout << "Hits number : " << size() << endl;
+	if(Blast_verbose){ cout << "Hits number : " << size() << endl;}
 }
 
 void parallel_remove_overlapping()
@@ -108,12 +104,12 @@ void parallel_remove_overlapping()
 
 void BlastControler::compute_identity(int thread_number, string tmp_rep)
 {
-	cout << "Computing identity for " << Blast_identity.size() << " hits." << endl;
+	if(Blast_verbose){ cout << "Computing identity for " << Blast_identity.size() << " hits." << endl; }
 	if(Blast_fasta_a != nullptr && Blast_fasta_b != nullptr)
 	{
 		list< thread > alignements_run;
 		
-		ProgressBar progress(1, 2, 0, Blast_identity.size());
+		ProgressBar progress(1, 2, 0, Blast_identity.size(), Blast_verbose);
 		
 		for(unsigned int i = 0; i < size(); i++)
 		{
@@ -168,7 +164,7 @@ void BlastControler::parallel_compute_identity(unsigned int i, unsigned int j, s
 
 void BlastControler::neighbor()
 {
-	ProgressBar progress(1, 1, 0, Blast_identity.size());
+	ProgressBar progress(1, 1, 0, Blast_identity.size(), Blast_verbose);
 	
 	for(int i = 1; i < size()-1; i++)
 	{
@@ -195,7 +191,7 @@ void BlastControler::compute_test(double chromosome_identity, int thread_number)
 	{
 		list< thread > alignements_run;
 		
-		ProgressBar progress(1, 2, 0, Blast_pvalue.size());
+		ProgressBar progress(1, 2, 0, Blast_pvalue.size(), Blast_verbose);
 		
 		for(unsigned int i = 0; i < size(); i++)
 		{

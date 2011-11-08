@@ -18,53 +18,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "BlastModel.hpp"
 
-BlastModel::BlastModel(){}
-
-BlastModel::BlastModel(string const & name, string const & file)
+BlastModel::BlastModel(bool verbose)
 {
-	Blast_fasta_a = nullptr;
-	Blast_fasta_b = nullptr;
-	Blast_muscle_path = "/usr/bin/muscle";
-	Blast_file = file;
-	Blast_name = name;
-	read();
+	Blast_verbose = verbose;
 }
 
-BlastModel::BlastModel(string const & name, string const & file, string const & muscle_path)
-{
-	Blast_fasta_a = nullptr;
-	Blast_fasta_b = nullptr;
-	Blast_muscle_path = muscle_path;
-	Blast_file = file;
-	Blast_query = HitList();
-	read();
-}
-
-BlastModel::BlastModel(string const & name, string const & file, Fasta* fasta1)
-{
-	Blast_fasta_a = fasta1;
-	Blast_fasta_b = nullptr;
-	Blast_muscle_path = "/usr/bin/muscle";
-	Blast_file = file;
-	Blast_name = name;
-	read();
-}
-
-BlastModel::BlastModel(string const & name, string const & file, Fasta* fasta1, Fasta* fasta2)
+void BlastModel::load(string const & name, string const & file, Fasta* fasta1, Fasta* fasta2)
 {
 	Blast_fasta_a = fasta1;
 	Blast_fasta_b = fasta2;
 	Blast_muscle_path = "/usr/bin/muscle";
-	Blast_file = file;
-	Blast_name = name;
-	read();
-}
-
-BlastModel::BlastModel(string const & name, string const & file, Fasta* fasta1, Fasta* fasta2, string const & muscle_path)
-{
-	Blast_fasta_a = fasta1;
-	Blast_fasta_b = fasta2;
-	Blast_muscle_path = muscle_path;
 	Blast_file = file;
 	Blast_name = name;
 	read();
@@ -77,6 +40,7 @@ BlastModel::BlastModel(BlastModel & Blastbis)
 	Blast_muscle_path = Blastbis.Blast_muscle_path;
 	Blast_file = Blastbis.Blast_file;
 	Blast_name = Blastbis.Blast_name;
+	Blast_verbose = Blastbis.Blast_verbose;
 	
 	Blast_query = Blastbis.Blast_query;
 	Blast_target = Blastbis.Blast_target;
@@ -377,7 +341,7 @@ void BlastModel::sav()
 			outputf << Blast_file << endl;
 			outputf << Blast_muscle_path << endl;
 			
-			ProgressBar progress(1, 1, 0, size());
+			ProgressBar progress(1, 1, 0, size(), Blast_verbose);
 			
 			for(int i = 0; i < size(); i++)
 			{
@@ -550,15 +514,5 @@ void BlastModel::restore(string const & file, Fasta* fasta_a, Fasta* fasta_b)
 	{
 		cerr << "ERROR : " << e.what()  << " in : void BlastModel::read()" << endl;
 	}
-}
-
-void BlastModel::load(string const & name, string const & file, Fasta* fasta1, Fasta* fasta2)
-{
-	Blast_fasta_a = fasta1;
-	Blast_fasta_b = fasta2;
-	Blast_muscle_path = "/usr/bin/muscle";
-	Blast_file = file;
-	Blast_name = name;
-	read();
 }
 

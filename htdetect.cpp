@@ -36,6 +36,7 @@ int main(int argc, char *argv[]) {
 	double chromosome_identity = -1.0;
 	string tmp_rep = "/tmp";
 	string output;
+	bool verbose = false;
 	
 	static struct option long_options[] =
 	{
@@ -48,10 +49,11 @@ int main(int argc, char *argv[]) {
 		{"output", required_argument, 0, 'o'},
 		{"restore", required_argument, 0, 'p'},
 		{"sav", required_argument, 0, 'q'},
+		{"v", required_argument, 0, 'r'},
 		{0, 0, 0, 0}
 	};
 	
-	while ((c = getopt_long_only (argc, argv, "a:b:c:d:e:f:o:p:q:", long_options, &option_index)) != -1) {
+	while ((c = getopt_long_only (argc, argv, "a:b:c:d:e:f:o:p:q:r:", long_options, &option_index)) != -1) {
 		switch(c) {
 			case 'a':
 				blast = optarg;
@@ -89,6 +91,10 @@ int main(int argc, char *argv[]) {
 				steptosave = atoi(optarg);
 				cout << "step to save : " << output << endl;
 			break;
+			case 'r':
+				verbose = true;
+				cout << "verbose enable" << endl;
+			break;
 			case ':':
 				cout << "without argument : " << optopt << endl;
 			break;
@@ -117,7 +123,7 @@ int main(int argc, char *argv[]) {
 	Fasta f2(fasta2);
 	cout << "oppening : " << blast << endl;
 	
-	Blast b;
+	Blast b(verbose);
 	if(restore.empty())
 		b.load(output, blast, &f1, &f2);
 	else

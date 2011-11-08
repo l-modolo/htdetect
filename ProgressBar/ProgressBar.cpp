@@ -20,8 +20,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 int ProgressBar::ProgressBar_number = 0;
 
-ProgressBar::ProgressBar(int step, int step_max, int start, int stop)
+ProgressBar::ProgressBar(int step, int step_max, int start, int stop, bool verbose)
 {
+	ProgressBar_verbose = verbose;
 	try
 	{
 		if(ProgressBar_number < 1)
@@ -32,11 +33,12 @@ ProgressBar::ProgressBar(int step, int step_max, int start, int stop)
 			else
 				ProgressBar_start = 0;
 			ProgressBar_stop = stop;
-	
+			
 			ProgressBar_step = step;
 			ProgressBar_step_max = step_max;
-	
-			ProgressBar_run = thread(ProgressBarThread(ProgressBar_step, ProgressBar_step_max, &ProgressBar_start, ProgressBar_stop));
+			
+			if(ProgressBar_verbose)
+				ProgressBar_run = thread(ProgressBarThread(ProgressBar_step, ProgressBar_step_max, &ProgressBar_start, ProgressBar_stop));
 		}
 		else
 		{
@@ -64,7 +66,8 @@ void ProgressBar::operator()(int step, int start, int stop)
 	ProgressBar_stop = stop;
 	ProgressBar_step = step;
 	
-	ProgressBar_run = thread(ProgressBarThread(ProgressBar_step, ProgressBar_step_max, &ProgressBar_start, ProgressBar_stop));
+	if(ProgressBar_verbose)
+		ProgressBar_run = thread(ProgressBarThread(ProgressBar_step, ProgressBar_step_max, &ProgressBar_start, ProgressBar_stop));
 }
 
 ProgressBar::~ProgressBar()

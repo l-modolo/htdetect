@@ -25,24 +25,7 @@ int Blast::number()
 	return Blast_number;
 }
 
-Blast::Blast(){}
-
-Blast::Blast(string const & name, string const & file) : BlastControler::BlastControler(name, file)
-{
-	Blast_number++;
-}
-
-Blast::Blast(string const & name, string const & file, Fasta* fasta) : BlastControler::BlastControler(name, file, fasta)
-{
-	Blast_number++;
-}
-
-Blast::Blast(string const & name, string const & file, Fasta* fasta1, Fasta* fasta2) : BlastControler::BlastControler(name, file, fasta1, fasta2)
-{
-	Blast_number++;
-}
-
-Blast::Blast(string const & name, string const & file, Fasta* fasta1, Fasta* fasta2, string const & muscle_path) : BlastControler::BlastControler(name, file, fasta1, fasta2, muscle_path)
+Blast::Blast(bool verbose) : BlastControler::BlastControler(verbose)
 {
 	Blast_number++;
 }
@@ -54,7 +37,7 @@ Blast::~Blast()
 
 void Blast::display(ostream &stream)
 {
-	ProgressBar progress(1, 1, 0, size());
+	ProgressBar progress(1, 1, 0, size(), Blast_verbose);
 	
 	stream << "number\ttarget\tsens\tstat\tstop\tsize\tdist_prev\tdist_next\tquery\tsens\tstart\tstop\tsize\tid\tpvalue" << endl;
 	

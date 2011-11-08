@@ -33,11 +33,7 @@ using namespace std;
 class Blast : public BlastControler
 {
 	public:
-	Blast();
-	Blast(string const & name, string const & file);
-	Blast(string const & name, string const & file, Fasta* fasta);
-	Blast(string const & name, string const & file, Fasta* fasta1, Fasta* fasta2);
-	Blast(string const & name, string const & file, Fasta* fasta1, Fasta* fasta2, string const & muscle_path);
+	Blast(bool verbose);
 	~Blast();
 	
 	static int number();

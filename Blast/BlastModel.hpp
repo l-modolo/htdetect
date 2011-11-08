@@ -35,12 +35,7 @@ using namespace std;
 class BlastModel
 {
 	public:
-	BlastModel();
-	BlastModel(string const & name, string const & file);
-	BlastModel(string const & name, string const & file, string const & muscle_path);
-	BlastModel(string const & name, string const & file, Fasta* fasta1);
-	BlastModel(string const & name, string const & file, Fasta* fasta1, Fasta* fasta2);
-	BlastModel(string const & name, string const & file, Fasta* fasta1, Fasta* fasta2, string const & muscle_path);
+	BlastModel(bool verbose);
 	BlastModel(BlastModel & Blastbis);
 	~BlastModel();
 	
@@ -75,6 +70,7 @@ class BlastModel
 	string Blast_muscle_path;
 	string Blast_file;
 	string Blast_name;
+	bool Blast_verbose;
 	
 	HitList Blast_query;
 	vector<HitList*> Blast_target;

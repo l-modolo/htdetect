@@ -27,7 +27,7 @@ using namespace std;
 
 class ProgressBar {
 	public:
-	ProgressBar(int step, int step_max, int start, int stop);
+	ProgressBar(int step, int step_max, int start, int stop, bool verbose);
 	~ProgressBar();
 	
 	void operator()(int step, int start, int stop);
@@ -38,6 +38,7 @@ class ProgressBar {
 	int ProgressBar_stop;
 	int ProgressBar_step;
 	int ProgressBar_step_max;
+	bool ProgressBar_verbose;
 	thread ProgressBar_run;
 	
 	void run();
