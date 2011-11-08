@@ -57,7 +57,8 @@ void ProgressBar::operator()(int step, int start, int stop)
 	{
 		ProgressBar_start = ProgressBar_stop;
 	}
-	ProgressBar_run.join();
+	if(ProgressBar_run.joinable())
+		ProgressBar_run.join();
 	
 	if(start < stop)
 		ProgressBar_start =  start;
@@ -73,7 +74,8 @@ void ProgressBar::operator()(int step, int start, int stop)
 ProgressBar::~ProgressBar()
 {
 	ProgressBar_start = ProgressBar_stop;
-	ProgressBar_run.join();
+	if(ProgressBar_run.joinable())
+		ProgressBar_run.join();
 	ProgressBar_number--;
 }
 
