@@ -40,20 +40,19 @@ void ProgressBarThread::operator()()
 void ProgressBarThread::display()
 {
 	int step = *ProgressBar_start;
-	if(step < ProgressBar_stop)
-	{
-		cout << ProgressBar_step << "/" << ProgressBar_step_max << " : " << round(((double)step/(double)ProgressBar_stop*100.0) * 100) / 100 << "%";
+	cout << "\r";
+	cout << ProgressBar_step << "/" << ProgressBar_step_max << " : " << round(((double)step/(double)ProgressBar_stop*100.0) * 100) / 100 << "%";
 	
-		auto timediff = (chrono::system_clock::now() - ProgressBar_time);
-		auto time = timediff.count();
+	auto timediff = (chrono::system_clock::now() - ProgressBar_time);
+	auto time = timediff.count();
 	
-		double speed = (double)(time / 1000000) / (double)step;
-		double sec = speed * (double)(ProgressBar_stop - step);
-		double min = floor(sec / 60);
+	double speed = (double)(time / 1000000) / (double)step;
+	double sec = speed * (double)(ProgressBar_stop - step);
+	double min = floor(sec / 60);
 	
-		cout << " and " << min << " min " << floor(sec - min*60) << " sec left at "<< (double)step / (double)(time / 1000000) << " step/sec.                                                    \r";
-	}
-	else
-		cout << ProgressBar_step << "/" << ProgressBar_step_max << " : 100%                                                                                  " << endl;
+	cout << " and " << min << " min " << floor(sec - min*60) << " sec left at "<< (double)step / (double)(time / 1000000) << " step/sec.                                                    ";
+	
+	if(step >= ProgressBar_stop)
+		cout << endl;
 }
 

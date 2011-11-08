@@ -54,7 +54,6 @@ void ProgressBar::operator()(int step, int start, int stop)
 	if(ProgressBar_start < ProgressBar_stop)
 	{
 		ProgressBar_start = ProgressBar_stop;
-		cout << ProgressBar_step << "/" << ProgressBar_step_max << " : 100%                                                                                  " << endl;
 	}
 	ProgressBar_run.join();
 	
@@ -71,7 +70,6 @@ void ProgressBar::operator()(int step, int start, int stop)
 ProgressBar::~ProgressBar()
 {
 	ProgressBar_start = ProgressBar_stop;
-	cout << ProgressBar_step << "/" << ProgressBar_step_max << " : 100%                                                                                  " << endl;
 	ProgressBar_run.join();
 	ProgressBar_number--;
 }

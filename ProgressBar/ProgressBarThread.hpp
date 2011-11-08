@@ -22,6 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <iostream>
 #include <mutex>
 #include <math.h>
+#include <sstream>
 
 using namespace std;
 
@@ -38,6 +39,7 @@ class ProgressBarThread
 	int ProgressBar_step;
 	int ProgressBar_step_max;
 	chrono::time_point<std::chrono::system_clock> ProgressBar_time;
+	int ProgressBar_text_size;
 	
 	private:
 	void display();
