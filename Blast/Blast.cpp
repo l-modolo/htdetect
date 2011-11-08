@@ -56,7 +56,7 @@ void Blast::display(ostream &stream)
 {
 	ProgressBar progress(1, 1, 0, size());
 	
-	stream << "target\tsens\tstat\tstop\tsize\tdist_prev\tdist_next\tquery\tsens\tstart\tstop\tsize\tid\tpvalue" << endl;
+	stream << "number\ttarget\tsens\tstat\tstop\tsize\tdist_prev\tdist_next\tquery\tsens\tstart\tstop\tsize\tid\tpvalue" << endl;
 	
 	for(int i = 0; i < size(); i++)
 	{
@@ -64,6 +64,7 @@ void Blast::display(ostream &stream)
 		{
 			if(pvalue(i, j) < 1.0)
 			{
+				stream << i << "\t";
 				stream << *hit_query(i);
 				if(i > 1)
 					stream << "\t" << hit_query(i)->dist_to(*hit_query(i-1));
