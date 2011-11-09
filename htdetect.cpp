@@ -106,12 +106,17 @@ int main(int argc, char *argv[]) {
 	// the only required argument is the blast file
 	if(blast.empty() || fasta1.empty() || fasta2.empty() || output.empty()){
 		cout << "Argument must be defined." << endl;
-		cout << "Usage: htdetect --blast <blast_file -m8> --fasta1 <fasta_file> --fasta2 <fasta_file> --output <output_file> --identity <chromosome identity>" << endl;
+		cout << "Usage: htdetect --blast <blast_file -m8> --fasta1 <fasta_file> --fasta2 <fasta_file> --output <output_file>" << endl;
 		cout << "       --fasta1 the subject species (the best assembled one)" << endl;
 		cout << "       --fasta2 the target species (the worst assembled one)" << endl;
 		cout << "Optional:" << endl;
+		cout << "       --identity <chromosome identity> compute p-value of thes hits according to an identity ceil" << endl;
 		cout << "       --restore a .sav file to restore data from a previous execution" << endl;
 		cout << "       --sav step to create the .sav" << endl;
+		cout << "             1 for the removing of overlapping query hit" << endl;
+		cout << "             2 for the computing of the identity" << endl;
+		cout << "             3 for the computing of the p-values (if a chromosome identity is provided)" << endl;
+		cout << "       --v enable verbose mode (htdetect says what he is doing)" << endl;
 		return 1;
 	}
 	
