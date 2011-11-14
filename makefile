@@ -10,12 +10,7 @@ htdetect: htdetect.o Hit.o HitControler.o HitModel.o HitList.o HitListControler.
 htdetect.o: htdetect.cpp Hit.o HitControler.o HitModel.o HitList.o HitListControler.o HitListModel.o Blast.o BlastControler.o BlastModel.o Fasta.o FastaThread.o FastaControler.o FastaModel.o Sequence.o Alignement.o ProgressBar.o ProgressBarThread.o
 	$(CC) -c htdetect.cpp $(CFLAGS)
 
-ProgressBar.o: ProgressBar/ProgressBar.cpp ProgressBarThread.o
-	$(CC) -c ProgressBar/ProgressBar.cpp $(CFLAGS)
-
-ProgressBarThread.o: ProgressBar/ProgressBarThread.cpp
-	$(CC) -c ProgressBar/ProgressBarThread.cpp $(CFLAGS)
-
+# Blast
 Blast.o: Blast/Blast.cpp BlastControler.o
 	$(CC) -c Blast/Blast.cpp $(CFLAGS)
 
@@ -25,10 +20,27 @@ BlastControler.o: Blast/BlastControler.cpp BlastModel.o Alignement.o
 BlastModel.o: Blast/BlastModel.cpp HitList.o
 	$(CC) -c Blast/BlastModel.cpp $(CFLAGS)
 
-Alignement.o: Alignement/Alignement.cpp Fasta.o
+Alignement.o: Alignement/Alignement.cpp HitList.o Fasta.o ProgressBar.o PairWalker.o
 	$(CC) -c Alignement/Alignement.cpp $(CFLAGS)
 
+# PairWalker
+PairWalker.o: PairWalker/PairWalker.cpp PairWalkerControler.o
+	$(CC) -c PairWalker/PairWalker.cpp $(CFLAGS)
 
+PairWalkerControler.o: PairWalker/PairWalkerControler.cpp PairWalkerModel.o
+	$(CC) -c PairWalker/PairWalkerControler.cpp $(CFLAGS)
+
+PairWalkerModel.o: PairWalker/PairWalkerModel.cpp HitList.o Fasta.o ProgressBar.o
+	$(CC) -c PairWalker/PairWalkerModel.cpp $(CFLAGS)
+
+# ProgressBar
+ProgressBar.o: ProgressBar/ProgressBar.cpp ProgressBarThread.o
+	$(CC) -c ProgressBar/ProgressBar.cpp $(CFLAGS)
+
+ProgressBarThread.o: ProgressBar/ProgressBarThread.cpp
+	$(CC) -c ProgressBar/ProgressBarThread.cpp $(CFLAGS)
+
+# Fasta
 Fasta.o: Fasta/Fasta.cpp FastaControler.o FastaThread.o
 	$(CC) -c Fasta/Fasta.cpp $(CFLAGS)
 
@@ -44,7 +56,7 @@ FastaThread.o: Fasta/FastaThread.cpp Sequence.o
 Sequence.o: Fasta/Sequence.cpp
 	$(CC) -c Fasta/Sequence.cpp $(CFLAGS)
 
-
+# HitList
 HitList.o: HitList/HitList.cpp HitListControler.o
 	$(CC) -c HitList/HitList.cpp $(CFLAGS)
 
@@ -54,7 +66,7 @@ HitListControler.o: HitList/HitListControler.cpp HitListModel.o
 HitListModel.o: HitList/HitListModel.cpp Hit.o
 	$(CC) -c HitList/HitListModel.cpp $(CFLAGS)
 
-
+# Hit
 Hit.o: Hit/Hit.cpp HitControler.o
 	$(CC) -c Hit/Hit.cpp $(CFLAGS)
 

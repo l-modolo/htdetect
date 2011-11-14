@@ -49,7 +49,7 @@ int main(int argc, char *argv[]) {
 		{"output", required_argument, 0, 'o'},
 		{"restore", required_argument, 0, 'p'},
 		{"sav", required_argument, 0, 'q'},
-		{"v", required_argument, 0, 'r'},
+		{"v", 0, 0, 'r'},
 		{0, 0, 0, 0}
 	};
 	
@@ -85,11 +85,11 @@ int main(int argc, char *argv[]) {
 			break;
 			case 'p':
 				restore = optarg;
-				cout << "restore from : " << output << endl;
+				cout << "restore from : " << restore << endl;
 			break;
 			case 'q':
 				steptosave = atoi(optarg);
-				cout << "step to save : " << output << endl;
+				cout << "step to save : " << steptosave << endl;
 			break;
 			case 'r':
 				verbose = true;
