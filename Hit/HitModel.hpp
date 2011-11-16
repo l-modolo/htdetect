@@ -41,6 +41,7 @@ class HitModel {
 	int start() const;
 	int stop() const;
 	string name() const;
+	bool set() const;
 	
 	protected:
 	// attributes

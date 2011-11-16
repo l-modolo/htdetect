@@ -20,18 +20,28 @@ BlastControler.o: Blast/BlastControler.cpp BlastModel.o Alignement.o
 BlastModel.o: Blast/BlastModel.cpp HitList.o
 	$(CC) -c Blast/BlastModel.cpp $(CFLAGS)
 
-Alignement.o: Alignement/Alignement.cpp HitList.o Fasta.o ProgressBar.o PairWalker.o
+Alignement.o: Alignement/Alignement.cpp HitList.o Fasta.o ProgressBar.o PathWalker.o
 	$(CC) -c Alignement/Alignement.cpp $(CFLAGS)
 
-# PairWalker
-PairWalker.o: PairWalker/PairWalker.cpp PairWalkerControler.o
-	$(CC) -c PairWalker/PairWalker.cpp $(CFLAGS)
+# PathWalker
+PathWalker.o: PathWalker/PathWalker.cpp PathWalkerControler.o
+	$(CC) -c PathWalker/PathWalker.cpp $(CFLAGS)
 
-PairWalkerControler.o: PairWalker/PairWalkerControler.cpp PairWalkerModel.o
-	$(CC) -c PairWalker/PairWalkerControler.cpp $(CFLAGS)
+PathWalkerControler.o: PathWalker/PathWalkerControler.cpp PathWalkerModel.o
+	$(CC) -c PathWalker/PathWalkerControler.cpp $(CFLAGS)
 
-PairWalkerModel.o: PairWalker/PairWalkerModel.cpp HitList.o Fasta.o ProgressBar.o
-	$(CC) -c PairWalker/PairWalkerModel.cpp $(CFLAGS)
+PathWalkerModel.o: PathWalker/PathWalkerModel.cpp Path.o ProgressBar.o
+	$(CC) -c PathWalker/PathWalkerModel.cpp $(CFLAGS)
+
+# Path
+Path.o: Path/Path.cpp PathControler.o
+	$(CC) -c Path/Path.cpp $(CFLAGS)
+
+PathControler.o: Path/PathControler.cpp PathModel.o
+	$(CC) -c Path/PathControler.cpp $(CFLAGS)
+
+PathModel.o: Path/PathModel.cpp Hit.o
+	$(CC) -c Path/PathModel.cpp $(CFLAGS)
 
 # ProgressBar
 ProgressBar.o: ProgressBar/ProgressBar.cpp ProgressBarThread.o

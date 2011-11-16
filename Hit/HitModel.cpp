@@ -120,6 +120,11 @@ string HitModel::name() const
 	return Hit_id_names[Hit_name];
 }
 
+bool HitModel::set() const
+{
+	return (Hit_start != Hit_stop && Hit_stop != 0);
+}
+
 unsigned int HitModel::add_name(string name)
 {
 	lock_guard<mutex> lk(Hit_names_lock);

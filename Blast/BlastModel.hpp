@@ -81,6 +81,7 @@ class BlastModel
 	vector<double> Blast_pvalue;
 	
 	friend class Alignement;
+	friend class PathWalker;
 };
 
 #endif
