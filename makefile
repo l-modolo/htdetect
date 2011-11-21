@@ -14,7 +14,7 @@ htdetect.o: htdetect.cpp Hit.o HitControler.o HitModel.o HitList.o HitListContro
 Blast.o: Blast/Blast.cpp BlastControler.o
 	$(CC) -c Blast/Blast.cpp $(CFLAGS)
 
-BlastControler.o: Blast/BlastControler.cpp BlastModel.o Alignement.o
+BlastControler.o: Blast/BlastControler.cpp BlastModel.o Alignement.o myThread.o
 	$(CC) -c Blast/BlastControler.cpp $(CFLAGS)
 
 BlastModel.o: Blast/BlastModel.cpp HitList.o
@@ -85,6 +85,9 @@ HitControler.o: Hit/HitControler.cpp HitModel.o
 
 HitModel.o: Hit/HitModel.cpp
 	$(CC) -c Hit/HitModel.cpp $(CFLAGS)
+
+myThread.o: myThread/myThread.cpp
+	$(CC) -c myThread/myThread.cpp $(CFLAGS)
 
 clean:
 	rm -rf *.o htdetect
