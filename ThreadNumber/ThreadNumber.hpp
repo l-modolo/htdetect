@@ -16,38 +16,32 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DEF_myThread
-#define DEF_myThread
+#ifndef DEF_ThreadNumber
+#define DEF_ThreadNumber
 
-#include <iostream>
-#include <thread>
 #include <mutex>
 
 using namespace std;
 
-class myThread : public thread
+class ThreadNumber
 {
 	public:
-	myThread();
-	
-	template<typename _Callable , typename... _Args> myThread(_Callable &&__f, _Args &&...__args);
-	
-	void join();
-	void detach();
-	
-	~myThread();
+	ThreadNumber();
+	~ThreadNumber();
 	
 	static void set_max_number(int number);
 	static int number();
-	static int number_inc();
-	static int number_dec();
+	static void add_thread();
+	static void pop_thread();
 	
 	protected:
-	bool joined;
-	static int myThread_number;
-	static mutex myThread_number_lock;
-	static int myThread_max_number;
-	static mutex myThread_limit;
+	static void number_inc();
+	static void number_dec();
+	
+	static int ThreadNumber_number;
+	static mutex ThreadNumber_number_lock;
+	static int ThreadNumber_max_number;
+	static mutex ThreadNumber_limit;
 };
 #endif
 

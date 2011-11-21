@@ -22,6 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <cstdio>
 #include <iostream>
 #include <fstream>
+#include <thread>
 #include <future>
 #include <string>
 #include <vector>
@@ -32,7 +33,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <boost/math/special_functions/round.hpp>
 #include "BlastModel.hpp"
 #include "../Alignement/Alignement.hpp"
-#include "../myThread/myThread.hpp"
+#include "../ThreadNumber/ThreadNumber.hpp"
 
 using namespace std;
 

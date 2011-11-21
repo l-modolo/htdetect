@@ -4,21 +4,25 @@ CFLAGS = -std=c++0x -pthread -I/usr/local/include -L/usr/local/lib
 
 all: htdetect
 
-htdetect: htdetect.o Hit.o HitControler.o HitModel.o HitList.o HitListControler.o HitListModel.o Blast.o BlastControler.o BlastModel.o Fasta.o FastaThread.o FastaControler.o FastaModel.o Sequence.o Alignement.o ProgressBar.o ProgressBarThread.o
-	$(CC) htdetect.o Hit.o  HitControler.o HitModel.o HitList.o HitListControler.o HitListModel.o Blast.o BlastControler.o BlastModel.o Fasta.o FastaThread.o FastaControler.o FastaModel.o Sequence.o Alignement.o ProgressBar.o ProgressBarThread.o -o htdetect $(CFLAGS)
+htdetect: htdetect.o Hit.o HitControler.o HitModel.o HitList.o HitListControler.o HitListModel.o Blast.o BlastControler.o BlastModel.o Fasta.o FastaThread.o FastaControler.o FastaModel.o Sequence.o Alignement.o ProgressBar.o ProgressBarThread.o ThreadNumber.o
+	$(CC) htdetect.o Hit.o  HitControler.o HitModel.o HitList.o HitListControler.o HitListModel.o Blast.o BlastControler.o BlastModel.o Fasta.o FastaThread.o FastaControler.o FastaModel.o Sequence.o Alignement.o ProgressBar.o ProgressBarThread.o ThreadNumber.o -o htdetect $(CFLAGS)
  	
-htdetect.o: htdetect.cpp Hit.o HitControler.o HitModel.o HitList.o HitListControler.o HitListModel.o Blast.o BlastControler.o BlastModel.o Fasta.o FastaThread.o FastaControler.o FastaModel.o Sequence.o Alignement.o ProgressBar.o ProgressBarThread.o
+htdetect.o: htdetect.cpp Hit.o HitControler.o HitModel.o HitList.o HitListControler.o HitListModel.o Blast.o BlastControler.o BlastModel.o Fasta.o FastaThread.o FastaControler.o FastaModel.o Sequence.o Alignement.o ProgressBar.o ProgressBarThread.o ThreadNumber.o
 	$(CC) -c htdetect.cpp $(CFLAGS)
 
 # Blast
 Blast.o: Blast/Blast.cpp BlastControler.o
 	$(CC) -c Blast/Blast.cpp $(CFLAGS)
 
-BlastControler.o: Blast/BlastControler.cpp BlastModel.o Alignement.o myThread.o
+BlastControler.o: Blast/BlastControler.cpp BlastModel.o ThreadNumber.o
 	$(CC) -c Blast/BlastControler.cpp $(CFLAGS)
 
 BlastModel.o: Blast/BlastModel.cpp HitList.o
 	$(CC) -c Blast/BlastModel.cpp $(CFLAGS)
+
+# ThreadNumber
+ThreadNumber.o: ThreadNumber/ThreadNumber.cpp Alignement.o
+	$(CC) -c ThreadNumber/ThreadNumber.cpp $(CFLAGS)
 
 Alignement.o: Alignement/Alignement.cpp HitList.o Fasta.o ProgressBar.o PathWalker.o
 	$(CC) -c Alignement/Alignement.cpp $(CFLAGS)
@@ -85,9 +89,6 @@ HitControler.o: Hit/HitControler.cpp HitModel.o
 
 HitModel.o: Hit/HitModel.cpp
 	$(CC) -c Hit/HitModel.cpp $(CFLAGS)
-
-myThread.o: myThread/myThread.cpp
-	$(CC) -c myThread/myThread.cpp $(CFLAGS)
 
 clean:
 	rm -rf *.o htdetect

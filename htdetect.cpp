@@ -21,6 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "HitList/HitList.hpp"
 #include "Blast/Blast.hpp"
 #include "Fasta/Fasta.hpp"
+#include "ThreadNumber/ThreadNumber.hpp"
 #include <getopt.h>
 
 int main(int argc, char *argv[]) {
@@ -127,6 +128,8 @@ int main(int argc, char *argv[]) {
 	cout << "oppening : " << fasta2 << endl;
 	Fasta f2(fasta2);
 	cout << "oppening : " << blast << endl;
+	
+	ThreadNumber::set_max_number(thread_number);
 	
 	Blast b(verbose);
 	if(restore.empty())
