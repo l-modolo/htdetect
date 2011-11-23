@@ -45,6 +45,11 @@ int Alignement::number()
 	return Alignement_id;
 }
 
+Alignement::Alignement()
+{
+	
+}
+
 Alignement::Alignement(Fasta* fasta_a, Hit* hit_a, Fasta* fasta_b, Hit* hit_b, vector<double>* identity, string* muscle_path, int thread_id, string* tmp_rep)
 {
 	Alignement_fasta_a = fasta_a;
@@ -59,17 +64,38 @@ Alignement::Alignement(Fasta* fasta_a, Hit* hit_a, Fasta* fasta_b, Hit* hit_b, v
 	Alignement_identity = identity;
 }
 
+Alignement& Alignement::operator=(Alignement const& alignementbis)
+{
+	if(this != &alignementbis)
+	{
+		Alignement_fasta_a = alignementbis.Alignement_fasta_a;
+		Alignement_fasta_b = alignementbis.Alignement_fasta_b;
+		Alignement_hit_a = alignementbis.Alignement_hit_a;
+		Alignement_hit_b = alignementbis.Alignement_hit_b;
+
+		Alignement_path = alignementbis.Alignement_path;
+		Alignement_tmp_rep = alignementbis.Alignement_tmp_rep;
+
+		Alignement_id = alignementbis.Alignement_id;
+		Alignement_identity = alignementbis.Alignement_identity;
+	}
+	return *this;
+}
+
 void Alignement::run()
 {
 	try
 	{
 		FastaThread seqa(Alignement_fasta_a, Alignement_hit_a);
 		FastaThread seqb(Alignement_fasta_b, Alignement_hit_b);
-		future<string*> first_seq = async(launch::async, seqa);
-		future<string*> second_seq = async(launch::async, seqb);
+//		future<string*> first_seq = async(launch::async, seqa);
+//		future<string*> second_seq = async(launch::async, seqb);
+//		
+//		Alignement_first_seq = first_seq.get();
+//		Alignement_second_seq = second_seq.get();
 		
-		Alignement_first_seq = first_seq.get();
-		Alignement_second_seq = second_seq.get();
+		Alignement_first_seq = seqa.find();
+		Alignement_second_seq = seqb.find();
 		
 		Alignement_identity->at(Alignement_hit_b->id()) = compute_identity();
 	}

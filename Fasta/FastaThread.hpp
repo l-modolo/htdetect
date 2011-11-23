@@ -36,6 +36,8 @@ class FastaThread
 	
 	Fasta * FastaThread_fasta;
 	Hit * FastaThread_hit;
+	
+	static mutex FastaThread_onebyone;
 };
 
 #endif

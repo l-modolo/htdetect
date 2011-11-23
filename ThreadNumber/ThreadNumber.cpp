@@ -22,6 +22,7 @@ int ThreadNumber::ThreadNumber_number = 0;
 mutex ThreadNumber::ThreadNumber_number_lock;
 int ThreadNumber::ThreadNumber_max_number = -1;
 mutex ThreadNumber::ThreadNumber_limit;
+condition_variable ThreadNumber::ThreadNumber_limit_cond;
 
 int ThreadNumber::number()
 {
@@ -29,19 +30,22 @@ int ThreadNumber::number()
 	return ThreadNumber_number;
 }
 
+int ThreadNumber::max_number()
+{
+	return ThreadNumber_max_number;
+}
+
 void ThreadNumber::number_inc()
 {
 	lock_guard<mutex> lk(ThreadNumber_number_lock);
 	ThreadNumber_number++;
-	if(ThreadNumber::number() >= ThreadNumber_max_number)
-		ThreadNumber_limit.lock();
 }
 
 void ThreadNumber::number_dec()
 {
 	lock_guard<mutex> lk(ThreadNumber_number_lock);
-	ThreadNumber_number--;
-	ThreadNumber_limit.unlock();
+	if(ThreadNumber_number > 0)
+		ThreadNumber_number--;
 }
 
 void ThreadNumber::set_max_number(int number)
@@ -51,12 +55,16 @@ void ThreadNumber::set_max_number(int number)
 
 void ThreadNumber::add_thread()
 {
+	std::unique_lock<std::mutex> lk(ThreadNumber_limit);
+	while(ThreadNumber::number() >= ThreadNumber_max_number)
+		ThreadNumber_limit_cond.wait(lk);
 	ThreadNumber::number_inc();
 }
 
 void ThreadNumber::pop_thread()
 {
 	ThreadNumber::number_dec();
+	ThreadNumber_limit_cond.notify_one();
 }
 
 

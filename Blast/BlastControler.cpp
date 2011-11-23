@@ -107,7 +107,8 @@ void BlastControler::compute_identity(int thread_number, string tmp_rep)
 	if(Blast_verbose){ cout << "Computing identity for " << Blast_identity.size() << " hits." << endl; }
 	if(Blast_fasta_a != nullptr && Blast_fasta_b != nullptr)
 	{
-		list< thread > alignements_run;
+		mThread<Alignement> alignements_run(thread_number);
+//		list< thread > alignements_run;
 		
 		ProgressBar progress(1, 2, 0, Blast_identity.size(), Blast_verbose);
 		
@@ -115,17 +116,19 @@ void BlastControler::compute_identity(int thread_number, string tmp_rep)
 		{
 			for(unsigned int j = 0; j < hit_target_size(i); j++)
 			{
-				BlastControler::parallel_compute_identity(i, j, &tmp_rep, &alignements_run, thread_number);
+				alignements_run.add(Alignement(Blast_fasta_a, hit_query(i), Blast_fasta_b, hit_target(i, j), &Blast_identity, &Blast_muscle_path, hit_target(i, j)->id(), &tmp_rep));
+//				BlastControler::parallel_compute_identity(i, j, &tmp_rep, &alignements_run, thread_number);
 				progress.inc();
 			}
 		}
 		
-		auto t1 = alignements_run.begin();
-		while(t1 != alignements_run.end())
-		{
-				(*t1).join();
-				t1 = alignements_run.erase(t1);
-		}
+//		auto t1 = alignements_run.begin();
+//		while(t1 != alignements_run.end())
+//		{
+//				(*t1).join();
+//				t1 = alignements_run.erase(t1);
+//		}
+		alignements_run.stop();
 	}
 }
 

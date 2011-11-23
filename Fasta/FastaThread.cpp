@@ -18,6 +18,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "FastaThread.hpp"
 
+mutex FastaThread::FastaThread_onebyone;
+
 FastaThread::FastaThread(Fasta * fasta, Hit * hit)
 {
 	try
@@ -40,19 +42,20 @@ FastaThread::FastaThread(Fasta * fasta, Hit * hit)
 
 Sequence FastaThread::findSeq()
 {
-	auto it = std::find(FastaThread_fasta->Fasta_sequences.begin(), FastaThread_fasta->Fasta_sequences.end(), Sequence(FastaThread_hit->name(), 0, 10, 0));
+	unique_lock<mutex> lk(FastaThread_onebyone);
 	try{
+		auto it = std::find(FastaThread_fasta->Fasta_sequences.begin(), FastaThread_fasta->Fasta_sequences.end(), Sequence(FastaThread_hit->name(), 0, 10, 0));
 		if(it == FastaThread_fasta->Fasta_sequences.end())
 		{
 			throw logic_error("Sequence not found : "+(FastaThread_hit->name())+" in file "+(FastaThread_fasta->Fasta_file));
 		}
+		return (*it);
 	}
 	catch(exception const& e)
 	{
 		cerr << "ERROR : " << e.what() << " in Sequence* FastaThread::findSeq()" << endl;
 		exit(-1);
 	}
-	return (*it);
 }
 
 string* FastaThread::operator()()

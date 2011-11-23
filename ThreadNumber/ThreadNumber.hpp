@@ -19,7 +19,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef DEF_ThreadNumber
 #define DEF_ThreadNumber
 
+#include <list>
+#include <thread>
 #include <mutex>
+#include <condition_variable>
 
 using namespace std;
 
@@ -31,6 +34,7 @@ class ThreadNumber
 	
 	static void set_max_number(int number);
 	static int number();
+	static int max_number();
 	static void add_thread();
 	static void pop_thread();
 	
@@ -42,6 +46,9 @@ class ThreadNumber
 	static mutex ThreadNumber_number_lock;
 	static int ThreadNumber_max_number;
 	static mutex ThreadNumber_limit;
+	static condition_variable ThreadNumber_limit_cond;
+	
+	static list<thread> test;
 };
 #endif
 

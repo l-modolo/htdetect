@@ -33,7 +33,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <boost/math/special_functions/round.hpp>
 #include "BlastModel.hpp"
 #include "../Alignement/Alignement.hpp"
-#include "../ThreadNumber/ThreadNumber.hpp"
+#include "../mThread/mThread.hpp"
 
 using namespace std;
 
@@ -50,11 +50,11 @@ class BlastControler : public BlastModel
 	
 	private:
 	void parallel_compute_identity(unsigned int i, unsigned int j, string* tmp_rep, list<thread>* locks, int thread_number);
-	
 	void parallel_remove_overlapping();
 	void parallel_compute_test(double chromosome_identity, unsigned int i, unsigned int j, list< thread >* alignements_run, int thread_number);
 	void hitTest(double chromosome_identity,  unsigned int i, unsigned int j);
 	
+	void clean_thread_list(list<thread>* locks, int thread_number, bool* run);
 };
 #endif
 

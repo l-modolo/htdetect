@@ -65,4 +65,7 @@ FastaModel::FastaModel(string const & file)
 	}
 }
 
-
+string FastaModel::test()
+{
+	return Fasta_file;
+}

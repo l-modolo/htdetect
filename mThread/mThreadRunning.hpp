@@ -16,33 +16,45 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DEF_FastaModel
-#define DEF_FastaModel
+#ifndef DEF_mThreadRunning
+#define DEF_mThreadRunning
 
-#include <cstdlib>
-#include <cstdio>
-#include <iostream>
-#include <fstream>
-#include <string>
+#include <future>
+#include <thread>
+#include <mutex>
+#include <condition_variable>
 #include <vector>
-#include <algorithm>
-#include <utility>
-#include <map>
-#include "Sequence.hpp"
+#include "mThreadWaiting.hpp"
+#include <exception>
+#include <stdexcept>
+#include <iostream>
 
 using namespace std;
 
-class FastaModel
+template <typename T>
+class mThreadRunning
 {
 	public:
-	FastaModel(string const & file);
+	mThreadRunning(mThreadWaiting<T>* todo);
 	
-	string test();
+	bool stop();
+	static void set_stop();
+	void join();
 	
 	protected:
-	// attributes
-	string Fasta_file;
-	vector<Sequence> Fasta_sequences;
+	void run();
+	void thread_run();
+	T thread_run_get_T();
+	
+	static mutex mThread_onebyone;
+	
+	mThreadWaiting<T>* mThread_todo;
+	thread mThread_thread;
+	
+	static bool mThread_run;
+	static mutex mThread_controler;
 };
 
+#include "mThreadRunning.tli"
 #endif
+

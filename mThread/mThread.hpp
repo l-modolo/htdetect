@@ -16,54 +16,37 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DEF_HitModel
-#define DEF_HitModel
+#ifndef DEF_mThread
+#define DEF_mThread
 
-#include <string>
 #include <exception>
 #include <stdexcept>
 #include <iostream>
-#include <map>
-#include <mutex>
+#include <future>
 #include <thread>
+#include <mutex>
+#include <vector>
+#include <condition_variable>
+#include "mThreadWaiting.hpp"
+#include "mThreadRunning.hpp"
 
 using namespace std;
 
-class HitModel {
+template <typename T>
+class mThread
+{
 	public:
-	HitModel();
-	HitModel(string const & name, int start, int stop);
-	HitModel(int id, string const & name, int start, int stop);
-	HitModel(HitModel const& Hitbis);
-	HitModel& operator=(HitModel const& Hitbis);
+	mThread(int number);
+	~mThread();
 	
-	int id() const;
-	bool sens() const;
-	int start() const;
-	int stop() const;
-	string name() const;
-	bool set() const;
+	void stop();
+	void add(T);
 	
 	protected:
-	// attributes
-	int Hit_id;
-	bool Hit_sens;
-//	int Hit_name;
-	int Hit_start;
-	int Hit_stop;
-	string Hit_name;
-	
-	
-	static mutex Hit_names_lock;
-	static map<unsigned int, string> Hit_id_names;
-	static map<string, unsigned int> Hit_names_id;
-	
-	private:
-	void init(int id, string const & name, int start, int stop);
-	
-	static unsigned int add_name(string name);
-	static string get_name(unsigned int id);
+	mThreadWaiting<T> mThread_waiting;
+	vector< mThreadRunning<T> > mThread_running;
 };
 
-
+#include "mThread.tli"
 #endif
+

@@ -1,0 +1,71 @@
+/*
+htdetect horizontal transfert detection tools
+Copyright (C) 2011  Laurent Modolo
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+#include "mThreadWaiting.hpp"
+
+template<typename T>
+mutex mThreadWaiting<T>::mThread_empty;
+template<typename T>
+mutex mThreadWaiting<T>::mThread_full;
+template<typename T>
+condition_variable mThreadWaiting<T>::mThread_empty_cond;
+template<typename T>
+condition_variable mThreadWaiting<T>::mThread_full_cond;
+
+template<typename T>
+mThreadWaiting<T>::mThreadWaiting(int size)
+{
+	mThread_size = size;
+}
+
+template<typename T>
+void mThreadWaiting<T>::add(T x)
+{
+	cout << "add" << mThread_waiting.size() << endl;
+	unique_lock<mutex> lk(mThread_full);
+		while(mThread_waiting.size() >= mThread_size)
+			mThread_full_cond.wait(lk);
+	
+	mThread_waiting.push(x);
+	
+	mThread_empty_cond.notify_one(); // we notify that mThread is not empty anymore
+}
+
+template<typename T>
+T mThreadWaiting<T>::get()
+{
+	try
+	{
+		// we wait until mThread_waiting is not empty
+		unique_lock<mutex> lk(mThread_empty);
+		while(mThread_waiting.size() <= 0)
+			mThread_empty_cond.wait(lk);
+		
+		T value = mThread_waiting.front();
+		mThread_waiting.pop();
+		
+		mThread_full_cond.notify_one();
+		
+		return value;
+	}
+	catch(exception const& e)
+	{
+		cerr << "ERROR : " << e.what() << " in : T mThreadWaiting<T>::get()" << endl;
+		return T();
+	}
+}

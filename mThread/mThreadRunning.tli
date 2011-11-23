@@ -1,0 +1,91 @@
+/*
+htdetect horizontal transfert detection tools
+Copyright (C) 2011  Laurent Modolo
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+#include "mThreadRunning.hpp"
+
+template <typename T>
+bool mThreadRunning<T>::mThread_run = true;
+template <typename T>
+mutex mThreadRunning<T>::mThread_controler;
+template <typename T>
+mutex mThreadRunning<T>::mThread_onebyone;
+
+template <typename T>
+void mThreadRunning<T>::set_stop()
+{
+	unique_lock<mutex> lk(mThread_controler);
+	mThread_run = false;
+}
+
+template <typename T>
+mThreadRunning<T>::mThreadRunning(mThreadWaiting<T>* todo)
+{
+	mThread_todo = todo;
+	mThreadRunning<T>::run();
+}
+
+template <typename T>
+void mThreadRunning<T>::run()
+{
+	try
+	{
+		cout << "new thread" << endl;
+		mThread_thread = thread( &mThreadRunning<T>::thread_run, this );
+	}
+	catch(exception const& e)
+	{
+		cerr << "ERROR : " << e.what() << " in : void mThreadRunning<T>::run()" << endl;
+	}
+}
+
+template <typename T>
+void mThreadRunning<T>::thread_run()
+{
+	try
+	{
+		while(!stop())
+		{
+			T x = thread_run_get_T(); // mThread_todo->get() is supposed to block until todo is not empty
+			x.run();
+		}
+	}
+	catch(exception const& e)
+	{
+		cerr << "ERROR : " << e.what() << " in : void mThreadRunning<T>::thread_run()" << endl;
+	}
+}
+
+template <typename T>
+T mThreadRunning<T>::thread_run_get_T()
+{
+	unique_lock<mutex> lk(mThread_onebyone);
+	return mThread_todo->get();
+}
+
+template <typename T>
+bool mThreadRunning<T>::stop()
+{
+	unique_lock<mutex> lk(mThread_controler);
+	return !mThread_run;
+}
+
+template <typename T>
+void mThreadRunning<T>::join()
+{
+	mThread_thread.join();
+}
