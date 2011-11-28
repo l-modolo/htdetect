@@ -115,7 +115,8 @@ int main(int argc, char *argv[]) {
 		cout << "       --sav step to create the .sav" << endl;
 		cout << "             1 for the removing of overlapping query hit" << endl;
 		cout << "             2 for the computing of the identity" << endl;
-		cout << "             3 for the computing of the p-values (if a chromosome identity is provided)" << endl;
+		cout << "             3 for the removing of overlapping target hit" << endl;
+		cout << "             4 for the computing of the p-values (if a chromosome identity is provided)" << endl;
 		cout << "       --v enable verbose mode (htdetect says what he is doing)" << endl;
 		return 1;
 	}
@@ -146,10 +147,14 @@ int main(int argc, char *argv[]) {
 	
 	if(chromosome_identity >= 0.0)
 	{
-		b.compute_test(chromosome_identity, thread_number);
+		b.remove_overlapping_2(chromosome_identity, thread_number);
 		step++;
 		if(steptosave == step)
 			b.sav();
+//		b.compute_test(chromosome_identity, thread_number);
+//		step++;
+//		if(steptosave == step)
+//			b.sav();
 	}
 	
 	cout << "writing " << output << "..." << endl;

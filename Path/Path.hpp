@@ -27,7 +27,7 @@ using namespace std;
 class Path : public PathControler
 {
 	public:
-	Path(Fasta* fasta_a, Fasta* fasta_b, string muscle_path, bool verbose);
+	Path(double chromosome_identity, vector<double>* identity, double* pvalue, bool verbose);
 	~Path();
 	
 	static int number();

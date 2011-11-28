@@ -18,12 +18,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "pTest.hpp"
 
-pTest::pTest(double chromosome_identity, double identity, unsigned int target_size, unsigned int id, vector<double>* pvalue)
+pTest::pTest(double chromosome_identity, double identity, unsigned int target_size, double* pvalue)
 {
 	pTest_chromosome_identity = chromosome_identity;
 	pTest_identity = identity;
 	pTest_target_size = target_size;
-	pTest_hit_target_id = id;
 	pTest_pvalue = pvalue;
 }
 
@@ -32,7 +31,6 @@ pTest& pTest::operator=(pTest const& ptestbis)
 	pTest_chromosome_identity = ptestbis.pTest_chromosome_identity;
 	pTest_identity = ptestbis.pTest_identity;
 	pTest_target_size = ptestbis.pTest_target_size;
-	pTest_hit_target_id = ptestbis.pTest_hit_target_id;
 	pTest_pvalue = ptestbis.pTest_pvalue;
 }
 
@@ -40,7 +38,7 @@ void pTest::run()
 {
 	try
 	{
-		if(pTest_pvalue->at(pTest_hit_target_id) == -1 && pTest_identity != -1.0)
+		if(*pTest_pvalue == -1 && pTest_identity != -1.0)
 		{
 			double x;
 			double T = pTest_target_size;
@@ -51,11 +49,11 @@ void pTest::run()
 				x = round((1.0-(pTest_identity/100.0))*T);
 				
 				boost::math::poisson_distribution<> poisson(r*T);
-				pTest_pvalue->at(pTest_hit_target_id) = boost::math::cdf(poisson, x);
+				*pTest_pvalue = boost::math::cdf(poisson, x);
 			}
 			else
 			{
-				pTest_pvalue->at(pTest_hit_target_id) = 1;
+				*pTest_pvalue = 1;
 			}
 		}
 	}

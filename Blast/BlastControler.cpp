@@ -109,7 +109,7 @@ void BlastControler::compute_identity(int thread_number, string tmp_rep)
 	{
 		mThread<Alignement> alignements_run(thread_number);
 		
-		ProgressBar progress(1, 2, 0, Blast_identity.size(), Blast_verbose);
+		ProgressBar progress(1, 1, 0, Blast_identity.size(), Blast_verbose);
 		
 		for(unsigned int i = 0; i < size(); i++)
 		{
@@ -129,16 +129,33 @@ void BlastControler::compute_test(double chromosome_identity, int thread_number)
 	if(Blast_verbose){ cout << "Computing p-value for " << Blast_pvalue.size() << " hits." << endl; }
 	
 	mThread<pTest> alignements_run(thread_number);
-	ProgressBar progress(1, 2, 0, Blast_pvalue.size(), Blast_verbose);
+	ProgressBar progress(1, 1, 0, Blast_pvalue.size(), Blast_verbose);
 	
 	for(unsigned int i = 0; i < size(); i++)
 	{
 		for(unsigned int j = 0; j < hit_target_size(i); j++)
 		{
-			alignements_run.add(pTest(chromosome_identity, identity(i,j), hit_target(i,j)->size(), hit_target(i,j)->id(), &Blast_pvalue));
+			alignements_run.add(pTest(chromosome_identity, identity(i,j), hit_target(i,j)->size(), &(Blast_pvalue.at(hit_target(i,j)->id()))));
+			
+			progress.inc();
 		}
 	}
 	alignements_run.stop();
+}
+
+void BlastControler::remove_overlapping_2(double chromosome_identity, int thread_number)
+{
+	if(Blast_verbose){ cout << "removing overlapping for " << Blast_target.size() << " hits." << endl; }
+	
+	PathWalker paths(chromosome_identity, &Blast_identity, Blast_verbose);
+	for(unsigned int i = 0; i < size(); i++)
+	{
+		for(unsigned int j = 0; j < hit_target_size(i); j++)
+		{
+			paths.add(i, hit_query(i), hit_target(i,j));
+		}
+	}
+	paths.compute_pvalue(thread_number);
 }
 
 void BlastControler::neighbor()

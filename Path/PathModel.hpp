@@ -29,9 +29,11 @@ using namespace std;
 class PathModel
 {
 	public:
-	PathModel(Fasta* fasta_a, Fasta* fasta_b, string muscle_path, bool verbose);
+	PathModel(double chromosome_identity, vector<double>* identity, double* pvalue, bool verbose);
 	~PathModel();
+	PathModel& operator=(PathModel const& pathModelbis);
 	
+	bool test(Hit* hit_query, Hit* hit_target);
 	void add(Hit* hit_query, Hit* hit_target);
 	pair<Hit*, Hit*> operator[](int i);
 	
@@ -43,9 +45,6 @@ class PathModel
 	
 	protected:
 	
-	Fasta* Path_fasta_a;
-	Fasta* Path_fasta_b;
-	string Path_muscle_path;
 	bool Path_verbose;
 	
 	vector<Hit*> Path_query;
@@ -53,9 +52,12 @@ class PathModel
 	
 	unsigned int Path_size;
 	double Path_identity;
-	double Path_pvalue;
+	double* Path_pvalue;
 	
-	friend class Alignement;
+	double Path_chromosome_identity;
+	vector<double>* Path_hits_identity;
+	
+	friend class pTest;
 };
 
 #endif

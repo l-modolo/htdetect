@@ -82,6 +82,7 @@ class BlastModel
 	
 	friend class Alignement;
 	friend class pTest;
+	friend class Path;
 	friend class PathWalker;
 };
 

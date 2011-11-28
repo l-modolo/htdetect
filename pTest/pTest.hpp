@@ -36,7 +36,7 @@ using namespace std;
 
 class pTest {
 	public:
-	pTest(double chromosome_identity, double identity, unsigned int target_size, unsigned int id, vector<double>* pvalue);
+	pTest(double chromosome_identity, double identity, unsigned int target_size, double* pvalue);
 	pTest& operator=(pTest const& ptestbis);
 	
 	void run();
@@ -47,7 +47,7 @@ class pTest {
 	double pTest_identity;
 	unsigned int pTest_target_size;
 	unsigned int pTest_hit_target_id;
-	vector<double>* pTest_pvalue;
+	double* pTest_pvalue;
 };
 
 

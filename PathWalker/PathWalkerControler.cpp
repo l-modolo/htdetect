@@ -18,6 +18,30 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "PathWalkerControler.hpp"
 
-PathWalkerControler::PathWalkerControler(bool verbose) : PathWalkerModel::PathWalkerModel(verbose) {}
 
+PathWalkerControler::PathWalkerControler(double chromosome_identity, vector<double>* hit_identity, bool verbose) : PathWalkerModel::PathWalkerModel(chromosome_identity, hit_identity, verbose) {}
+
+void PathWalkerControler::compute_pvalue(int thread_number)
+{
+	mThread<Path> alignements_run(thread_number);
+	ProgressBar progress(1, 3, 0,PathWalker_PathList.size(), PathWalker_verbose);
+	
+	for(int i = 0; i< PathWalker_PathList.size(); i++)
+	{
+		alignements_run.add(PathWalker_PathList.at(i));
+		progress.inc();
+	}
+	alignements_run.stop();
+}
+
+void PathWalkerControler::rm_overlapping_Path(int thread_number)
+{
+	ProgressBar progress(2, 3, 0,PathWalker_PathList.size(), PathWalker_verbose);
+	
+	for(int i = 0; i < query_number_size(); i++)
+	{
+		
+		progress.inc();
+	}
+}
 

@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define DEF_PathWalkerModel
 
 #include "../Path/Path.hpp"
-#include "../Fasta/Fasta.hpp"
+#include "../mThread/mThread.hpp"
 #include "../ProgressBar/ProgressBar.hpp"
 
 using namespace std;
@@ -28,23 +28,26 @@ using namespace std;
 class PathWalkerModel
 {
 	public:
-	PathWalkerModel(bool verbose);
+	PathWalkerModel(double chromosome_identity, vector<double>* hit_identity, bool verbose);
 	~PathWalkerModel();
 	
-	protected:
+	void add(unsigned int query_number, Hit* hit_query, Hit* hit_target);
 	
-	Fasta* PathWalker_fasta_a;
-	Fasta* PathWalker_fasta_b;
-	string PathWalker_muscle_path;
-	string PathWalker_file;
-	string PathWalker_name;
+	protected:
+	int test_to_path(int query, Hit* hit_query, Hit* hit_target);
+	void add_to_path(int id, int query, Hit* hit_query, Hit* hit_target);
+	int query_number_size();
+	int query_number_size(int i);
+	vector<unsigned int> & query_number(int i);
+	
 	bool PathWalker_verbose;
 	
-	vector<Hit*> PathWalker_query;
+	double PathWalker_chromosome_identity;
+	vector<double>* PathWalker_Hit_identity;
 	
-	vector<int> PathWalker_size;
-	vector<double> PathWalker_identity;
+	vector<Path> PathWalker_PathList;
 	vector<double> PathWalker_pvalue;
+	vector<vector<unsigned int>> PathWalker_QueryToPath;
 	
 };
 

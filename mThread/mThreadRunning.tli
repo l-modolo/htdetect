@@ -51,7 +51,6 @@ void mThreadRunning<T>::run()
 {
 	try
 	{
-		cout << "new thread" << endl;
 		mThread_thread = thread( &mThreadRunning<T>::thread_run, this );
 	}
 	catch(exception const& e)

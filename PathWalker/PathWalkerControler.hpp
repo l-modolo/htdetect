@@ -26,8 +26,12 @@ using namespace std;
 class PathWalkerControler : public PathWalkerModel
 {
 	public:
-	PathWalkerControler(bool verbose);
+	PathWalkerControler(double chromosome_identity, vector<double>* hit_identity, bool verbose);
 	
+	void compute_pvalue(int thread_number);
+	
+	void rm_overlapping_Path(int thread_number);
+
 };
 #endif
 

@@ -25,7 +25,7 @@ int Path::number()
 	return Path_number;
 }
 
-Path::Path(Fasta* fasta_a, Fasta* fasta_b, string muscle_path, bool verbose) : PathControler::PathControler(fasta_a, fasta_b, muscle_path, verbose)
+Path::Path(double chromosome_identity, vector<double>* identity, double* pvalue, bool verbose) : PathControler::PathControler(chromosome_identity, identity, pvalue, verbose)
 {
 	Path_number++;
 }

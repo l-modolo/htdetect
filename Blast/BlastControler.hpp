@@ -33,6 +33,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "../Alignement/Alignement.hpp"
 #include "../pTest/pTest.hpp"
 #include "../mThread/mThread.hpp"
+#include "../PathWalker/PathWalker.hpp"
 
 using namespace std;
 
@@ -44,6 +45,7 @@ class BlastControler : public BlastModel
 	void sort();
 	void neighbor();
 	void remove_overlapping();
+	void remove_overlapping_2(double chromosome_identity, int thread_number);
 	void compute_identity(int thread_number, string tmp_rep);
 	void compute_test(double chromosome_identity, int thread_number);
 	

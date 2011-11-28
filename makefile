@@ -4,17 +4,17 @@ CFLAGS = -std=c++0x -pthread -I/usr/local/include -L/usr/local/lib -g -DNDEBUG
 
 all: htdetect
 
-htdetect: htdetect.o Hit.o HitControler.o HitModel.o HitList.o HitListControler.o HitListModel.o Blast.o BlastControler.o BlastModel.o Fasta.o FastaThread.o FastaControler.o FastaModel.o Sequence.o Alignement.o ProgressBar.o ProgressBarThread.o pTest.o
-	$(CC) htdetect.o Hit.o  HitControler.o HitModel.o HitList.o HitListControler.o HitListModel.o Blast.o BlastControler.o BlastModel.o Fasta.o FastaThread.o FastaControler.o FastaModel.o Sequence.o Alignement.o ProgressBar.o ProgressBarThread.o pTest.o -o htdetect $(CFLAGS)
+htdetect: htdetect.o Hit.o HitControler.o HitModel.o HitList.o HitListControler.o HitListModel.o Blast.o BlastControler.o BlastModel.o Fasta.o FastaThread.o FastaControler.o FastaModel.o Sequence.o Alignement.o ProgressBar.o ProgressBarThread.o pTest.o Path.o PathControler.o PathModel.o PathWalker.o PathWalkerControler.o PathWalkerModel.o 
+	$(CC) htdetect.o Hit.o  HitControler.o HitModel.o HitList.o HitListControler.o HitListModel.o Blast.o BlastControler.o BlastModel.o Fasta.o FastaThread.o FastaControler.o FastaModel.o Sequence.o Alignement.o ProgressBar.o ProgressBarThread.o pTest.o Path.o PathControler.o PathModel.o PathWalker.o PathWalkerControler.o PathWalkerModel.o -o htdetect $(CFLAGS)
  	
-htdetect.o: htdetect.cpp Hit.o HitControler.o HitModel.o HitList.o HitListControler.o HitListModel.o Blast.o BlastControler.o BlastModel.o Fasta.o FastaThread.o FastaControler.o FastaModel.o Sequence.o Alignement.o ProgressBar.o ProgressBarThread.o pTest.o
+htdetect.o: htdetect.cpp Hit.o HitControler.o HitModel.o HitList.o HitListControler.o HitListModel.o Blast.o BlastControler.o BlastModel.o Fasta.o FastaThread.o FastaControler.o FastaModel.o Sequence.o Alignement.o ProgressBar.o ProgressBarThread.o pTest.o Path.o PathControler.o PathModel.o PathWalker.o PathWalkerControler.o PathWalkerModel.o 
 	$(CC) -c htdetect.cpp $(CFLAGS)
 
 # Blast
 Blast.o: Blast/Blast.cpp BlastControler.o
 	$(CC) -c Blast/Blast.cpp $(CFLAGS)
 
-BlastControler.o: Blast/BlastControler.cpp BlastModel.o pTest.o Alignement.o
+BlastControler.o: Blast/BlastControler.cpp BlastModel.o pTest.o Alignement.o PathWalker.o
 	$(CC) -c Blast/BlastControler.cpp $(CFLAGS)
 
 BlastModel.o: Blast/BlastModel.cpp HitList.o
@@ -23,7 +23,7 @@ BlastModel.o: Blast/BlastModel.cpp HitList.o
 pTest.o: pTest/pTest.cpp Hit.o
 	$(CC) -c pTest/pTest.cpp $(CFLAGS)
 
-Alignement.o: Alignement/Alignement.cpp HitList.o Fasta.o ProgressBar.o PathWalker.o
+Alignement.o: Alignement/Alignement.cpp HitList.o Fasta.o ProgressBar.o
 	$(CC) -c Alignement/Alignement.cpp $(CFLAGS)
 
 # PathWalker

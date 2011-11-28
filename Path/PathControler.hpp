@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef DEF_PathControler
 #define DEF_PathControler
 
+#include "../pTest/pTest.hpp"
 #include "PathModel.hpp"
 
 using namespace std;
@@ -26,8 +27,17 @@ using namespace std;
 class PathControler : public PathModel
 {
 	public:
-	PathControler(Fasta* fasta_a, Fasta* fasta_b, string muscle_path, bool verbose);
+	PathControler(double chromosome_identity, vector<double>* identity, double* pvalue, bool verbose);
 	
+	void operator()();
+	void compute_pvalue();
+	
+	bool overlapping(PathControler const& pathControlerbis) const;
+	bool operator<(PathControler const& pathControlerbis) const;
+	bool operator>(PathControler const& pathControlerbis) const;
+	bool operator<=(PathControler const& pathControlerbis) const;
+	bool operator>=(PathControler const& pathControlerbis) const;
+	bool operator==(PathControler const& pathControlerbis) const;
 };
 #endif
 
