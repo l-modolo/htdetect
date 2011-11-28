@@ -45,11 +45,6 @@ int Alignement::number()
 	return Alignement_id;
 }
 
-Alignement::Alignement()
-{
-	
-}
-
 Alignement::Alignement(Fasta* fasta_a, Hit* hit_a, Fasta* fasta_b, Hit* hit_b, vector<double>* identity, string* muscle_path, int thread_id, string* tmp_rep)
 {
 	Alignement_fasta_a = fasta_a;
@@ -66,18 +61,49 @@ Alignement::Alignement(Fasta* fasta_a, Hit* hit_a, Fasta* fasta_b, Hit* hit_b, v
 
 Alignement& Alignement::operator=(Alignement const& alignementbis)
 {
-	if(this != &alignementbis)
+	try
 	{
-		Alignement_fasta_a = alignementbis.Alignement_fasta_a;
-		Alignement_fasta_b = alignementbis.Alignement_fasta_b;
-		Alignement_hit_a = alignementbis.Alignement_hit_a;
-		Alignement_hit_b = alignementbis.Alignement_hit_b;
-
-		Alignement_path = alignementbis.Alignement_path;
-		Alignement_tmp_rep = alignementbis.Alignement_tmp_rep;
-
-		Alignement_id = alignementbis.Alignement_id;
-		Alignement_identity = alignementbis.Alignement_identity;
+		if(this != &alignementbis)
+		{
+			if(alignementbis.Alignement_fasta_a == nullptr)
+				throw logic_error("copy of a nullptr pointer");
+			Alignement_fasta_a = alignementbis.Alignement_fasta_a;
+			
+			if(alignementbis.Alignement_fasta_b == nullptr)
+				throw logic_error("copy of a nullptr pointer");
+			Alignement_fasta_b = alignementbis.Alignement_fasta_b;
+			
+			if(alignementbis.Alignement_hit_a == nullptr)
+				throw logic_error("copy of a nullptr pointer");
+			Alignement_hit_a = alignementbis.Alignement_hit_a;
+			
+			if(alignementbis.Alignement_hit_b == nullptr)
+				throw logic_error("copy of a nullptr pointer");
+			Alignement_hit_b = alignementbis.Alignement_hit_b;
+			
+			
+			if(alignementbis.Alignement_path == nullptr)
+				throw logic_error("copy of a nullptr pointer");
+			Alignement_path = alignementbis.Alignement_path;
+			
+			if(alignementbis.Alignement_tmp_rep == nullptr)
+				throw logic_error("copy of a nullptr pointer");
+			Alignement_tmp_rep = alignementbis.Alignement_tmp_rep;
+			
+			
+			Alignement_id = alignementbis.Alignement_id;
+			if(alignementbis.Alignement_identity == nullptr)
+				throw logic_error("copy of a nullptr pointer");
+			Alignement_identity = alignementbis.Alignement_identity;
+		}
+		else
+		{
+			throw logic_error("copy of this");
+		}
+	}
+	catch(exception const& e)
+	{
+		cerr << "ERROR : " << e.what() << " in : Alignement& Alignement::operator=(Alignement const& alignementbis)" << endl;
 	}
 	return *this;
 }
@@ -86,18 +112,21 @@ void Alignement::run()
 {
 	try
 	{
-		FastaThread seqa(Alignement_fasta_a, Alignement_hit_a);
-		FastaThread seqb(Alignement_fasta_b, Alignement_hit_b);
-//		future<string*> first_seq = async(launch::async, seqa);
-//		future<string*> second_seq = async(launch::async, seqb);
-//		
-//		Alignement_first_seq = first_seq.get();
-//		Alignement_second_seq = second_seq.get();
+		if(Alignement_identity->at(Alignement_hit_b->id()) == -1)
+		{
+			FastaThread seqa(*Alignement_fasta_a, *Alignement_hit_a);
+			FastaThread seqb(*Alignement_fasta_b, *Alignement_hit_b);
+	//		future<string*> first_seq = async(launch::async, seqa);
+	//		future<string*> second_seq = async(launch::async, seqb);
+	//		
+	//		Alignement_first_seq = first_seq.get();
+	//		Alignement_second_seq = second_seq.get();
 		
-		Alignement_first_seq = seqa.find();
-		Alignement_second_seq = seqb.find();
+			Alignement_first_seq = seqa.find();
+			Alignement_second_seq = seqb.find();
 		
-		Alignement_identity->at(Alignement_hit_b->id()) = compute_identity();
+			Alignement_identity->at(Alignement_hit_b->id()) = compute_identity();
+		}
 	}
 	catch(exception const& e)
 	{

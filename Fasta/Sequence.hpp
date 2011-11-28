@@ -30,6 +30,7 @@ using namespace std;
 class Sequence {
 	public:
 	Sequence(string const & name, long long int start, long long int stop, int line);
+	Sequence& operator=(Sequence const& Sequencebis);
 	
 	bool operator==(Sequence const& Sequencebis) const;
 	

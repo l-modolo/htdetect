@@ -36,13 +36,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <sys/wait.h>
 #include <sys/types.h>
 #include "../Fasta/FastaThread.hpp"
-#include "../ThreadNumber/ThreadNumber.hpp"
 
 using namespace std;
 
 class Alignement {
 	public:
-	Alignement();
 	Alignement(Fasta* fasta_a, Hit* hit_a, Fasta* fasta_b, Hit* hit_b, vector<double>* identity, string* muscle_path, int thread_id , string* tmp_rep);
 	Alignement& operator=(Alignement const& alignementbis);
 	

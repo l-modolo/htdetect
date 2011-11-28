@@ -26,7 +26,14 @@ template <typename T>
 mutex mThreadRunning<T>::mThread_onebyone;
 
 template <typename T>
-void mThreadRunning<T>::set_stop()
+bool mThreadRunning<T>::get_run()
+{
+	unique_lock<mutex> lk(mThread_controler);
+	return mThread_run;
+}
+
+template <typename T>
+void mThreadRunning<T>::set_run()
 {
 	unique_lock<mutex> lk(mThread_controler);
 	mThread_run = false;
@@ -58,30 +65,17 @@ void mThreadRunning<T>::thread_run()
 {
 	try
 	{
-		while(!stop())
+		T x = mThread_todo->get();
+		while(mThreadWaiting<T>::run())
 		{
-			T x = thread_run_get_T(); // mThread_todo->get() is supposed to block until todo is not empty
-			x.run();
+			x();
+			x = mThread_todo->get(); // mThread_todo->get() is supposed to block until todo is not empty
 		}
 	}
 	catch(exception const& e)
 	{
 		cerr << "ERROR : " << e.what() << " in : void mThreadRunning<T>::thread_run()" << endl;
 	}
-}
-
-template <typename T>
-T mThreadRunning<T>::thread_run_get_T()
-{
-	unique_lock<mutex> lk(mThread_onebyone);
-	return mThread_todo->get();
-}
-
-template <typename T>
-bool mThreadRunning<T>::stop()
-{
-	unique_lock<mutex> lk(mThread_controler);
-	return !mThread_run;
 }
 
 template <typename T>

@@ -30,6 +30,8 @@ class Fasta : public FastaControler
 	public:
 	Fasta(string const & file);
 	
+	bool set();
+	
 	private:
 	void display(ostream &stream) const;
 	

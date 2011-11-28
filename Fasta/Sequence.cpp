@@ -47,6 +47,18 @@ Sequence::Sequence(string const & name, long long int start, long long int stop,
 	}
 }
 
+Sequence& Sequence::operator=(Sequence const& Sequencebis)
+{
+	if(this != &Sequencebis)
+	{
+		Sequence_name = Sequencebis.Sequence_name;
+		Sequence_start = Sequencebis.Sequence_start;
+		Sequence_stop = Sequencebis.Sequence_stop;
+		Sequence_line_size = Sequencebis.Sequence_line_size;
+	}
+	return *this;
+}
+
 bool Sequence::operator==(Sequence const& Sequencebis) const
 {
 	if(Sequence_name.compare(Sequencebis.Sequence_name) == 0)

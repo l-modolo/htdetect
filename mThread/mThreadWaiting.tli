@@ -18,6 +18,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "mThreadWaiting.hpp"
 
+template <typename T>
+bool mThreadWaiting<T>::mThread_init = false;
+
+template<typename T>
+mutex mThreadWaiting<T>::mThread_onebyone;
 template<typename T>
 mutex mThreadWaiting<T>::mThread_empty;
 template<typename T>
@@ -28,44 +33,168 @@ template<typename T>
 condition_variable mThreadWaiting<T>::mThread_full_cond;
 
 template<typename T>
-mThreadWaiting<T>::mThreadWaiting(int size)
+int mThreadWaiting<T>::mThread_size;
+template<typename T>
+int mThreadWaiting<T>::mThread_pos_front;
+template<typename T>
+int mThreadWaiting<T>::mThread_pos_back;
+template<typename T>
+vector<T> mThreadWaiting<T>::mThread_waiting;
+
+template<typename T>
+bool mThreadWaiting<T>::mThread_run = true;
+template<typename T>
+mutex mThreadWaiting<T>::mThread_run_controler;
+template<typename T>
+bool mThreadWaiting<T>::mThread_stop_signal = false;
+template<typename T>
+mutex mThreadWaiting<T>::mThread_stop_controler;
+
+template <typename T>
+bool mThreadWaiting<T>::run()
 {
-	mThread_size = size;
+	unique_lock<mutex> lk(mThread_run_controler);
+	return mThread_run;
+}
+
+template <typename T>
+void mThreadWaiting<T>::set_run(bool run)
+{
+	unique_lock<mutex> lk(mThread_run_controler);
+	mThread_run = run;
+	mThread_empty_cond.notify_all();
+}
+
+template <typename T>
+bool mThreadWaiting<T>::stop()
+{
+	unique_lock<mutex> lk(mThread_stop_controler);
+	return mThread_stop_signal;
+}
+
+template <typename T>
+void mThreadWaiting<T>::set_stop(bool run)
+{
+	unique_lock<mutex> lk(mThread_stop_controler);
+	mThread_stop_signal = run;
+	mThread_empty_cond.notify_one();
 }
 
 template<typename T>
-void mThreadWaiting<T>::add(T x)
+mThreadWaiting<T>::mThreadWaiting(int size)
 {
-	cout << "add" << mThread_waiting.size() << endl;
-	unique_lock<mutex> lk(mThread_full);
-		while(mThread_waiting.size() >= mThread_size)
-			mThread_full_cond.wait(lk);
+	try
+	{
+		if(!mThread_init)
+		{
+			mThreadWaiting<T>::mThread_init = true;
+			mThreadWaiting<T>::mThread_run = true;
+			mThreadWaiting<T>::mThread_stop_signal = false;
+			mThread_size = size;
+			mThread_pos_front = -1;
+			mThread_pos_back = -1;
+		}
+		else
+		{
+			throw logic_error("mThread is a static object");
+		}
+	}
+	catch(exception const& e)
+	{
+		cerr << "ERROR : " << e.what() << " in : mThreadWaiting<T>::mThreadWaiting(int size)" << endl;
+	}
+}
+
+template<typename T>
+mThreadWaiting<T>::~mThreadWaiting()
+{
+	mThread_init = false;
+}
+
+template<typename T>
+void mThreadWaiting<T>::add(T const & x)
+{
+	unique_lock<mutex> full(mThread_full);
 	
-	mThread_waiting.push(x);
+	while(mThreadWaiting<T>::size() >= mThread_size - 1)
+	{
+		mThread_full_cond.wait(full);
+	}
 	
-	mThread_empty_cond.notify_one(); // we notify that mThread is not empty anymore
+	mThreadWaiting<T>::push_back(x);
 }
 
 template<typename T>
 T mThreadWaiting<T>::get()
 {
-	try
+	unique_lock<mutex> empty(mThread_empty);
+	
+	while(mThreadWaiting<T>::size() <= 0 && mThreadWaiting<T>::run())
 	{
-		// we wait until mThread_waiting is not empty
-		unique_lock<mutex> lk(mThread_empty);
-		while(mThread_waiting.size() <= 0)
-			mThread_empty_cond.wait(lk);
-		
-		T value = mThread_waiting.front();
-		mThread_waiting.pop();
-		
-		mThread_full_cond.notify_one();
-		
-		return value;
+		mThread_empty_cond.wait(empty);
 	}
-	catch(exception const& e)
+	
+	T value = mThreadWaiting<T>::pop_front();
+	
+	if(mThreadWaiting<T>::stop() && mThreadWaiting<T>::size() <= 0)
 	{
-		cerr << "ERROR : " << e.what() << " in : T mThreadWaiting<T>::get()" << endl;
-		return T();
+		mThreadWaiting<T>::set_run(false);
+	}
+	
+	return value;
+}
+
+template<typename T>
+void mThreadWaiting<T>::push_back(T const & x)
+{
+	unique_lock<mutex> lk(mThread_onebyone);
+	if(mThread_waiting.size() <= mThread_size)
+	{
+		mThread_pos_back = mThread_waiting.size();
+		mThread_waiting.push_back(x);
+	}
+	else
+	{
+		if(mThread_pos_back + 1 < mThread_size)
+		{
+			mThread_pos_back++;
+		}
+		else
+		{
+			mThread_pos_back = 0;
+		}
+		mThread_waiting[mThread_pos_back] = x;
+	}
+	mThread_empty_cond.notify_one();
+}
+
+template<typename T>
+T mThreadWaiting<T>::pop_front()
+{
+	unique_lock<mutex> lk(mThread_onebyone);
+	if(mThread_pos_front + 1 < mThread_size)
+	{
+		mThread_pos_front++;
+	}
+	else
+	{
+		mThread_pos_front = 0;
+	}
+	mThread_full_cond.notify_one();
+	return mThread_waiting.at(mThread_pos_front);
+}
+
+template<typename T>
+int mThreadWaiting<T>::size()
+{
+	unique_lock<mutex> lk(mThread_onebyone);
+	if(mThread_pos_front <= mThread_pos_back)
+	{
+		return mThread_pos_back - mThread_pos_front;
+	}
+	else
+	{
+		return mThread_size - mThread_pos_front + mThread_pos_back;
 	}
 }
+

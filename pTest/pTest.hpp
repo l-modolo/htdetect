@@ -16,39 +16,39 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DEF_ThreadNumber
-#define DEF_ThreadNumber
+#ifndef DEF_pTest
+#define DEF_pTest
 
-#include <list>
-#include <thread>
-#include <mutex>
-#include <condition_variable>
+#include <string>
+#include <exception>
+#include <stdexcept>
+#include <iostream>
+#include <sstream>
+#include <fstream>
+#include <stdio.h>
+#include <cstdlib>
+#include <vector>
+#include <boost/math/distributions/poisson.hpp>
+#include <boost/math/special_functions/round.hpp>
+#include "../Hit/Hit.hpp"
 
 using namespace std;
 
-class ThreadNumber
-{
+class pTest {
 	public:
-	ThreadNumber();
-	~ThreadNumber();
+	pTest(double chromosome_identity, double identity, unsigned int target_size, Hit* hit_target, vector<double>* pvalue);
+	pTest& operator=(pTest const& ptestbis);
 	
-	static void set_max_number(int number);
-	static int number();
-	static int max_number();
-	static void add_thread();
-	static void pop_thread();
+	void run();
+	void operator()();
 	
 	protected:
-	static void number_inc();
-	static void number_dec();
-	
-	static int ThreadNumber_number;
-	static mutex ThreadNumber_number_lock;
-	static int ThreadNumber_max_number;
-	static mutex ThreadNumber_limit;
-	static condition_variable ThreadNumber_limit_cond;
-	
-	static list<thread> test;
+	double pTest_chromosome_identity;
+	double pTest_identity;
+	unsigned int pTest_target_size;
+	Hit* pTest_hit_target;
+	vector<double>* pTest_pvalue;
 };
-#endif
 
+
+#endif

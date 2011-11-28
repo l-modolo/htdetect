@@ -27,15 +27,18 @@ using namespace std;
 class FastaThread
 {
 	public:
-	FastaThread(Fasta * fasta, Hit * hit);
+//	FastaThread(Fasta * fasta, Hit * hit);
+	FastaThread(Fasta fasta, Hit hit);
+//	~FastaThread();
+	
 	string* find();
 	string* operator()();
 	
 	private:
 	Sequence findSeq();
 	
-	Fasta * FastaThread_fasta;
-	Hit * FastaThread_hit;
+	Fasta FastaThread_fasta;
+	Hit FastaThread_hit;
 	
 	static mutex FastaThread_onebyone;
 };

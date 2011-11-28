@@ -20,6 +20,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 Fasta::Fasta(string const & file) : FastaControler::FastaControler(file) {}
 
+bool Fasta::set()
+{
+	return !Fasta_file.empty() && (Fasta_sequences.size() > 0);
+}
+
 void Fasta::display(ostream &stream) const
 {
 	stream << Fasta_file << endl;

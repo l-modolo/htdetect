@@ -36,25 +36,23 @@ class mThreadRunning
 {
 	public:
 	mThreadRunning(mThreadWaiting<T>* todo);
-	
-	bool stop();
-	static void set_stop();
+
+	static bool get_run();
+	static void set_run();
 	void join();
-	
+
 	protected:
 	void run();
 	void thread_run();
-	T thread_run_get_T();
-	
+
 	static mutex mThread_onebyone;
-	
+
 	mThreadWaiting<T>* mThread_todo;
 	thread mThread_thread;
-	
+
 	static bool mThread_run;
 	static mutex mThread_controler;
 };
 
 #include "mThreadRunning.tli"
 #endif
-

@@ -25,7 +25,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <iostream>
 #include <map>
 #include <mutex>
-#include <thread>
 
 using namespace std;
 
@@ -36,34 +35,32 @@ class HitModel {
 	HitModel(int id, string const & name, int start, int stop);
 	HitModel(HitModel const& Hitbis);
 	HitModel& operator=(HitModel const& Hitbis);
-	
+
 	int id() const;
 	bool sens() const;
 	int start() const;
 	int stop() const;
 	string name() const;
 	bool set() const;
-	
+
 	protected:
 	// attributes
 	int Hit_id;
 	bool Hit_sens;
-//	int Hit_name;
+	int Hit_name;
 	int Hit_start;
 	int Hit_stop;
-	string Hit_name;
-	
-	
+
 	static mutex Hit_names_lock;
 	static map<unsigned int, string> Hit_id_names;
 	static map<string, unsigned int> Hit_names_id;
-	
+
 	private:
 	void init(int id, string const & name, int start, int stop);
-	
-	static unsigned int add_name(string name);
-	static string get_name(unsigned int id);
+
+	unsigned int add_name(string name);
 };
 
 
 #endif
+

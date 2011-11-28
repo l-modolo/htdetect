@@ -108,7 +108,6 @@ void BlastControler::compute_identity(int thread_number, string tmp_rep)
 	if(Blast_fasta_a != nullptr && Blast_fasta_b != nullptr)
 	{
 		mThread<Alignement> alignements_run(thread_number);
-//		list< thread > alignements_run;
 		
 		ProgressBar progress(1, 2, 0, Blast_identity.size(), Blast_verbose);
 		
@@ -117,52 +116,29 @@ void BlastControler::compute_identity(int thread_number, string tmp_rep)
 			for(unsigned int j = 0; j < hit_target_size(i); j++)
 			{
 				alignements_run.add(Alignement(Blast_fasta_a, hit_query(i), Blast_fasta_b, hit_target(i, j), &Blast_identity, &Blast_muscle_path, hit_target(i, j)->id(), &tmp_rep));
-//				BlastControler::parallel_compute_identity(i, j, &tmp_rep, &alignements_run, thread_number);
+				
 				progress.inc();
 			}
 		}
-		
-//		auto t1 = alignements_run.begin();
-//		while(t1 != alignements_run.end())
-//		{
-//				(*t1).join();
-//				t1 = alignements_run.erase(t1);
-//		}
 		alignements_run.stop();
 	}
 }
 
-void BlastControler::parallel_compute_identity(unsigned int i, unsigned int j, string* tmp_rep, list< thread >* alignements_run, int thread_number)
+void BlastControler::compute_test(double chromosome_identity, int thread_number)
 {
-	if(identity(i, j) == -1.0)
+	if(Blast_verbose){ cout << "Computing p-value for " << Blast_pvalue.size() << " hits." << endl; }
+	
+	mThread<pTest> alignements_run(thread_number);
+	ProgressBar progress(1, 2, 0, Blast_pvalue.size(), Blast_verbose);
+	
+	for(unsigned int i = 0; i < size(); i++)
 	{
-		bool launched = false;
-		list< thread >::iterator t1;
-		
-		while(!launched)
+		for(unsigned int j = 0; j < hit_target_size(i); j++)
 		{
-			if(alignements_run->size() < thread_number)
-			{
-			
-				alignements_run->push_back( thread{Alignement(Blast_fasta_a, hit_query(i), Blast_fasta_b, hit_target(i, j), &Blast_identity, &Blast_muscle_path, hit_target(i, j)->id(), tmp_rep)} );
-				launched = true;
-			}
-			else
-			{
-				t1 = alignements_run->begin();
-				while(t1 != alignements_run->end())
-				{
-					if((*t1).joinable())
-					{
-						(*t1).join();
-						t1 = alignements_run->erase(t1);
-					}
-					else
-						t1++;
-				}
-			}
+			alignements_run.add(pTest(chromosome_identity, identity(i,j), hit_target(i,j)->size(), hit_target(i,j), &Blast_pvalue));
 		}
 	}
+	alignements_run.stop();
 }
 
 void BlastControler::neighbor()
@@ -185,87 +161,6 @@ void BlastControler::neighbor()
 			}
 			progress.inc();
 		}
-	}
-}
-
-void BlastControler::compute_test(double chromosome_identity, int thread_number)
-{
-	try
-	{
-		list< thread > alignements_run;
-		
-		ProgressBar progress(1, 2, 0, Blast_pvalue.size(), Blast_verbose);
-		
-		for(unsigned int i = 0; i < size(); i++)
-		{
-			for(unsigned int j = 0; j < hit_target_size(i); j++)
-			{
-				BlastControler::parallel_compute_test(chromosome_identity, i, j, &alignements_run, thread_number);
-				progress.inc();
-			}
-		}
-		
-		auto t1 = alignements_run.begin();
-		while(t1 != alignements_run.end())
-		{
-				(*t1).join();
-				t1 = alignements_run.erase(t1);
-		}
-		
-	}
-	catch(exception const& e)
-	{
-		cerr << "ERROR : " << e.what() << " in : void BlastControler::compute_test(double chromosome_identity)" << endl;
-	}
-}
-
-void BlastControler::parallel_compute_test(double chromosome_identity, unsigned int i, unsigned int j, list< thread >* alignements_run, int thread_number)
-{
-	bool launched = false;
-	list< thread >::iterator t1;
-	
-	while(!launched)
-	{
-		if(alignements_run->size() < thread_number)
-		{
-		
-			alignements_run->push_back( thread{&BlastControler::hitTest, this, chromosome_identity, i, j} );
-			launched = true;
-		}
-		else
-		{
-			t1 = alignements_run->begin();
-			while(t1 != alignements_run->end())
-			{
-				if((*t1).joinable())
-				{
-					(*t1).join();
-					t1 = alignements_run->erase(t1);
-				}
-				else
-					t1++;
-			}
-		}
-	}
-}
-
-void BlastControler::hitTest(double chromosome_identity,  unsigned int i, unsigned int j)
-{
-	double x;
-	double T;
-	double r = 1.0-(chromosome_identity/100.0);;
-	
-	if(identity(i,j) > chromosome_identity)
-	{
-		x = round((1.0-(identity(i,j)/100.0))*hit_target(i,j)->size());
-		T = hit_target(i, j)->size();
-	
-		boost::math::poisson_distribution<> poisson(r*T);
-		set_pvalue(i, j ,boost::math::cdf(poisson, x));
-	}
-	else
-	{
-		set_pvalue(i, j ,1);
 	}
 }
 

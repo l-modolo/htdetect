@@ -36,8 +36,7 @@ class FastaModel
 {
 	public:
 	FastaModel(string const & file);
-	
-	string test();
+	FastaModel& operator=(FastaModel const& Fastabis);
 	
 	protected:
 	// attributes

@@ -38,10 +38,10 @@ class mThread
 	public:
 	mThread(int number);
 	~mThread();
-	
+
 	void stop();
 	void add(T);
-	
+
 	protected:
 	mThreadWaiting<T> mThread_waiting;
 	vector< mThreadRunning<T> > mThread_running;

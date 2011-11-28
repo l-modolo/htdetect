@@ -45,5 +45,6 @@ void mThread<T>::add(T x)
 template <typename T>
 void mThread<T>::stop()
 {
-	mThreadRunning<T>::set_stop();
+	mThreadWaiting<T>::set_stop(true);
 }
+

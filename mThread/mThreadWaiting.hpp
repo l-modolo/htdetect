@@ -23,7 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <thread>
 #include <mutex>
 #include <condition_variable>
-#include <queue>
+#include <vector>
 #include <exception>
 #include <stdexcept>
 #include <iostream>
@@ -35,18 +35,39 @@ class mThreadWaiting
 {
 	public:
 	mThreadWaiting(int size);
+	~mThreadWaiting();
 	
-	void add(T);
+	void add(T const & x);
 	T get();
 	
+	static bool stop();
+	static void set_stop(bool run);
+	static bool run();
+	
 	protected:
+	void push_back(T const & x);
+	T pop_front();
+	static int size();
+	
+	static void set_run(bool run);
+	
+	static mutex mThread_onebyone;
 	static mutex mThread_empty;
 	static mutex mThread_full;
 	static condition_variable mThread_empty_cond;
 	static condition_variable mThread_full_cond;
 	
-	int mThread_size;
-	queue<T> mThread_waiting;
+	static int mThread_size;
+	static int mThread_pos_front;
+	static int mThread_pos_back;
+	static vector<T> mThread_waiting;
+	
+	static bool mThread_run;
+	static mutex mThread_run_controler;
+	static bool mThread_stop_signal;
+	static mutex mThread_stop_controler;
+	
+	static bool mThread_init;
 };
 #include "mThreadWaiting.tli"
 #endif

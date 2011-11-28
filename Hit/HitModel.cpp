@@ -56,7 +56,7 @@ void HitModel::init(int id, string const & name, int start, int stop)
 				Hit_sens = true;
 			}
 			Hit_id = id;
-			Hit_name = name;
+			Hit_name = HitModel::add_name(name);
 			Hit_start = start;
 			Hit_stop = stop;
 		}
@@ -116,7 +116,8 @@ int HitModel::stop() const
 
 string HitModel::name() const
 {
-	return Hit_name;
+//	lock_guard<mutex> lk(Hit_names_lock);
+	return Hit_id_names[Hit_name];
 }
 
 bool HitModel::set() const
@@ -127,16 +128,16 @@ bool HitModel::set() const
 unsigned int HitModel::add_name(string name)
 {
 	lock_guard<mutex> lk(Hit_names_lock);
-	
+
 	int size = Hit_names_id.size();
 	unsigned int id = Hit_names_id.size();;
-	
+
 	auto it = Hit_names_id.find(name);
-	
+
 	if(it == Hit_names_id.end())
 	{
 		Hit_names_id[name] = id;
-		
+
 		Hit_id_names[id] = name;
 	}
 	else
@@ -145,11 +146,3 @@ unsigned int HitModel::add_name(string name)
 	}
 	return id;
 }
-
-string HitModel::get_name(unsigned int id)
-{
-	lock_guard<mutex> lk(Hit_names_lock);
-	return Hit_id_names[id];
-}
-
-

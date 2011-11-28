@@ -65,7 +65,12 @@ FastaModel::FastaModel(string const & file)
 	}
 }
 
-string FastaModel::test()
+FastaModel& FastaModel::operator=(FastaModel const& Fastabis)
 {
-	return Fasta_file;
+	if(this != &Fastabis)
+	{
+		Fasta_file = Fastabis.Fasta_file;
+		Fasta_sequences = Fastabis.Fasta_sequences;
+	}
+	return *this;
 }
