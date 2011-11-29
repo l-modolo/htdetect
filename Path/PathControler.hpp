@@ -32,7 +32,7 @@ class PathControler : public PathModel
 	void operator()();
 	void compute_pvalue();
 	
-	bool overlapping(PathControler const& pathControlerbis) const;
+	bool overlapping(PathControler & pathControlerbis);
 	bool operator<(PathControler const& pathControlerbis) const;
 	bool operator>(PathControler const& pathControlerbis) const;
 	bool operator<=(PathControler const& pathControlerbis) const;

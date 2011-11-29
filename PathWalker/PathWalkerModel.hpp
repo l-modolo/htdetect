@@ -36,9 +36,13 @@ class PathWalkerModel
 	protected:
 	int test_to_path(int query, Hit* hit_query, Hit* hit_target);
 	void add_to_path(int id, int query, Hit* hit_query, Hit* hit_target);
+	
 	int query_number_size();
+	int query_id_size();
 	int query_number_size(int i);
+	int query_id_size(int i);
 	vector<unsigned int> & query_number(int i);
+	vector<unsigned int> & query_id(int i);
 	
 	bool PathWalker_verbose;
 	
@@ -48,7 +52,7 @@ class PathWalkerModel
 	vector<Path> PathWalker_PathList;
 	vector<double> PathWalker_pvalue;
 	vector<vector<unsigned int>> PathWalker_QueryToPath;
-	
+	vector<vector<unsigned int>> PathWalker_QueryIdToPath;
 };
 
 #endif

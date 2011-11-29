@@ -43,6 +43,7 @@ int PathWalkerModel::test_to_path(int query, Hit* hit_query, Hit* hit_target)
 		if(query_number_size() <= query || query == -1)
 		{
 			PathWalker_QueryToPath.push_back(vector<unsigned int>());
+			PathWalker_QueryIdToPath.push_back(vector<unsigned int>());
 		}
 		else
 		{
@@ -67,11 +68,13 @@ void PathWalkerModel::add_to_path(int id, int query, Hit* hit_query, Hit* hit_ta
 		while(query_number_size() <= query)
 		{
 			PathWalker_QueryToPath.push_back(vector<unsigned int>());
+			PathWalker_QueryIdToPath.push_back(vector<unsigned int>());
 		}
 		if(id < PathWalker_PathList.size() && id != -1)
 		{
 			PathWalker_PathList.at(id).add(hit_query, hit_target);
 			query_number(query).push_back(id);
+			query_id(query).push_back(hit_query->id());
 		}
 		else
 		{
@@ -79,6 +82,7 @@ void PathWalkerModel::add_to_path(int id, int query, Hit* hit_query, Hit* hit_ta
 			PathWalker_PathList.push_back(Path(PathWalker_chromosome_identity, PathWalker_Hit_identity, &PathWalker_pvalue.back(), PathWalker_verbose));
 			PathWalker_PathList.back().add(hit_query, hit_target);
 			PathWalker_QueryToPath.at(query).push_back(PathWalker_PathList.size()-1);
+			PathWalker_QueryIdToPath.at(query).push_back(hit_query->id());
 		}
 	}
 	catch(exception const& e)
@@ -92,11 +96,28 @@ int PathWalkerModel::query_number_size()
 	return PathWalker_QueryToPath.size();
 }
 
+int PathWalkerModel::query_id_size()
+{
+	return PathWalker_QueryIdToPath.size();
+}
+
 int PathWalkerModel::query_number_size(int i)
 {
 	try
 	{
 		return PathWalker_QueryToPath.at(i).size();
+	}
+	catch(exception const& e)
+	{
+		cerr << "ERROR : " << e.what() << " in : int query_number_size(int i)" << endl;
+	}
+}
+
+int PathWalkerModel::query_id_size(int i)
+{
+	try
+	{
+		return PathWalker_QueryIdToPath.at(i).size();
 	}
 	catch(exception const& e)
 	{
@@ -115,4 +136,17 @@ vector<unsigned int> & PathWalkerModel::query_number(int i)
 		cerr << "ERROR : " << e.what() << " in : unsigned int query_number(int i, int j)" << endl;
 	}
 }
+
+vector<unsigned int> & PathWalkerModel::query_id(int i)
+{
+	try
+	{
+		return PathWalker_QueryIdToPath.at(i);
+	}
+	catch(exception const& e)
+	{
+		cerr << "ERROR : " << e.what() << " in : unsigned int query_number(int i, int j)" << endl;
+	}
+}
+
 

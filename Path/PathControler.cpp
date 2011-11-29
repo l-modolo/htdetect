@@ -53,16 +53,31 @@ void  PathControler::operator()()
 	compute_pvalue();
 }
 
-bool PathControler::overlapping(PathControler const& pathControlerbis) const
+bool PathControler::overlapping(PathControler & pathControlerbis)
 {
-	return overlapping(pathControlerbis, 0, Path_query.size()),
-}
-
-bool PathControler::overlapping(PathControler const& pathControlerbis, int start, int stop) const
-{
-	if(Path_query.at(0))
-	{}
-	return true;
+	PathControler* small = nullptr;
+	PathControler* big = nullptr;
+	
+	if(size() < pathControlerbis.size())
+	{
+		small = this;
+		big = &pathControlerbis;
+	}
+	else
+	{
+		small = &pathControlerbis;
+		big = this;
+	}
+	
+	for(int i = 0; i < big->size(); i++)
+	{
+		for(int j = 0; j < small->size(); j++)
+		{
+			if(big->at(i).first == small->at(j).first)
+				return true;
+		}
+	}
+	return false;
 }
 
 bool PathControler::operator<(PathControler const& pathControlerbis) const

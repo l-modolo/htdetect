@@ -142,6 +142,11 @@ void PathModel::add(Hit* hit_query, Hit* hit_target)
 
 pair<Hit*, Hit*> PathModel::operator[](int i)
 {
+	return at(i);
+}
+
+pair<Hit*, Hit*> PathModel::at(int i)
+{
 	try
 	{
 		if(i < Path_query.size() && i < Path_target.size())
@@ -153,6 +158,12 @@ pair<Hit*, Hit*> PathModel::operator[](int i)
 	{
 		cerr << "ERROR : " << e.what() << " in : pair<Hit*, Hit*> PathModel::operator[](int i)" << endl;
 	}
+}
+
+void PathModel::pop_front()
+{
+	Path_query.erase(Path_query.begin());
+	Path_target.erase(Path_target.begin());
 }
 
 unsigned int PathModel::size() const

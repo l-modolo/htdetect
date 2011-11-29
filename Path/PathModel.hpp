@@ -36,6 +36,9 @@ class PathModel
 	bool test(Hit* hit_query, Hit* hit_target);
 	void add(Hit* hit_query, Hit* hit_target);
 	pair<Hit*, Hit*> operator[](int i);
+	pair<Hit*, Hit*> at(int i);
+	
+	void pop_front();
 	
 	unsigned int size() const;
 	double identity() const;
