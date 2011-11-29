@@ -45,7 +45,7 @@ void Blast::display(ostream &stream)
 	{
 		for(int j = 0; j < hit_target_size(i); j++)
 		{
-			if(pvalue(i, j) < 1.0)
+			if(pvalue(i, j) <= 1.0)
 			{
 				stream << i << "\t";
 				stream << *hit_query(i);

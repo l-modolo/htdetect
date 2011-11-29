@@ -99,6 +99,11 @@ int HitModel::id() const
 	return Hit_id;
 }
 
+void HitModel::set_id(int id)
+{
+	Hit_id = id;
+}
+
 bool HitModel::sens() const
 {
 	return Hit_sens;

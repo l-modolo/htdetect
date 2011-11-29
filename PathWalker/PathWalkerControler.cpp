@@ -37,11 +37,106 @@ void PathWalkerControler::compute_pvalue(int thread_number)
 void PathWalkerControler::rm_overlapping_Path(int thread_number)
 {
 	ProgressBar progress(2, 3, 0,PathWalker_PathList.size(), PathWalker_verbose);
+	double max_pvalue = 2.0;
+	int query;
+	int id;
+	vector<unsigned int> query_to_keep;
+	vector<unsigned int> id_to_keep;
+	
+	int overallsize = 0;
+	for(int i = 0; i< PathWalker_PathList.size(); i++)
+	{
+		overallsize += PathWalker_PathList.at(i).size();
+	}
+	cout << "size " << overallsize << "/" << PathWalker_PathList.size() << "/" << query_number_size() << endl;
 	
 	for(int i = 0; i < query_number_size(); i++)
 	{
-		
+		if(query_number_size(i) > 1)
+		{
+			max_pvalue = 2.0;
+			query_to_keep.clear();
+			id_to_keep.clear();
+			
+			for(int j = 0; j < query_number_size(i); j++)
+			{
+				if(max_pvalue > PathWalker_pvalue.at(query_number(i).at(j)))
+				{
+					query = query_number(i).at(j);
+					id = query_id(i).at(j);
+					max_pvalue = PathWalker_pvalue.at(query);
+				}
+			}
+			
+			for(int j = 0; j < query_number_size(i); j++)
+			{
+				if(query != query_number(i).at(j))
+				{
+					if(!PathWalker_PathList.at(query_number(i).at(j)).rm_front(query_id(i).at(j)))
+					{
+						query_to_keep.push_back(query_number(i).at(j));
+						id_to_keep.push_back(query_id(i).at(j));
+					}
+				}
+			}
+			query_to_keep.push_back(query);
+			id_to_keep.push_back(id);
+			query_number(i) = query_to_keep;
+			query_id(i) = id_to_keep;
+		}
 		progress.inc();
 	}
+	
+	overallsize = 0;
+	for(int i = 0; i< PathWalker_PathList.size(); i++)
+	{
+		overallsize += PathWalker_PathList.at(i).size();
+	}
+	cout << "size " << overallsize << "/" << PathWalker_PathList.size() << "/" << query_number_size() << endl;
+	
+	for(int i = query_number_size()-1; 0 <= i; i--)
+	{
+		if(query_number_size(i) > 1)
+		{
+			max_pvalue = 2.0;
+			query_to_keep.clear();
+			id_to_keep.clear();
+			
+			for(int j = 0; j < query_number_size(i); j++)
+			{
+				if(max_pvalue > PathWalker_pvalue.at(query_number(i).at(j)))
+				{
+					query = query_number(i).at(j);
+					id = query_id(i).at(j);
+					max_pvalue = PathWalker_pvalue.at(query);
+				}
+			}
+			
+			for(int j = 0; j < query_number_size(i); j++)
+			{
+				if(query != query_number(i).at(j))
+				{
+					if(!PathWalker_PathList.at(query_number(i).at(j)).rm_back(query_id(i).at(j)))
+					{
+						query_to_keep.push_back(query_number(i).at(j));
+						id_to_keep.push_back(query_id(i).at(j));
+					}
+				}
+			}
+			query_to_keep.push_back(query);
+			id_to_keep.push_back(id);
+			query_number(i) = query_to_keep;
+			query_id(i) = id_to_keep;
+		}
+		progress.inc();
+	}
+	
+	overallsize = 0;
+	for(int i = 0; i< PathWalker_PathList.size(); i++)
+	{
+		overallsize += PathWalker_PathList.at(i).size();
+	}
+	cout << "size " << overallsize << "/" << PathWalker_PathList.size() << "/" << query_number_size() << endl;
+	
 }
 

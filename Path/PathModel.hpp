@@ -38,7 +38,7 @@ class PathModel
 	pair<Hit*, Hit*> operator[](int i);
 	pair<Hit*, Hit*> at(int i);
 	
-	void pop_front();
+	Hit* target_hit(int id);
 	
 	unsigned int size() const;
 	double identity() const;
@@ -46,7 +46,12 @@ class PathModel
 	
 	bool set() const;
 	
+	bool rm_front(int query_id);
+	bool rm_back(int query_id);
+	
 	protected:
+	void pop_front();
+	void pop_back();
 	
 	bool Path_verbose;
 	
@@ -59,6 +64,8 @@ class PathModel
 	
 	double Path_chromosome_identity;
 	vector<double>* Path_hits_identity;
+	
+	static int Path_error;
 	
 	friend class pTest;
 };

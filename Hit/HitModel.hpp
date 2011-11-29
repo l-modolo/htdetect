@@ -37,6 +37,7 @@ class HitModel {
 	HitModel& operator=(HitModel const& Hitbis);
 
 	int id() const;
+	void set_id(int id);
 	bool sens() const;
 	int start() const;
 	int stop() const;

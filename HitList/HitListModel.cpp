@@ -27,7 +27,8 @@ HitListModel::~HitListModel()
 {
 	for(auto & it : HitList_hits)
 	{
-		delete it;
+		if(it != nullptr)
+			delete it;
 	}
 }
 
@@ -140,20 +141,37 @@ void HitListModel::add_hit(string const & name, int start, int stop, list<int> h
 
 void HitListModel::clear()
 {
-	for(auto & it : HitList_hits)
+	try
 	{
-		delete it;
-		it = nullptr;
+		for(int i = 0; i < HitList_hits.size(); i++)
+		{
+			if(HitList_hits.at(i) != nullptr)
+			{
+				delete HitList_hits.at(i);
+				HitList_hits.at(i) = nullptr;
+			}
+		}
+		HitList_hits.clear();
 	}
-	HitList_hits.clear();
+	catch(exception const& e)
+	{
+		cerr << "ERROR : " << e.what() << " in void HitListModel::clear()" << endl;
+	}
 }
 
 void HitListModel::clear_nodelete()
 {
-	for(auto & it : HitList_hits)
+	try
 	{
-		it = nullptr;
+		for(int i = 0; i < HitList_hits.size(); i++)
+		{
+			HitList_hits.at(i) = nullptr;
+		}
+		HitList_hits.clear();
 	}
-	HitList_hits.clear();
+	catch(exception const& e)
+	{
+		cerr << "ERROR : " << e.what() << " in void HitListModel::clear_nodelete()" << endl;
+	}
 }
 

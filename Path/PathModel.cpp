@@ -18,6 +18,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "PathModel.hpp"
 
+int PathModel::Path_error = 0;
+
 PathModel::PathModel(double chromosome_identity, vector<double>* identity, double* pvalue, bool verbose)
 {
 	Path_verbose = verbose;
@@ -160,10 +162,76 @@ pair<Hit*, Hit*> PathModel::at(int i)
 	}
 }
 
+Hit* PathModel::target_hit(int id)
+{
+	try
+	{
+		for(int i = 0; i < Path_query.size(); i++)
+		{
+			if(Path_query.at(i)->id() == id)
+			{
+				return Path_target.at(i);
+			}
+		}
+		throw logic_error("id not found");
+	}
+	catch(exception const& e)
+	{
+		cerr << "ERROR : " << e.what() << " in : Hit* PathModel::target_hit(int id)" << endl;
+		exit(-1);
+	}
+}
+
+bool PathModel::rm_front(int query_id)
+{
+	if(Path_query.front()->id() == query_id)
+	{
+		PathModel::pop_front();
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+bool PathModel::rm_back(int query_id)
+{
+	if(Path_query.back()->id() == query_id)
+	{
+		PathModel::pop_back();
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
 void PathModel::pop_front()
 {
-	Path_query.erase(Path_query.begin());
-	Path_target.erase(Path_target.begin());
+	try
+	{
+		Path_query.erase(Path_query.begin());
+		Path_target.erase(Path_target.begin());
+	}
+	catch(exception const& e)
+	{
+		cerr << "ERROR : " << e.what() << " in : void PathModel::pop_front()" << endl;
+	}
+}
+
+void PathModel::pop_back()
+{
+	try
+	{
+		Path_query.pop_back();
+		Path_target.pop_back();
+	}
+	catch(exception const& e)
+	{
+		cerr << "ERROR : " << e.what() << " in : void PathModel::pop_back()" << endl;
+	}
 }
 
 unsigned int PathModel::size() const

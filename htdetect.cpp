@@ -151,10 +151,10 @@ int main(int argc, char *argv[]) {
 		step++;
 		if(steptosave == step)
 			b.sav();
-//		b.compute_test(chromosome_identity, thread_number);
-//		step++;
-//		if(steptosave == step)
-//			b.sav();
+		b.compute_test(chromosome_identity, thread_number);
+		step++;
+		if(steptosave == step)
+			b.sav();
 	}
 	
 	cout << "writing " << output << "..." << endl;

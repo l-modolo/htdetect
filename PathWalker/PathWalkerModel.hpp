@@ -22,6 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "../Path/Path.hpp"
 #include "../mThread/mThread.hpp"
 #include "../ProgressBar/ProgressBar.hpp"
+#include "../HitList/HitList.hpp"
 
 using namespace std;
 
@@ -32,6 +33,7 @@ class PathWalkerModel
 	~PathWalkerModel();
 	
 	void add(unsigned int query_number, Hit* hit_query, Hit* hit_target);
+	
 	
 	protected:
 	int test_to_path(int query, Hit* hit_query, Hit* hit_target);

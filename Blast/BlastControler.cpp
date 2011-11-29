@@ -145,17 +145,46 @@ void BlastControler::compute_test(double chromosome_identity, int thread_number)
 
 void BlastControler::remove_overlapping_2(double chromosome_identity, int thread_number)
 {
-	if(Blast_verbose){ cout << "removing overlapping for " << Blast_target.size() << " hits." << endl; }
-	
-	PathWalker paths(chromosome_identity, &Blast_identity, Blast_verbose);
-	for(unsigned int i = 0; i < size(); i++)
+	try
 	{
-		for(unsigned int j = 0; j < hit_target_size(i); j++)
+		if(Blast_verbose){ cout << "removing overlapping for " << Blast_target.size() << " hits." << endl; }
+	
+		PathWalker paths(chromosome_identity, &Blast_identity, Blast_verbose);
+		for(unsigned int i = 0; i < size(); i++)
 		{
-			paths.add(i, hit_query(i), hit_target(i,j));
+			for(unsigned int j = 0; j < hit_target_size(i); j++)
+			{
+				paths.add(i, hit_query(i), hit_target(i,j));
+			}
+		}
+		paths.compute_pvalue(thread_number);
+		paths.rm_overlapping_Path(thread_number);
+		paths.rm_overlapping_Path(thread_number);
+		paths.rm_overlapping_Path(thread_number);
+		vector<HitList*> new_hitlist = paths.result();
+		
+		if(new_hitlist.size() != Blast_query.size())
+			throw logic_error("target size liste error");
+		
+		for(int i = 0; i < Blast_target.size(); i++)
+		{
+			if(Blast_target.at(i) != nullptr)
+			{
+				Blast_target.at(i)->clear_nodelete();
+				delete Blast_target.at(i); // there is many hit lost and undeleted
+			}
+		}
+		Blast_target = new_hitlist;
+		
+		for(int i = 0; i < Blast_target.size(); i++)
+		{
+			Blast_query.hit(i)->set_id(i);
 		}
 	}
-	paths.compute_pvalue(thread_number);
+	catch(exception const& e)
+	{
+		cerr << "ERROR : " << e.what() << " in : void BlastControler::remove_overlapping_2(double chromosome_identity, int thread_number)" << endl;
+	}
 }
 
 void BlastControler::neighbor()
