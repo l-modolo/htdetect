@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "HitListControler.hpp"
 
 HitListControler::HitListControler() : HitListModel::HitListModel() {}
+HitListControler::~HitListControler() {}
 
 bool HitListControler::find(Hit & h) const
 {

@@ -41,6 +41,7 @@ class BlastControler : public BlastModel
 {
 	public:
 	BlastControler(bool verbose);
+	~BlastControler();
 	
 	void sort();
 	void neighbor();

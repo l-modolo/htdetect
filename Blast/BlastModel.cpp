@@ -58,10 +58,12 @@ BlastModel::BlastModel(BlastModel & Blastbis)
 
 BlastModel::~BlastModel()
 {
-	for(auto & it : Blast_target)
+	for(int i = 0; i < Blast_target.size(); i++)
 	{
-		if(it != nullptr)
-			delete it;
+		if(Blast_target.at(i) != nullptr)
+		{
+//			delete Blast_target.at(i);
+		}
 	}
 }
 

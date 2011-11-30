@@ -32,6 +32,7 @@ class HitListControler : public HitListModel
 {
 	public:
 	HitListControler();
+	~HitListControler();
 	
 	bool find(Hit & h) const;
 	

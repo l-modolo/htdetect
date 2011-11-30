@@ -25,10 +25,10 @@ HitListModel::HitListModel()
 
 HitListModel::~HitListModel()
 {
-	for(auto & it : HitList_hits)
+	for(int i = 0; i < HitList_hits.size(); i++)
 	{
-		if(it != nullptr)
-			delete it;
+		if(HitList_hits.at(i) != nullptr)
+			delete HitList_hits.at(i);
 	}
 }
 

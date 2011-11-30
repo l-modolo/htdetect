@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "BlastControler.hpp"
 
 BlastControler::BlastControler(bool verbose) : BlastModel::BlastModel(verbose) {}
+BlastControler::~BlastControler() {}
 
 void BlastControler::sort()
 {
@@ -172,6 +173,7 @@ void BlastControler::remove_overlapping_2(double chromosome_identity, int thread
 			{
 				Blast_target.at(i)->clear_nodelete();
 				delete Blast_target.at(i); // there is many hit lost and undeleted
+				Blast_target.at(i) = nullptr;
 			}
 		}
 		Blast_target = new_hitlist;
