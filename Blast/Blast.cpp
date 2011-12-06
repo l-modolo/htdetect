@@ -39,13 +39,13 @@ void Blast::display(ostream &stream)
 {
 	ProgressBar progress(1, 1, 0, size(), Blast_verbose);
 	
-	stream << "number\ttarget\tsens\tstat\tstop\tsize\tdist_prev\tdist_next\tquery\tsens\tstart\tstop\tsize\tid\tpvalue" << endl;
+	stream << "number\ttarget\tsens\tstat\tstop\tsize\tdist_prev\tdist_next\tquery\tsens\tstart\tstop\tsize\tid\tpvalue\tstatistic" << endl;
 	
 	for(int i = 0; i < size(); i++)
 	{
 		for(int j = 0; j < hit_target_size(i); j++)
 		{
-			if(pvalue(i, j) < 1.0)
+			if(pvalue(i, j) <= 1.0)
 			{
 				stream << i << "\t";
 				stream << *hit_query(i);
@@ -59,7 +59,8 @@ void Blast::display(ostream &stream)
 					stream << "\t" << 0;
 				stream << "\t" << *hit_target(i, j);
 				stream << "\t" << identity(i, j);
-				stream << "\t" << pvalue(i, j) << endl;
+				stream << "\t" << pvalue(i, j);
+				stream << "\t" << statistic(i, j) << endl;
 			}
 		}
 		progress.inc();

@@ -90,9 +90,10 @@ mThreadWaiting<T>::mThreadWaiting(int size)
 			mThreadWaiting<T>::mThread_init = true;
 			mThreadWaiting<T>::mThread_run = true;
 			mThreadWaiting<T>::mThread_stop_signal = false;
-			mThread_size = size;
-			mThread_pos_front = -1;
-			mThread_pos_back = -1;
+			mThreadWaiting<T>::mThread_size = size;
+			mThreadWaiting<T>::mThread_pos_front = -1;
+			mThreadWaiting<T>::mThread_pos_back = -1;
+			mThreadWaiting<T>::mThread_waiting.clear();
 		}
 		else
 		{

@@ -79,6 +79,14 @@ ProgressBar::~ProgressBar()
 	ProgressBar_number--;
 }
 
+void ProgressBar::clear()
+{
+	ProgressBar_start = ProgressBar_stop;
+	if(ProgressBar_run.joinable())
+		ProgressBar_run.join();
+	ProgressBar_number--;
+}
+
 void ProgressBar::inc()
 {
 	ProgressBar_start++;

@@ -32,7 +32,7 @@ PathWalkerModel::~PathWalkerModel()
 
 void PathWalkerModel::add(unsigned int query, Hit* hit_query, Hit* hit_target)
 {
-	int id = test_to_path(query-1, hit_query, hit_target);
+	int id = test_to_path(query, hit_query, hit_target);
 	add_to_path(id, query, hit_query, hit_target);
 }
 
@@ -40,12 +40,20 @@ int PathWalkerModel::test_to_path(int query, Hit* hit_query, Hit* hit_target)
 {
 	try
 	{
-		if(query_number_size() <= query || query == -1)
+		bool new_path = false;
+		if(query == 0)
 		{
 			PathWalker_QueryToPath.push_back(vector<unsigned int>());
 			PathWalker_QueryIdToPath.push_back(vector<unsigned int>());
+			new_path = true;
 		}
-		else
+		while(query_number_size() <= query)
+		{
+			PathWalker_QueryToPath.push_back(vector<unsigned int>());
+			PathWalker_QueryIdToPath.push_back(vector<unsigned int>());
+			new_path = true;
+		}
+		if(!new_path)
 		{
 			for(int i = 0; i < query_number_size(query); i++)
 			{
@@ -65,11 +73,6 @@ void PathWalkerModel::add_to_path(int id, int query, Hit* hit_query, Hit* hit_ta
 {
 	try
 	{
-		while(query_number_size() <= query)
-		{
-			PathWalker_QueryToPath.push_back(vector<unsigned int>());
-			PathWalker_QueryIdToPath.push_back(vector<unsigned int>());
-		}
 		if(id < PathWalker_PathList.size() && id != -1)
 		{
 			PathWalker_PathList.at(id).add(hit_query, hit_target);

@@ -35,16 +35,17 @@ PathWalker::~PathWalker()
 	PathWalker_number--;
 }
 
-vector<HitList*> PathWalker::result()
+vector<HitList*>* PathWalker::result()
 {
-	vector<HitList*> result;
+	vector<HitList*>* result;
+	result = new vector<HitList*>;
 	for(int i = 0; i < query_number_size(); i++)
 	{
-		result.push_back(new HitList());
+		result->push_back(new HitList());
 		
 		for(int j = 0; j < query_number_size(i); j++)
 		{
-			result.back()->add_hit(PathWalker_PathList.at(query_number(i).at(j)).target_hit(query_id(i).at(j)));
+			result->back()->add_hit(PathWalker_PathList.at(query_number(i).at(j)).target_hit(query_id(i).at(j)));
 		}
 	}
 	

@@ -136,7 +136,7 @@ void BlastControler::compute_test(double chromosome_identity, int thread_number)
 	{
 		for(unsigned int j = 0; j < hit_target_size(i); j++)
 		{
-			alignements_run.add(pTest(chromosome_identity, identity(i,j), hit_target(i,j)->size(), &(Blast_pvalue.at(hit_target(i,j)->id()))));
+			alignements_run.add(pTest(chromosome_identity, identity(i,j), hit_target(i,j)->size(), &(Blast_pvalue.at(hit_target(i,j)->id())), &(Blast_statistic.at(hit_target(i,j)->id()))));
 			
 			progress.inc();
 		}
@@ -151,20 +151,24 @@ void BlastControler::remove_overlapping_2(double chromosome_identity, int thread
 		if(Blast_verbose){ cout << "removing overlapping for " << Blast_target.size() << " hits." << endl; }
 	
 		PathWalker paths(chromosome_identity, &Blast_identity, Blast_verbose);
+		ProgressBar progress(1, 1, 0, Blast_pvalue.size(), Blast_verbose);
+		
 		for(unsigned int i = 0; i < size(); i++)
 		{
 			for(unsigned int j = 0; j < hit_target_size(i); j++)
 			{
 				paths.add(i, hit_query(i), hit_target(i,j));
+				progress.inc();
 			}
 		}
+		progress.clear();
 		paths.compute_pvalue(thread_number);
 		paths.rm_overlapping_Path(thread_number);
 		paths.rm_overlapping_Path(thread_number);
 		paths.rm_overlapping_Path(thread_number);
-		vector<HitList*> new_hitlist = paths.result();
+		vector<HitList*>* new_hitlist = paths.result();
 		
-		if(new_hitlist.size() != Blast_query.size())
+		if(new_hitlist->size() != Blast_query.size())
 			throw logic_error("target size liste error");
 		
 		for(int i = 0; i < Blast_target.size(); i++)
@@ -176,7 +180,7 @@ void BlastControler::remove_overlapping_2(double chromosome_identity, int thread
 				Blast_target.at(i) = nullptr;
 			}
 		}
-		Blast_target = new_hitlist;
+		Blast_target = *new_hitlist;
 		
 		for(int i = 0; i < Blast_target.size(); i++)
 		{

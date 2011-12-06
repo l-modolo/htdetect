@@ -23,21 +23,28 @@ PathWalkerControler::PathWalkerControler(double chromosome_identity, vector<doub
 
 void PathWalkerControler::compute_pvalue(int thread_number)
 {
-	mThread<Path> alignements_run(thread_number);
-	ProgressBar progress(1, 3, 0,PathWalker_PathList.size(), PathWalker_verbose);
-	
-	for(int i = 0; i< PathWalker_PathList.size(); i++)
+	try
 	{
-		alignements_run.add(PathWalker_PathList.at(i));
-		progress.inc();
+		mThread<Path> alignements_run(thread_number);
+		ProgressBar progress(1, 3, 0,PathWalker_PathList.size(), PathWalker_verbose);
+	
+		for(int i = 0; i< PathWalker_PathList.size(); i++)
+		{
+			alignements_run.add(PathWalker_PathList.at(i));
+			progress.inc();
+		}
+		alignements_run.stop();
 	}
-	alignements_run.stop();
+	catch(exception const& e)
+	{
+		cerr << "ERROR : " << e.what() << " in : void PathModel::add(Hit* hit_query, Hit* hit_target)" << endl;
+	}
 }
 
 void PathWalkerControler::rm_overlapping_Path(int thread_number)
 {
 	ProgressBar progress(2, 3, 0,PathWalker_PathList.size(), PathWalker_verbose);
-	double max_pvalue = 2.0;
+	double min_pvalue = 2.0;
 	int query;
 	int id;
 	vector<unsigned int> query_to_keep;
@@ -50,21 +57,22 @@ void PathWalkerControler::rm_overlapping_Path(int thread_number)
 	}
 	cout << "size " << overallsize << "/" << PathWalker_PathList.size() << "/" << query_number_size() << endl;
 	
+	
 	for(int i = 0; i < query_number_size(); i++)
 	{
 		if(query_number_size(i) > 1)
 		{
-			max_pvalue = 2.0;
+			min_pvalue = 2.0;
 			query_to_keep.clear();
 			id_to_keep.clear();
 			
 			for(int j = 0; j < query_number_size(i); j++)
 			{
-				if(max_pvalue > PathWalker_pvalue.at(query_number(i).at(j)))
+				if(min_pvalue > PathWalker_pvalue.at(query_number(i).at(j)))
 				{
 					query = query_number(i).at(j);
 					id = query_id(i).at(j);
-					max_pvalue = PathWalker_pvalue.at(query);
+					min_pvalue = PathWalker_pvalue.at(query);
 				}
 			}
 			
@@ -98,17 +106,17 @@ void PathWalkerControler::rm_overlapping_Path(int thread_number)
 	{
 		if(query_number_size(i) > 1)
 		{
-			max_pvalue = 2.0;
+			min_pvalue = 2.0;
 			query_to_keep.clear();
 			id_to_keep.clear();
 			
 			for(int j = 0; j < query_number_size(i); j++)
 			{
-				if(max_pvalue > PathWalker_pvalue.at(query_number(i).at(j)))
+				if(min_pvalue > PathWalker_pvalue.at(query_number(i).at(j)))
 				{
 					query = query_number(i).at(j);
 					id = query_id(i).at(j);
-					max_pvalue = PathWalker_pvalue.at(query);
+					min_pvalue = PathWalker_pvalue.at(query);
 				}
 			}
 			
@@ -137,6 +145,5 @@ void PathWalkerControler::rm_overlapping_Path(int thread_number)
 		overallsize += PathWalker_PathList.at(i).size();
 	}
 	cout << "size " << overallsize << "/" << PathWalker_PathList.size() << "/" << query_number_size() << endl;
-	
 }
 

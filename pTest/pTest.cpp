@@ -24,6 +24,16 @@ pTest::pTest(double chromosome_identity, double identity, unsigned int target_si
 	pTest_identity = identity;
 	pTest_target_size = target_size;
 	pTest_pvalue = pvalue;
+	pTest_statistic = nullptr;
+}
+
+pTest::pTest(double chromosome_identity, double identity, unsigned int target_size, double* pvalue, double* statistic)
+{
+	pTest_chromosome_identity = chromosome_identity;
+	pTest_identity = identity;
+	pTest_target_size = target_size;
+	pTest_pvalue = pvalue;
+	pTest_statistic = statistic;
 }
 
 pTest& pTest::operator=(pTest const& ptestbis)
@@ -32,6 +42,7 @@ pTest& pTest::operator=(pTest const& ptestbis)
 	pTest_identity = ptestbis.pTest_identity;
 	pTest_target_size = ptestbis.pTest_target_size;
 	pTest_pvalue = ptestbis.pTest_pvalue;
+	pTest_statistic = ptestbis.pTest_statistic;
 }
 
 void pTest::run()
@@ -43,18 +54,13 @@ void pTest::run()
 			double x;
 			double T = pTest_target_size;
 			double r = 1.0-(pTest_chromosome_identity/100.0);;
-		
-			if(pTest_identity > pTest_chromosome_identity)
-			{
-				x = round((1.0-(pTest_identity/100.0))*T);
-				
-				boost::math::poisson_distribution<> poisson(r*T);
-				*pTest_pvalue = boost::math::cdf(poisson, x);
-			}
-			else
-			{
-				*pTest_pvalue = 1;
-			}
+			
+			x = round((1.0-(pTest_identity/100.0))*T);
+			
+			boost::math::poisson_distribution<> poisson(r*T);
+			*pTest_pvalue = boost::math::cdf(poisson, x);
+			if(pTest_statistic != nullptr)
+				*pTest_statistic = boost::math::pdf(poisson, x);
 		}
 	}
 	catch(exception const& e)

@@ -30,6 +30,8 @@ class ProgressBar {
 	ProgressBar(int step, int step_max, int start, int stop, bool verbose);
 	~ProgressBar();
 	
+	void clear();
+	
 	void operator()(int step, int start, int stop);
 	void inc();
 	

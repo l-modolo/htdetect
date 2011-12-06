@@ -30,10 +30,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <utility>
 #include <mutex>
 #include "BlastModel.hpp"
-#include "../Alignement/Alignement.hpp"
-#include "../pTest/pTest.hpp"
-#include "../mThread/mThread.hpp"
-#include "../PathWalker/PathWalker.hpp"
 
 using namespace std;
 

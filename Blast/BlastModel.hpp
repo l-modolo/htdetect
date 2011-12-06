@@ -29,6 +29,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "../HitList/HitList.hpp"
 #include "../Fasta/Fasta.hpp"
 #include "../ProgressBar/ProgressBar.hpp"
+#include "../Alignement/Alignement.hpp"
+#include "../pTest/pTest.hpp"
+#include "../mThread/mThread.hpp"
+#include "../PathWalker/PathWalker.hpp"
 
 using namespace std;
 
@@ -48,17 +52,18 @@ class BlastModel
 	int size() const;
 	
 	Hit* hit_query(int i);
-	Hit* hit_target(int i);
 	Hit* hit_target(int i, int j);
 	HitList* target(int i);
 	
 	int hit_target_size(int i);
 	double identity(int i, int j);
 	double pvalue(int i, int j);
+	double statistic(int i, int j);
 	bool neighbor_prev(int i, int j);
 	bool neighbor_next(int i, int j);
 	
 	void set_pvalue(int i, int j, double value);
+	void set_statistic(int i, int j, double value);
 	void set_neighbor_prev(int i, int j, bool value);
 	void set_neighbor_next(int i, int j, bool value);
 	
@@ -79,11 +84,16 @@ class BlastModel
 	vector<bool> Blast_neighbor_next;
 	vector<double> Blast_identity;
 	vector<double> Blast_pvalue;
+	vector<double> Blast_statistic;
 	
 	friend class Alignement;
 	friend class pTest;
 	friend class Path;
 	friend class PathWalker;
+	friend class mThread<class Path>;
+	friend class mThread<class PathWalker>;
+	friend class mThread<class Alignement>;
+	friend class mThread<class pTest>;
 };
 
 #endif

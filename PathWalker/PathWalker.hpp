@@ -32,7 +32,7 @@ class PathWalker : public PathWalkerControler
 	
 	static int number();
 	
-	vector<HitList*> result();
+	vector<HitList*>* result();
 	
 	protected:
 	static int PathWalker_number;

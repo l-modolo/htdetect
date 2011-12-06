@@ -54,6 +54,7 @@ BlastModel::BlastModel(BlastModel & Blastbis)
 	Blast_neighbor_next = Blastbis.Blast_neighbor_next;
 	Blast_identity = Blastbis.Blast_identity;
 	Blast_pvalue = Blastbis.Blast_pvalue;
+	Blast_statistic = Blastbis.Blast_statistic;
 }
 
 BlastModel::~BlastModel()
@@ -85,22 +86,6 @@ int BlastModel::size() const
 Hit* BlastModel::hit_query(int i)
 {
 	return Blast_query.hit(i);
-}
-
-Hit* BlastModel::hit_target(int i)
-{
-	try
-	{
-		if(Blast_target.at(hit_query(i)->id()) != nullptr && Blast_target.at(hit_query(i)->id())->size() != 0)
-			return Blast_target.at(hit_query(i)->id())->hit(0);
-		else
-			throw logic_error("Blast_target is empty");
-	}
-	catch(exception const& e)
-	{
-		cerr << "ERROR : " << e.what() << " in : Hit* BlastModel::hit_target(int i)" << endl;
-		return nullptr;
-	}
 }
 
 Hit* BlastModel::hit_target(int i, int j)
@@ -177,6 +162,19 @@ double BlastModel::pvalue(int i, int j)
 	}
 }
 
+double BlastModel::statistic(int i, int j)
+{
+	try
+	{
+		return Blast_statistic.at(hit_target(i,j)->id());
+	}
+	catch(exception const& e)
+	{
+		cerr << "ERROR : " << e.what() << " in : double BlastModel::pvalue(int i, int j)" << endl;
+		return 0.0;
+	}
+}
+
 bool BlastModel::neighbor_prev(int i, int j)
 {
 	try
@@ -209,6 +207,18 @@ void BlastModel::set_pvalue(int i, int j, double value)
 	try
 	{
 		Blast_pvalue.at(hit_target(i,j)->id()) = value;
+	}
+	catch(exception const& e)
+	{
+		cerr << "ERROR : " << e.what() << " in : double BlastModel::pvalue(int i, int j)" << endl;
+	}
+}
+
+void BlastModel::set_statistic(int i, int j, double value)
+{
+	try
+	{
+		Blast_statistic.at(hit_target(i,j)->id()) = value;
 	}
 	catch(exception const& e)
 	{
@@ -318,6 +328,7 @@ void BlastModel::read()
 			Blast_neighbor_prev = vector<bool>(Blast_query.size(), false);
 			Blast_neighbor_next = vector<bool>(Blast_query.size(), false);
 			Blast_pvalue = vector<double>(Blast_query.size(), -1.0);
+			Blast_statistic = vector<double>(Blast_query.size(), -1.0);
 			
 			fBlast.close();
 		}
@@ -353,6 +364,7 @@ void BlastModel::sav()
 					outputf << "\t" << *hit_target(i, j);
 					outputf << "\t" << identity(i, j);
 					outputf << "\t" << pvalue(i, j) << endl;
+					outputf << "\t" << statistic(i, j) << endl;
 				}
 				progress.inc();
 			}
@@ -387,6 +399,7 @@ void BlastModel::restore(string const & file, Fasta* fasta_a, Fasta* fasta_b)
 		int qstop;
 		double identity;
 		double pvalue;
+		double statistic;
 		bool sens;
 		
 		Hit prev_hit;
@@ -472,6 +485,9 @@ void BlastModel::restore(string const & file, Fasta* fasta_a, Fasta* fasta_b)
 							case 11:
 								pvalue = atof(sub.c_str());
 							break;
+							case 12:
+								statistic = atof(sub.c_str());
+							break;
 						}
 						column_number++;
 						column_start = i;
@@ -500,6 +516,7 @@ void BlastModel::restore(string const & file, Fasta* fasta_a, Fasta* fasta_b)
 				Blast_target.back()->add_hit(Blast_query.last_hit()->id(), qname, qstart, qstop);
 				Blast_identity.push_back(identity);
 				Blast_pvalue.push_back(pvalue);
+				Blast_statistic.push_back(statistic);
 			}
 			
 			Blast_neighbor_prev = vector<bool>(Blast_query.size(), false);

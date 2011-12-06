@@ -64,27 +64,26 @@ bool PathModel::test(Hit* hit_query, Hit* hit_target)
 			if(Path_target.at(0)->name().compare(hit_target->name()) != 0)
 				return false;
 			
-			if(hit_query->sens())
+			if(hit_query->sens() != Path_query.back()->sens())
 			{
-				if(*(Path_query.back()) > *hit_query)
-					return false;
-			}
-			else
-			{
-				if(*(Path_query.back()) < *hit_query)
-					return false;
+				return false;
 			}
 			
-			if(hit_target->sens())
+			if(hit_target->sens() !=  Path_target.back()->sens())
 			{
-				if(*(Path_target.back()) > *hit_target)
-					return false;
+				return false;
 			}
-			else
+			
+			if(*hit_query < *(Path_query.back()))
 			{
-				if(*(Path_target.back()) < *hit_target)
-					return false;
+				return false;
 			}
+			
+			if(*hit_target < *(Path_target.back()))
+			{
+				return false;
+			}
+			
 			return true;
 		}
 		else
@@ -106,26 +105,25 @@ void PathModel::add(Hit* hit_query, Hit* hit_target)
 				if(Path_target.at(0)->name().compare(hit_target->name()) != 0)
 					throw logic_error("Target Hit not from the same chromosome as the reste of the Target Hit of this Path");
 				
-				if(hit_query->sens())
+				
+				if(hit_query->sens() != Path_query.back()->sens())
 				{
-					if(*(Path_query.back()) > *hit_query)
-						throw logic_error("Wrong order of the Query Hit");
-				}
-				else
-				{
-					if(*(Path_query.back()) < *hit_query)
-						throw logic_error("Wrong order of the Query Hit");
+					throw logic_error("Wrong order of the Query Hit");
 				}
 				
-				if(hit_target->sens())
+				if(hit_target->sens() !=  Path_target.back()->sens())
 				{
-					if(*(Path_target.back()) > *hit_target)
-						throw logic_error("Wrong order of the Target Hit");
+					throw logic_error("Wrong order of the Query Hit");
 				}
-				else
+				
+				if(*hit_query < *(Path_query.back()))
 				{
-					if(*(Path_target.back()) < *hit_target)
-						throw logic_error("Wrong order of the Target Hit");
+					throw logic_error("Wrong order of the Query Hit");
+				}
+				
+				if(*hit_target < *(Path_target.back()))
+				{
+					throw logic_error("Wrong order of the Query Hit");
 				}
 			}
 			Path_query.push_back(hit_query);
