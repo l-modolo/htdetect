@@ -39,7 +39,7 @@ void Blast::display(ostream &stream)
 {
 	ProgressBar progress(1, 1, 0, size(), Blast_verbose);
 	
-	stream << "number\ttarget\tsens\tstat\tstop\tsize\tdist_prev\tdist_next\tquery\tsens\tstart\tstop\tsize\tid\tpvalue\tstatistic" << endl;
+	stream << "number\ttarget\ttsens\ttstart\ttstop\ttsize\tdist_prev\tdist_next\tquery\tqsens\tqstart\tqstop\tqsize\tid\tpvalue\tstatistic" << endl;
 	
 	for(int i = 0; i < size(); i++)
 	{

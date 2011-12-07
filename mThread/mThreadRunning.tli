@@ -70,6 +70,7 @@ void mThreadRunning<T>::thread_run()
 			x();
 			x = mThread_todo->get(); // mThread_todo->get() is supposed to block until todo is not empty
 		}
+		x();
 	}
 	catch(exception const& e)
 	{
