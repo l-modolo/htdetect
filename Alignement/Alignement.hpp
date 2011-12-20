@@ -42,16 +42,20 @@ using namespace std;
 class Alignement {
 	public:
 	Alignement(Fasta* fasta_a, Hit* hit_a, Fasta* fasta_b, Hit* hit_b, vector<double>* identity, string* muscle_path, int thread_id , string* tmp_rep);
+	Alignement(Fasta* fasta_a, Hit* hit_a, Fasta* fasta_b, Hit* hit_b, string* first_seq, string* second_seq, string* muscle_path, int thread_id , string* tmp_rep);
+	
 	Alignement& operator=(Alignement const& alignementbis);
 	
-	void run();
 	void operator()();
 	void operator()(Fasta* fasta_a, Hit* hit_a, Fasta* fasta_b, Hit* hit_b, vector<double>* identity, string* muscle_path, int thread_id, string* tmp_rep);
 	int number();
 	int id();
 	
 	protected:
-	bool Alignement_callable;
+	void run();
+	void runBis();
+	
+	bool Alignement_sequences;
 	string* Alignement_first_seq;
 	string* Alignement_second_seq;
 	string* Alignement_path;
@@ -68,6 +72,7 @@ class Alignement {
 	void align();
 	void read(string* Fasta_file);
 	double compute_identity();
+	void trunquate_sequence();
 	
 	static string Alignement_salt;
 };

@@ -27,6 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <algorithm>
 #include <utility>
 #include "BlastControler.hpp"
+#include "../writeSeq/writeSeq.hpp"
 
 using namespace std;
 
@@ -36,6 +37,8 @@ class Blast : public BlastControler
 	Blast(bool verbose);
 	~Blast();
 	
+	void toFasta(string output, int thread_number, string tmp_rep);
+	
 	static int number();
 	
 	protected:
@@ -43,6 +46,7 @@ class Blast : public BlastControler
 	void display(ostream &stream);
 	
 	friend std::ostream& operator<< (std::ostream& flux, Blast &hitbis);
+	friend class writeSeq;
 };
 
 #endif

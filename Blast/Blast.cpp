@@ -35,6 +35,35 @@ Blast::~Blast()
 	Blast_number--;
 }
 
+void Blast::toFasta(string output, int thread_number, string tmp_rep)
+{
+	if(Blast_verbose){ cout << "Writting sequences for " << Blast_target.size() << " hits." << endl;}
+	
+	if(Blast_fasta_a != nullptr && Blast_fasta_b != nullptr)
+	{
+		mThread<Alignement> alignements_run(thread_number);
+		string* qseq;
+		string* tseq;
+		writeSeq waitting_line(output);
+		
+		ProgressBar progress(1, 1, 0, Blast_target.size(), Blast_verbose);
+		
+		for(unsigned int i = 0; i < size(); i++)
+		{
+			for(unsigned int j = 0; j < hit_target_size(i); j++)
+			{
+				qseq = new string;
+				tseq = new string;
+				alignements_run.add(Alignement(Blast_fasta_a, hit_query(i), Blast_fasta_b, hit_target(i, j), qseq, tseq, &Blast_muscle_path, hit_target(i, j)->id(), &tmp_rep));
+				waitting_line.add(hit_query(i), qseq, hit_target(i, j), tseq);
+				
+				progress.inc();
+			}
+		}
+		alignements_run.stop();
+	}
+}
+
 void Blast::display(ostream &stream)
 {
 	ProgressBar progress(1, 1, 0, size(), Blast_verbose);

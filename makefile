@@ -2,16 +2,22 @@ CC = g++
 #CFLAGS = -std=c++0x -pthread -I/usr/local/include -L/usr/local/lib
 CFLAGS = -std=c++0x -pthread -I/usr/local/include -L/usr/local/lib -g -DNDEBUG
 
-all: htdetect
+all: htdetect getseq
 
-htdetect: htdetect.o Hit.o HitControler.o HitModel.o HitList.o HitListControler.o HitListModel.o Blast.o BlastControler.o BlastModel.o Fasta.o FastaThread.o FastaControler.o FastaModel.o Sequence.o Alignement.o ProgressBar.o ProgressBarThread.o pTest.o Path.o PathControler.o PathModel.o PathWalker.o PathWalkerControler.o PathWalkerModel.o 
-	$(CC) htdetect.o Hit.o  HitControler.o HitModel.o HitList.o HitListControler.o HitListModel.o Blast.o BlastControler.o BlastModel.o Fasta.o FastaThread.o FastaControler.o FastaModel.o Sequence.o Alignement.o ProgressBar.o ProgressBarThread.o pTest.o Path.o PathControler.o PathModel.o PathWalker.o PathWalkerControler.o PathWalkerModel.o -o htdetect $(CFLAGS)
- 	
-htdetect.o: htdetect.cpp Hit.o HitControler.o HitModel.o HitList.o HitListControler.o HitListModel.o Blast.o BlastControler.o BlastModel.o Fasta.o FastaThread.o FastaControler.o FastaModel.o Sequence.o Alignement.o ProgressBar.o ProgressBarThread.o pTest.o Path.o PathControler.o PathModel.o PathWalker.o PathWalkerControler.o PathWalkerModel.o 
+htdetect: htdetect.o Hit.o HitControler.o HitModel.o HitList.o HitListControler.o HitListModel.o Blast.o BlastControler.o BlastModel.o Fasta.o FastaThread.o FastaControler.o FastaModel.o Sequence.o Alignement.o ProgressBar.o ProgressBarThread.o pTest.o Path.o PathControler.o PathModel.o PathWalker.o PathWalkerControler.o PathWalkerModel.o  writeSeq.o
+	$(CC) htdetect.o Hit.o  HitControler.o HitModel.o HitList.o HitListControler.o HitListModel.o Blast.o BlastControler.o BlastModel.o Fasta.o FastaThread.o FastaControler.o FastaModel.o Sequence.o Alignement.o ProgressBar.o ProgressBarThread.o pTest.o Path.o PathControler.o PathModel.o PathWalker.o PathWalkerControler.o PathWalkerModel.o  writeSeq.o -o htdetect $(CFLAGS)
+
+getseq: getseq.o Hit.o HitControler.o HitModel.o HitList.o HitListControler.o HitListModel.o Blast.o BlastControler.o BlastModel.o Fasta.o FastaThread.o FastaControler.o FastaModel.o Sequence.o Alignement.o ProgressBar.o ProgressBarThread.o pTest.o Path.o PathControler.o PathModel.o PathWalker.o PathWalkerControler.o PathWalkerModel.o  writeSeq.o
+	$(CC) getseq.o Hit.o  HitControler.o HitModel.o HitList.o HitListControler.o HitListModel.o Blast.o BlastControler.o BlastModel.o Fasta.o FastaThread.o FastaControler.o FastaModel.o Sequence.o Alignement.o ProgressBar.o ProgressBarThread.o pTest.o Path.o PathControler.o PathModel.o PathWalker.o PathWalkerControler.o PathWalkerModel.o  writeSeq.o -o getseq $(CFLAGS)
+
+getseq.o: getseq.cpp  Hit.o HitControler.o HitModel.o HitList.o HitListControler.o HitListModel.o Blast.o BlastControler.o BlastModel.o Fasta.o FastaThread.o FastaControler.o FastaModel.o Sequence.o Alignement.o ProgressBar.o ProgressBarThread.o pTest.o Path.o PathControler.o PathModel.o PathWalker.o PathWalkerControler.o PathWalkerModel.o  writeSeq.o
+	$(CC) -c getseq.cpp $(CFLAGS)
+	
+htdetect.o: htdetect.cpp Hit.o HitControler.o HitModel.o HitList.o HitListControler.o HitListModel.o Blast.o BlastControler.o BlastModel.o Fasta.o FastaThread.o FastaControler.o FastaModel.o Sequence.o Alignement.o ProgressBar.o ProgressBarThread.o pTest.o Path.o PathControler.o PathModel.o PathWalker.o PathWalkerControler.o PathWalkerModel.o  writeSeq.o
 	$(CC) -c htdetect.cpp $(CFLAGS)
 
 # Blast
-Blast.o: Blast/Blast.cpp BlastControler.o
+Blast.o: Blast/Blast.cpp BlastControler.o writeSeq.o
 	$(CC) -c Blast/Blast.cpp $(CFLAGS)
 
 BlastControler.o: Blast/BlastControler.cpp BlastModel.o pTest.o Alignement.o PathWalker.o
@@ -25,6 +31,9 @@ pTest.o: pTest/pTest.cpp Hit.o
 
 Alignement.o: Alignement/Alignement.cpp HitList.o Fasta.o ProgressBar.o
 	$(CC) -c Alignement/Alignement.cpp $(CFLAGS)
+
+writeSeq.o: writeSeq/writeSeq.cpp Hit.o
+	$(CC) -c writeSeq/writeSeq.cpp $(CFLAGS)
 
 # PathWalker
 PathWalker.o: PathWalker/PathWalker.cpp PathWalkerControler.o
@@ -90,4 +99,4 @@ HitModel.o: Hit/HitModel.cpp
 	$(CC) -c Hit/HitModel.cpp $(CFLAGS)
 
 clean:
-	rm -rf *.o htdetect
+	rm -rf *.o htdetect getseq
