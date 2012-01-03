@@ -108,7 +108,20 @@ void BlastControler::compute_identity(int thread_number, string tmp_rep)
 	if(Blast_verbose){ cout << "Computing identity for " << Blast_identity.size() << " hits." << endl; }
 	if(Blast_fasta_a != nullptr && Blast_fasta_b != nullptr)
 	{
-		mThread<Alignement> alignements_run(thread_number);
+		int t_number;
+		if(thread_number > size())
+		{
+			if(size() > 1)
+				t_number = size()-1;
+			else
+				t_number = 1;
+		}
+		else
+		{
+			t_number = thread_number;
+		}
+		
+		mThread<AlignementGet> alignements_run(t_number);
 		
 		ProgressBar progress(1, 1, 0, Blast_identity.size(), Blast_verbose);
 		
@@ -116,7 +129,7 @@ void BlastControler::compute_identity(int thread_number, string tmp_rep)
 		{
 			for(unsigned int j = 0; j < hit_target_size(i); j++)
 			{
-				alignements_run.add(Alignement(Blast_fasta_a, hit_query(i), Blast_fasta_b, hit_target(i, j), &Blast_identity, &Blast_muscle_path, hit_target(i, j)->id(), &tmp_rep));
+				alignements_run.add(AlignementGet(Blast_fasta_a, hit_query(i), Blast_fasta_b, hit_target(i, j), &Blast_identity, &Blast_muscle_path, hit_target(i, j)->id(), &tmp_rep));
 				
 				progress.inc();
 			}
@@ -129,7 +142,21 @@ void BlastControler::compute_test(double chromosome_identity, int thread_number)
 {
 	if(Blast_verbose){ cout << "Computing p-value for " << Blast_pvalue.size() << " hits." << endl; }
 	
-	mThread<pTest> alignements_run(thread_number);
+	int t_number;
+	if(thread_number > size())
+	{
+		if(size() > 1)
+			t_number = size()-1;
+		else
+			t_number = 1;
+	}
+	else
+	{
+		t_number = thread_number;
+	}
+	
+	mThread<pTest> alignements_run(t_number);
+	
 	ProgressBar progress(1, 1, 0, Blast_pvalue.size(), Blast_verbose);
 	
 	for(unsigned int i = 0; i < size(); i++)

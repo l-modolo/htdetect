@@ -31,6 +31,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <string>
 #include <deque>
 #include "../Hit/Hit.hpp"
+#include "../mThread/mThread.hpp"
+#include "../Alignement/Alignement.hpp"
 
 using namespace std;
 
@@ -40,13 +42,15 @@ class writeSeq
 	writeSeq(string output);
 	~writeSeq();
 	
-	void add(Hit* qhit, string* query, Hit* thit, string* target);
+	void add(Hit* qhit, string* query, Hit* thit, string* target, mutex* controler);
 	void write();
+	
+	void stop();
 	
 	int size();
 	
 	protected:
-	void push_back(Hit* qhit, string* query, Hit* thit, string* target);
+	void push_back(Hit qhit, string* query, Hit thit, string* target, mutex* controler);
 	void pop_front();
 	
 	void run();
@@ -55,22 +59,29 @@ class writeSeq
 	void set_run(bool run);
 	bool get_run();
 	
-	bool writeSeq_run;
-	thread writeSeq_thread;
-	string writeSeq_output;
-	deque<Hit*> writeSeq_qhit;
-	deque<Hit*> writeSeq_thit;
-	deque<string*> writeSeq_query;
-	deque<string*> writeSeq_target;
+	static bool writeSeq_init;
+	static bool writeSeq_run;
+	static thread writeSeq_thread;
+	static string writeSeq_output;
+	static deque<Hit> writeSeq_qhit;
+	static deque<Hit> writeSeq_thit;
+	static deque<string*> writeSeq_query;
+	static deque<string*> writeSeq_target;
+	static deque<mutex*> writeSeq_controler;
 	
-	ofstream writeSeq_qoutputf;
-	ofstream writeSeq_toutputf;
+	static ofstream writeSeq_qoutputf;
+	static ofstream writeSeq_toutputf;
 	
 	static mutex writeSeq_onebyone;
 	static mutex writeSeq_empty;
 	static mutex writeSeq_full;
 	static condition_variable writeSeq_empty_cond;
 	static condition_variable writeSeq_full_cond;
+	
+	friend class Alignement;
+	friend class mThread<class Alignement>;
+	friend class mThreadRunning<class Alignement>;
+	friend class mThreadWaiting<class Alignement>;
 };
 
 #endif

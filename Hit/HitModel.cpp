@@ -121,7 +121,7 @@ int HitModel::stop() const
 
 string HitModel::name() const
 {
-//	lock_guard<mutex> lk(Hit_names_lock);
+	lock_guard<mutex> lk(Hit_names_lock);
 	return Hit_id_names[Hit_name];
 }
 

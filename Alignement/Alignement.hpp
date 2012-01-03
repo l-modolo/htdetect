@@ -41,23 +41,16 @@ using namespace std;
 
 class Alignement {
 	public:
-	Alignement(Fasta* fasta_a, Hit* hit_a, Fasta* fasta_b, Hit* hit_b, vector<double>* identity, string* muscle_path, int thread_id , string* tmp_rep);
-	Alignement(Fasta* fasta_a, Hit* hit_a, Fasta* fasta_b, Hit* hit_b, string* first_seq, string* second_seq, string* muscle_path, int thread_id , string* tmp_rep);
+	Alignement(Fasta* fasta_a, Hit* hit_a, Fasta* fasta_b, Hit* hit_b, string* muscle_path, int thread_id , string* tmp_rep);
 	
-	Alignement& operator=(Alignement const& alignementbis);
-	
-	void operator()();
-	void operator()(Fasta* fasta_a, Hit* hit_a, Fasta* fasta_b, Hit* hit_b, vector<double>* identity, string* muscle_path, int thread_id, string* tmp_rep);
 	int number();
 	int id();
 	
 	protected:
-	void run();
-	void runBis();
 	
-	bool Alignement_sequences;
 	string* Alignement_first_seq;
 	string* Alignement_second_seq;
+	
 	string* Alignement_path;
 	string* Alignement_tmp_rep;
 	Fasta* Alignement_fasta_a;
@@ -65,16 +58,15 @@ class Alignement {
 	Hit* Alignement_hit_a;
 	Hit* Alignement_hit_b;
 	int Alignement_id;
-	vector<double>* Alignement_identity;
 	
-	private:
-	void align_pipe();
 	void align();
 	void read(string* Fasta_file);
-	double compute_identity();
-	void trunquate_sequence();
 	
 	static string Alignement_salt;
+	
+	bool Alignement_init;
+	
+	friend class writeSeq;
 };
 
 

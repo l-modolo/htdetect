@@ -17,26 +17,50 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "writeSeq.hpp"
+bool writeSeq::writeSeq_init = false;
+
 mutex writeSeq::writeSeq_onebyone;
 mutex writeSeq::writeSeq_empty;
 mutex writeSeq::writeSeq_full;
 condition_variable writeSeq::writeSeq_empty_cond;
 condition_variable writeSeq::writeSeq_full_cond;
 
+bool writeSeq::writeSeq_run;
+thread writeSeq::writeSeq_thread;
+
+string writeSeq::writeSeq_output;
+deque<Hit> writeSeq::writeSeq_qhit;
+deque<Hit> writeSeq::writeSeq_thit;
+deque<string*> writeSeq::writeSeq_query;
+deque<string*>writeSeq:: writeSeq_target;
+deque<mutex*> writeSeq::writeSeq_controler;
+
+ofstream writeSeq::writeSeq_qoutputf;
+ofstream writeSeq::writeSeq_toutputf;
+
 writeSeq::writeSeq(string output)
 {
 	try
 	{
-		writeSeq_output = output;
-		set_run(true);
-		ofstream qoutputf(writeSeq_output+".query");
-		ofstream toutputf(writeSeq_output+".target");
-		if(qoutputf && toutputf)
-		{}
+		if(!writeSeq_init)
+		{
+			writeSeq_init = true;
+			writeSeq_output = output;
+			set_run(true);
+			writeSeq_qoutputf.open(writeSeq_output+".query");
+			writeSeq_toutputf.open(writeSeq_output+".target");
+			
+			if(writeSeq_qoutputf && writeSeq_toutputf)
+			{}
+			else
+				throw logic_error("Can not open "+writeSeq_output+".query"+" or "+writeSeq_output+".target");
+			
+			writeSeq::run();
+		}
 		else
-			throw logic_error("Can not open "+writeSeq_output+".query"+" or "+writeSeq_output+".target");
-		
-		writeSeq::run();
+		{
+			throw logic_error("writeSeq is a static object");
+		}
 	}
 	catch(exception const& e)
 	{
@@ -44,7 +68,23 @@ writeSeq::writeSeq(string output)
 	}
 }
 
-void writeSeq::add(Hit* qhit, string* query, Hit* thit, string* target)
+writeSeq::~writeSeq()
+{
+	set_run(false);
+	writeSeq_thread.join();
+	
+	writeSeq_qoutputf.close();
+	writeSeq_toutputf.close();
+	writeSeq_init = false;
+}
+
+void writeSeq::stop()
+{
+	set_run(false);
+	writeSeq_thread.join();
+}
+
+void writeSeq::add(Hit* qhit, string* query, Hit* thit, string* target, mutex* controler)
 {
 	try
 	{
@@ -55,7 +95,7 @@ void writeSeq::add(Hit* qhit, string* query, Hit* thit, string* target)
 			writeSeq_full_cond.wait(full);
 		}
 		
-		writeSeq::push_back(qhit, query, thit, target);
+		writeSeq::push_back(*qhit, query, *thit, target, controler);
 	}
 	catch(exception const& e)
 	{
@@ -64,7 +104,7 @@ void writeSeq::add(Hit* qhit, string* query, Hit* thit, string* target)
 	}
 }
 
-void writeSeq::push_back(Hit* qhit, string* query, Hit* thit, string* target)
+void writeSeq::push_back(Hit qhit, string* query, Hit thit, string* target, mutex* controler)
 {
 	unique_lock<mutex> lk(writeSeq_onebyone);
 	
@@ -72,6 +112,7 @@ void writeSeq::push_back(Hit* qhit, string* query, Hit* thit, string* target)
 	writeSeq_thit.push_back(thit);
 	writeSeq_query.push_back(query);
 	writeSeq_target.push_back(target);
+	writeSeq_controler.push_back(controler);
 	
 	writeSeq_empty_cond.notify_one();
 }
@@ -80,6 +121,8 @@ void writeSeq::write()
 {
 	try
 	{
+//		cout << "w" << writeSeq_thit.front().id() << endl;
+		
 		unique_lock<mutex> empty(writeSeq_empty);
 		
 		while(writeSeq::size() <= 0 && writeSeq::get_run())
@@ -87,9 +130,10 @@ void writeSeq::write()
 			writeSeq_empty_cond.wait(empty);
 		}
 		
-		while(writeSeq_query.front()->empty() || writeSeq_target.front()->empty())
-		{}
-		writeSeq::pop_front();
+		if(writeSeq::size() > 0)
+		{
+			writeSeq::pop_front();
+		}
 	}
 	catch(exception const& e)
 	{
@@ -103,22 +147,25 @@ void writeSeq::pop_front()
 	unique_lock<mutex> lk(writeSeq_onebyone);
 	try
 	{
-		
-			writeSeq_qoutputf << ">" << *(writeSeq_qhit.front());
-			writeSeq_qoutputf << *(writeSeq_thit.front()) << endl;
+			writeSeq_controler.front()->lock();
+			
+			writeSeq_qoutputf << ">" << writeSeq_qhit.front() << "\t" << writeSeq_thit.front() << endl;
 			writeSeq_qoutputf << *(writeSeq_query.front()) << endl;
 			
-			writeSeq_toutputf << ">" << *(writeSeq_qhit.front());
-			writeSeq_toutputf << *(writeSeq_thit.front()) << endl;
+			writeSeq_toutputf << ">" << writeSeq_qhit.front() << "\t" << writeSeq_thit.front() << endl;
 			writeSeq_toutputf << *(writeSeq_target.front()) << endl;
 			
 			delete writeSeq_query.front();
 			delete writeSeq_target.front();
 			
-			writeSeq_thit.pop_front();
+			writeSeq_controler.front()->unlock();
+			delete writeSeq_controler.front();
+			
+			writeSeq_qhit.pop_front();
 			writeSeq_thit.pop_front();
 			writeSeq_query.pop_front();
 			writeSeq_target.pop_front();
+			writeSeq_controler.pop_front();
 	}
 	catch(exception const& e)
 	{
@@ -150,7 +197,7 @@ void writeSeq::thread_run()
 {
 	try
 	{
-		while(writeSeq::get_run())
+		while(writeSeq::get_run() || writeSeq::size() > 0)
 		{
 			writeSeq::write();
 		}
@@ -166,7 +213,9 @@ void writeSeq::set_run(bool run)
 	unique_lock<mutex> lk(writeSeq_onebyone);
 	writeSeq_run = run;
 	if(!run)
+	{
 		writeSeq_empty_cond.notify_one();
+	}
 }
 bool writeSeq::get_run()
 {
@@ -174,12 +223,4 @@ bool writeSeq::get_run()
 	return writeSeq_run;
 }
 
-writeSeq::~writeSeq()
-{
-	set_run(false);
-	writeSeq_thread.join();
-	
-	writeSeq_qoutputf.close();
-	writeSeq_toutputf.close();
-}
 

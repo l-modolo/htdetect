@@ -19,31 +19,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "mThreadRunning.hpp"
 
 template <typename T>
-bool mThreadRunning<T>::mThread_run = true;
-template <typename T>
-mutex mThreadRunning<T>::mThread_controler;
-template <typename T>
-mutex mThreadRunning<T>::mThread_onebyone;
-
-template <typename T>
-bool mThreadRunning<T>::get_run()
-{
-	unique_lock<mutex> lk(mThread_controler);
-	return mThread_run;
-}
-
-template <typename T>
-void mThreadRunning<T>::set_run()
-{
-	unique_lock<mutex> lk(mThread_controler);
-	mThread_run = false;
-}
-
-template <typename T>
 mThreadRunning<T>::mThreadRunning(mThreadWaiting<T>* todo)
 {
 	mThread_todo = todo;
 	mThreadRunning<T>::run();
+}
+
+template <typename T>
+mThreadRunning<T>::~mThreadRunning()
+{
+	
 }
 
 template <typename T>
@@ -64,13 +49,22 @@ void mThreadRunning<T>::thread_run()
 {
 	try
 	{
-		T x = mThread_todo->get();
-		while(mThreadWaiting<T>::run())
+		T* x_prev = nullptr;
+		T* x = mThread_todo->get();
+		
+		while(x != nullptr && x != x_prev)
 		{
-			x();
+			if(x != nullptr && x != x_prev)
+			{
+				(*x)();
+			}
+			x_prev = x;
 			x = mThread_todo->get(); // mThread_todo->get() is supposed to block until todo is not empty
 		}
-		x();
+		if(x != nullptr && x != x_prev)
+		{
+			(*x)();
+		}
 	}
 	catch(exception const& e)
 	{
@@ -83,3 +77,10 @@ void mThreadRunning<T>::join()
 {
 	mThread_thread.join();
 }
+
+template <typename T>
+bool mThreadRunning<T>::joinable()
+{
+	mThread_thread.joinable();
+}
+

@@ -109,35 +109,35 @@ void HitListModel::add_hit(int id, string const & name, int start, int stop)
 	HitList_hits.push_back(new Hit(id, name, start, stop));
 }
 
-void HitListModel::add_hit(string const & name, int start, int stop, list<int> holes)
-{
-	try
-	{
-		if(holes.size()%2 == 0)
-		{
-			Hit* new_Hit = new Hit(HitList_hits.size(), name, start, stop);
-			int hole_start, hole_stop;
-			auto it = holes.begin();
-			while(it != holes.end())
-			{
-				hole_start = *it;
-				it++;
-				hole_stop = *it;
-				new_Hit->add_hole(HitControler("", hole_start, hole_stop));
-			}
-			
-			HitList_hits.push_back(new_Hit);
-		}
-		else
-		{
-			throw logic_error("holes list size is not a multiple of 2, eatch holes needs to have a start and end position");
-		}
-	}
-	catch(exception const& e)
-	{
-		cerr << "ERROR : " << e.what() << " in void HitListModel::add_hit(string const & name, int start, int stop, list<int> holes)" << endl;
-	}
-}
+//void HitListModel::add_hit(string const & name, int start, int stop, list<int> holes)
+//{
+//	try
+//	{
+//		if(holes.size()%2 == 0)
+//		{
+//			Hit* new_Hit = new Hit(HitList_hits.size(), name, start, stop);
+//			int hole_start, hole_stop;
+//			auto it = holes.begin();
+//			while(it != holes.end())
+//			{
+//				hole_start = *it;
+//				it++;
+//				hole_stop = *it;
+//				new_Hit->add_hole(HitControler("", hole_start, hole_stop));
+//			}
+//			
+//			HitList_hits.push_back(new_Hit);
+//		}
+//		else
+//		{
+//			throw logic_error("holes list size is not a multiple of 2, eatch holes needs to have a start and end position");
+//		}
+//	}
+//	catch(exception const& e)
+//	{
+//		cerr << "ERROR : " << e.what() << " in void HitListModel::add_hit(string const & name, int start, int stop, list<int> holes)" << endl;
+//	}
+//}
 
 void HitListModel::clear()
 {

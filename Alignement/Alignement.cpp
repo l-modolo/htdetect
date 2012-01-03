@@ -45,7 +45,7 @@ int Alignement::number()
 	return Alignement_id;
 }
 
-Alignement::Alignement(Fasta* fasta_a, Hit* hit_a, Fasta* fasta_b, Hit* hit_b, vector<double>* identity, string* muscle_path, int thread_id, string* tmp_rep)
+Alignement::Alignement(Fasta* fasta_a, Hit* hit_a, Fasta* fasta_b, Hit* hit_b, string* muscle_path, int thread_id , string* tmp_rep)
 {
 	Alignement_fasta_a = fasta_a;
 	Alignement_fasta_b = fasta_b;
@@ -56,241 +56,8 @@ Alignement::Alignement(Fasta* fasta_a, Hit* hit_a, Fasta* fasta_b, Hit* hit_b, v
 	Alignement_tmp_rep = tmp_rep;
 	
 	Alignement_id = thread_id;
-	Alignement_identity = identity;
-	Alignement_first_seq = nullptr;
-	Alignement_second_seq = nullptr;
-	Alignement_sequences = false;
-}
-
-Alignement::Alignement(Fasta* fasta_a, Hit* hit_a, Fasta* fasta_b, Hit* hit_b, string* first_seq, string* second_seq, string* muscle_path, int thread_id , string* tmp_rep)
-{
-	Alignement_fasta_a = fasta_a;
-	Alignement_fasta_b = fasta_b;
-	Alignement_hit_a = hit_a;
-	Alignement_hit_b = hit_b;
 	
-	Alignement_path = muscle_path;
-	Alignement_tmp_rep = tmp_rep;
-	
-	Alignement_id = thread_id;
-	Alignement_identity = nullptr;
-	Alignement_first_seq = first_seq;
-	Alignement_second_seq = second_seq;
-	Alignement_sequences = true;
-}
-
-Alignement& Alignement::operator=(Alignement const& alignementbis)
-{
-	try
-	{
-		if(this != &alignementbis)
-		{
-			Alignement_sequences = alignementbis.Alignement_sequences;
-			
-			if(alignementbis.Alignement_fasta_a == nullptr)
-				throw logic_error("copy of a nullptr pointer");
-			Alignement_fasta_a = alignementbis.Alignement_fasta_a;
-			
-			if(alignementbis.Alignement_fasta_b == nullptr)
-				throw logic_error("copy of a nullptr pointer");
-			Alignement_fasta_b = alignementbis.Alignement_fasta_b;
-			
-			if(alignementbis.Alignement_hit_a == nullptr)
-				throw logic_error("copy of a nullptr pointer");
-			Alignement_hit_a = alignementbis.Alignement_hit_a;
-			
-			if(alignementbis.Alignement_hit_b == nullptr)
-				throw logic_error("copy of a nullptr pointer");
-			Alignement_hit_b = alignementbis.Alignement_hit_b;
-			
-			
-			if(alignementbis.Alignement_path == nullptr)
-				throw logic_error("copy of a nullptr pointer");
-			Alignement_path = alignementbis.Alignement_path;
-			
-			if(alignementbis.Alignement_tmp_rep == nullptr)
-				throw logic_error("copy of a nullptr pointer");
-			Alignement_tmp_rep = alignementbis.Alignement_tmp_rep;
-			
-			
-			Alignement_id = alignementbis.Alignement_id;
-			
-			if(alignementbis.Alignement_identity == nullptr && !Alignement_sequences)
-				throw logic_error("copy of a nullptr pointer");
-			Alignement_identity = alignementbis.Alignement_identity;
-			
-			Alignement_first_seq = alignementbis.Alignement_first_seq;
-			Alignement_second_seq = alignementbis.Alignement_second_seq;
-		}
-		else
-		{
-			throw logic_error("copy of this");
-		}
-	}
-	catch(exception const& e)
-	{
-		cerr << "ERROR : " << e.what() << " in : Alignement& Alignement::operator=(Alignement const& alignementbis)" << endl;
-	}
-	return *this;
-}
-
-void Alignement::run()
-{
-	try
-	{
-		if(Alignement_sequences)
-			throw logic_error("This Alignement object is not initialised to compute an identity");
-		if(Alignement_identity->at(Alignement_hit_b->id()) == -1)
-		{
-			FastaThread seqa(*Alignement_fasta_a, *Alignement_hit_a);
-			FastaThread seqb(*Alignement_fasta_b, *Alignement_hit_b);
-//			future<string*> first_seq = async(launch::async, seqa);
-//			future<string*> second_seq = async(launch::async, seqb);
-//			
-//			Alignement_first_seq = first_seq.get();
-//			Alignement_second_seq = second_seq.get();
-		
-			Alignement_first_seq = seqa.find();
-			Alignement_second_seq = seqb.find();
-		
-			Alignement_identity->at(Alignement_hit_b->id()) = compute_identity();
-		}
-	}
-	catch(exception const& e)
-	{
-		cerr << "ERROR : " << e.what() << " in : void Alignement::run()" << endl;
-		exit(-1);
-	}
-}
-
-void Alignement::runBis()
-{
-	try
-	{
-		if(!Alignement_sequences)
-			throw logic_error("This Alignement object is not initialised to return sequences");
-		
-		FastaThread seqa(*Alignement_fasta_a, *Alignement_hit_a);
-		FastaThread seqb(*Alignement_fasta_b, *Alignement_hit_b);
-		*Alignement_first_seq = *seqa.find();
-		*Alignement_second_seq = *seqb.find();
-		
-		trunquate_sequence();
-	}
-	catch(exception const& e)
-	{
-		cerr << "ERROR : " << e.what() << " in : void Alignement::run()" << endl;
-		exit(-1);
-	}
-}
-
-void Alignement::operator()()
-{
-	if(Alignement_sequences)
-		Alignement::runBis();
-	else
-		Alignement::run();
-}
-
-void Alignement::operator()(Fasta* fasta_a, Hit* hit_a, Fasta* fasta_b, Hit* hit_b, vector<double>* identity, string* muscle_path, int thread_id, string* tmp_rep)
-{
-	Alignement_fasta_a = fasta_a;
-	Alignement_fasta_b = fasta_b;
-	Alignement_hit_a = hit_a;
-	Alignement_hit_b = hit_b;
-	
-	Alignement_path = muscle_path;
-	Alignement_tmp_rep = tmp_rep;
-	
-	Alignement_id = thread_id;
-	Alignement_identity = identity;
-	
-	Alignement::run();
-}
-
-double Alignement::compute_identity()
-{
-	if(Alignement_first_seq->length() != Alignement_second_seq->length())
-	{
-		Alignement::align();
-	}
-	
-	int size = Alignement_first_seq->length();
-	int diff = 0;
-	int gap = 0;
-	double result = 0.0;
-	
-	try
-	{
-		for(int i = 0 ; i < size ; i++)
-		{
-			if(Alignement_first_seq->at(i) == 'N' || Alignement_second_seq->at(i) == 'N' || Alignement_first_seq->at(i) == '-' || Alignement_second_seq->at(i) == '-'){
-				gap++;
-			}else{
-				if(Alignement_first_seq->at(i) != Alignement_second_seq->at(i)){
-					diff++;
-				}
-			}
-		}
-		if(size-gap != 0)
-		{
-			result = ((double)(size-diff-gap)/(double)(size-gap))*100.0;
-		}
-		else
-		{
-			throw logic_error("Can not make a null division in double Alignement::identity()");
-		}
-	}
-	catch(exception const& e)
-	{
-		cerr << "ERROR : " << e.what() << " in double Alignement::identity()" << endl;
-		cerr << Alignement_first_seq << endl;
-		cerr << Alignement_second_seq;
-	}
-	delete Alignement_first_seq;
-	delete Alignement_second_seq;
-	
-	return result;
-}
-
-void Alignement::align_pipe()
-{
-	string in, out;
-	stringstream ss;
-	ss << Alignement::number();
-	in = *Alignement_tmp_rep+"/htdetect."+Alignement_salt+"."+ss.str()+".pir";
-	out = *Alignement_tmp_rep+"/htdetect"+Alignement_salt+"."+ss.str()+".out";
-	ofstream outputf(in);
-	try
-	{
-		if(outputf)
-		{
-			outputf << ">a" << endl << *Alignement_first_seq << endl;
-			outputf << ">b" << endl << *Alignement_second_seq << endl;
-			outputf.close();
-			
-			string cmd = *Alignement_path+" -quiet -in "+in+" -out "+out;
-			system(cmd.c_str());
-			
-			if(remove(in.c_str()) != 0 )
-				throw logic_error("Can not remove "+in);
-			
-			Alignement::read(&out);
-			
-			if(remove(out.c_str()) != 0 )
-				throw logic_error("Can not remove "+out);
-		}
-		else
-		{
-			throw logic_error("Can not open "+in);
-		}
-	}
-	catch(exception const& e)
-	{
-		cerr << "ERROR : " << e.what() << " in void Alignement::align()" << endl;
-		outputf.close();
-		exit(-1);
-	}
+	Alignement_init = false;
 }
 
 void Alignement::align()
@@ -328,6 +95,8 @@ void Alignement::align()
 	catch(exception const& e)
 	{
 		cerr << "ERROR : " << e.what() << " in void Alignement::align()" << endl;
+		cerr << ">" << *Alignement_first_seq << endl;
+		cerr << ">" << *Alignement_second_seq << endl;
 		outputf.close();
 		exit(-1);
 	}
@@ -372,39 +141,5 @@ void Alignement::read(string* Fasta_file)
 	{
 		fFasta.close();
 		throw logic_error("Can not open file : "+(*Fasta_file)+" in void Alignement::read(string* Fasta_file)");
-	}
-}
-
-void Alignement::trunquate_sequence()
-{
-	if(Alignement_first_seq->length() != Alignement_second_seq->length())
-	{
-		Alignement::align();
-	}
-	
-	int size = Alignement_first_seq->length();
-	int diff = 0;
-	int gap = 0;
-	double result = 0.0;
-	
-	try
-	{
-		int front = 0;
-		int back = Alignement_second_seq->length();
-		while(Alignement_second_seq->at(front) == '-')
-		{
-			front++;
-		}
-		while(Alignement_second_seq->at(back) == '-')
-		{
-			back--;
-		}
-		
-		*Alignement_first_seq = Alignement_first_seq->substr(front, back-front+1);
-		*Alignement_second_seq = Alignement_second_seq->substr(front, back-front+1);
-	}
-	catch(exception const& e)
-	{
-		cerr << "ERROR : " << e.what() << " in double Alignement::trunquate_sequence()" << endl;
 	}
 }

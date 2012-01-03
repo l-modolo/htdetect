@@ -37,12 +37,12 @@ class Hit : public HitControler
 	
 	static long long int number();
 	
-	bool hole(int start, int stop);
+//	bool hole(int start, int stop);
 	
 	bool operator()(const HitControler* a, const HitControler* b);
 	void sort();
-	void add_hole(HitControler hole);
-	void add_hole(HitControler* hole);
+//	void add_hole(HitControler hole);
+//	void add_hole(HitControler* hole);
 	
 	Hit operator+(Hit const& Hitbis);
 	Hit operator-(Hit const& Hitbis);
@@ -56,7 +56,7 @@ class Hit : public HitControler
 	
 	protected:
 	// attribute
-	list<HitControler*> Hit_holes;
+//	list<HitControler*> Hit_holes;
 	static long long int Hit_number;
 	
 	friend std::ostream& operator<< (std::ostream& flux, Hit const& Hitbis);

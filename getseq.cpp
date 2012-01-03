@@ -33,7 +33,7 @@ int main(int argc, char *argv[]) {
 	string fasta2;
 	string restore;
 	int steptosave = 0;
-	int thread_number = 50;
+	int thread_number = 10;
 	double chromosome_identity = -1.0;
 	string tmp_rep = "/tmp";
 	string output;
@@ -102,7 +102,7 @@ int main(int argc, char *argv[]) {
 	// the only required argument is the blast file
 	if((blast.empty() && htdetect.empty()) || fasta1.empty() || fasta2.empty() || output.empty()){
 		cout << "Argument must be defined." << endl;
-		cout << "Usage: getset --blast <blast_file -m8> --htdetect <htdetect_file> --fasta1 <fasta_file> --fasta2 <fasta_file> --output <output_file>" << endl;
+		cout << "Usage: getset [--blast <blast_file -m8> || --htdetect <htdetect_file>] --fasta1 <fasta_file> --fasta2 <fasta_file> --output <output_file>" << endl;
 		cout << "       --fasta1 the subject species (the best assembled one)" << endl;
 		cout << "       --fasta2 the target species (the worst assembled one)" << endl;
 		cout << "Optional:" << endl;
@@ -118,66 +118,22 @@ int main(int argc, char *argv[]) {
 	cout << "oppening : " << fasta2 << endl;
 	Fasta f2(fasta2);
 	
-	if(!blast.empty())
+	if(htdetect.empty())
 	{
 		cout << "oppening : " << blast << endl;
 		Blast b(verbose);
 		b.load(output, blast, &f1, &f2);
-	
-	
+		cout << "writting : " << output << endl;
+		b.toFasta(output, thread_number, tmp_rep);
 	}
 	else
 	{
-		
+		cout << "oppening: " << htdetect << endl;
+		Blast b(verbose);
+		b.restore(output, htdetect, &f1, &f2);
+		cout << "writting : " << output << endl;
+		b.toFasta(output, thread_number, tmp_rep);
 	}
-	
-	Blast b(verbose);
-	if(restore.empty())
-		b.load(output, blast, &f1, &f2);
-	else
-		b.restore(restore, &f1, &f2);
-	
-	b.remove_overlapping();
-	step++;
-	if(steptosave == step)
-		b.sav();
-	
-	b.compute_identity(thread_number, tmp_rep);
-	step++;
-	if(steptosave == step)
-		b.sav();
-	
-	if(chromosome_identity >= 0.0)
-	{
-		b.remove_overlapping_2(chromosome_identity, thread_number);
-		step++;
-		if(steptosave == step)
-			b.sav();
-		b.compute_test(chromosome_identity, thread_number);
-		step++;
-		if(steptosave == step)
-			b.sav();
-	}
-	
-	cout << "writing " << output << "..." << endl;
-	
-	ofstream outputf(output);
-	try
-	{
-		if(outputf)
-		{
-			outputf << b << endl;
-		}
-		else
-		{
-			throw logic_error("Can not open "+output);
-		}
-	}
-	catch(exception const& e)
-	{
-		cerr << "ERROR : " << e.what() << endl;
-	}
-	outputf.close();
 	
 	return 0;
 }

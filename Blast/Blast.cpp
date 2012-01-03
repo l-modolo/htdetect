@@ -37,25 +37,45 @@ Blast::~Blast()
 
 void Blast::toFasta(string output, int thread_number, string tmp_rep)
 {
-	if(Blast_verbose){ cout << "Writting sequences for " << Blast_target.size() << " hits." << endl;}
+	if(Blast_verbose){ cout << "Writting sequences for " << size() << " hits." << endl;}
 	
 	if(Blast_fasta_a != nullptr && Blast_fasta_b != nullptr)
 	{
-		mThread<Alignement> alignements_run(thread_number);
+		int t_number;
+		if(thread_number > size())
+		{
+			if(size() > 1)
+				t_number = size()-1;
+			else
+				t_number = 1;
+		}
+		else
+		{
+			t_number = thread_number;
+		}
+		mThread<AlignementWrite> alignements_run(t_number);
+		
 		string* qseq;
 		string* tseq;
-		writeSeq waitting_line(output);
+		mutex* controler;
+		Hit* qhit;
+		Hit* thit;
 		
-		ProgressBar progress(1, 1, 0, Blast_target.size(), Blast_verbose);
+		ProgressBar progress(1, 1, 0, size(), Blast_verbose);
 		
 		for(unsigned int i = 0; i < size(); i++)
 		{
 			for(unsigned int j = 0; j < hit_target_size(i); j++)
 			{
+				qhit = hit_query(i);
+				thit = hit_target(i, j);
 				qseq = new string;
 				tseq = new string;
-				alignements_run.add(Alignement(Blast_fasta_a, hit_query(i), Blast_fasta_b, hit_target(i, j), qseq, tseq, &Blast_muscle_path, hit_target(i, j)->id(), &tmp_rep));
-				waitting_line.add(hit_query(i), qseq, hit_target(i, j), tseq);
+				controler = new mutex;
+				
+//				cout << i << "/" << size() << " " << j << "/" << hit_target_size(i) << endl;
+				
+				alignements_run.add(AlignementWrite(Blast_fasta_a, qhit, Blast_fasta_b, thit, qseq, tseq, &Blast_muscle_path, thit->id(), &tmp_rep, controler));
 				
 				progress.inc();
 			}

@@ -23,7 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <thread>
 #include <mutex>
 #include <condition_variable>
-#include <vector>
+#include <deque>
 #include <exception>
 #include <stdexcept>
 #include <iostream>
@@ -38,7 +38,7 @@ class mThreadWaiting
 	~mThreadWaiting();
 	
 	void add(T const & x);
-	T get();
+	T* get();
 	
 	static bool stop();
 	static void set_stop(bool run);
@@ -46,7 +46,7 @@ class mThreadWaiting
 	
 	protected:
 	void push_back(T const & x);
-	T pop_front();
+	T* pop_front();
 	static int size();
 	
 	static void set_run(bool run);
@@ -60,7 +60,7 @@ class mThreadWaiting
 	static int mThread_size;
 	static int mThread_pos_front;
 	static int mThread_pos_back;
-	static vector<T> mThread_waiting;
+	static deque<T> mThread_waiting;
 	
 	static bool mThread_run;
 	static mutex mThread_run_controler;

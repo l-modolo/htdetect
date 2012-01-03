@@ -39,7 +39,7 @@ class HitListModel {
 	void add_hit(Hit & hitbis);
 	void add_hit(Hit* hitbis);
 	void add_hit(int id, string const & name, int start, int stop);
-	void add_hit(string const & name, int start, int stop, list<int> holes);
+//	void add_hit(string const & name, int start, int stop, list<int> holes);
 	
 	int size() const;
 	Hit* hit(int i);

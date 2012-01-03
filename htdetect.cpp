@@ -32,7 +32,7 @@ int main(int argc, char *argv[]) {
 	string fasta2;
 	string restore;
 	int steptosave = 0;
-	int thread_number = 50;
+	int thread_number = 10;
 	double chromosome_identity = -1.0;
 	string tmp_rep = "/tmp";
 	string output;

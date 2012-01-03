@@ -531,7 +531,141 @@ void BlastModel::restore(string const & file, Fasta* fasta_a, Fasta* fasta_b)
 	}
 	catch(exception const& e)
 	{
-		cerr << "ERROR : " << e.what()  << " in : void BlastModel::read()" << endl;
+		cerr << "ERROR : " << e.what()  << " in : void BlastModel::restore(string const & file, Fasta* fasta_a, Fasta* fasta_b)" << endl;
 	}
 }
 
+void BlastModel::restore(string const & blastname, string const & file, Fasta* fasta_a, Fasta* fasta_b)
+{
+	try
+	{
+		Blast_fasta_a = fasta_a;
+		Blast_fasta_b = fasta_b;
+		
+		ifstream fBlast(file);
+		int column_number;
+		int column_start;
+		
+		int tmp;
+		int start;
+		int stop;
+		int qstart;
+		int qstop;
+		string name;
+		string qname;
+		double identity;
+		double pvalue;
+		double statistic;
+		bool sens;
+		
+		Hit prev_hit;
+		
+		bool test;
+		
+		/*                      Reading the Blast file                        */
+		if(fBlast)
+		{
+			// for each line of the Blast file
+			string line;
+			Blast_name = blastname;
+			Blast_file = file;
+			Blast_muscle_path = "/usr/bin/muscle";
+			
+			column_number = 0;
+			column_start = 0;
+			
+			start = -1;
+			stop = -1;
+			qstart = -1;
+			qstop = -1;
+			string name;
+			string qname;
+			size_t found1;
+			size_t found2;
+			
+			getline(fBlast, line);
+			
+			int i = 0;
+			while(getline(fBlast, line))
+			{
+				
+				
+				if(line.size() >= 10)
+				{
+					i++;
+					vector<string> line_columns = split(line, (char*)"\t");
+					if(line_columns.size() == 16)
+					{
+						name = line_columns.at(1);
+						start =  atoi(line_columns.at(3).c_str());
+						stop =  atoi(line_columns.at(4).c_str());
+						qname = line_columns.at(8);
+						qstart = atoi(line_columns.at(10).c_str());
+						qstop = atoi(line_columns.at(11).c_str());
+						identity = atof(line_columns.at(13).c_str());
+						pvalue = atof(line_columns.at(14).c_str());
+						statistic = atof(line_columns.at(15).c_str());
+				
+		//				[0]number	[1]target	[2]tsens	[3]tstart	[4]tstop	[5]tsize	[6]dist_prev	[7]dist_next	
+		//				[8]query	[9]qsens	[10]qstart	[11]qstop	[12]qsize	[13]id	[14]pvalue	[15]statistic
+				
+						if(Blast_query.size() == 0)
+						{
+							if(prev_hit.sens() == (start < stop) && prev_hit.start() == start &&  prev_hit.stop() == stop && prev_hit.name().compare(name) == 0)
+							{
+					
+							}
+							else
+							{
+								Blast_query.add_hit(name, start, stop);
+								prev_hit = Hit(name, start, stop);
+							}
+						}
+						else
+						{
+							Blast_query.add_hit(name, start, stop);
+							prev_hit = Hit(name, start, stop);
+						}
+				
+						Blast_target.push_back(new HitList());
+						Blast_target.back()->add_hit(Blast_query.last_hit()->id(), qname, qstart, qstop);
+						Blast_identity.push_back(identity);
+						Blast_pvalue.push_back(pvalue);
+						Blast_statistic.push_back(statistic);
+					}
+				}
+			}
+			Blast_neighbor_prev = vector<bool>(Blast_query.size(), false);
+			Blast_neighbor_next = vector<bool>(Blast_query.size(), false);
+			
+			fBlast.close();
+		}
+		else
+		{
+			throw logic_error("Can not open file : "+Blast_file);
+		}
+	}
+	catch(exception const& e)
+	{
+		cerr << "ERROR : " << e.what()  << " in : void BlastModel::restore(string const & blastname, string const & file, Fasta* fasta_a, Fasta* fasta_b)" << endl;
+	}
+}
+
+vector<string> BlastModel::split(string const & str, char * spliter)
+{
+	vector<string> result;
+	char* cstr;
+	cstr = new char [str.size()+1];
+	strcpy(cstr, str.c_str());
+	
+	char* p;
+	p = strtok(cstr,spliter);
+	while(p != NULL)
+	{
+		result.push_back(p);
+		p = strtok(NULL,spliter);
+	}
+	
+	delete[] cstr;
+	return result;
+}

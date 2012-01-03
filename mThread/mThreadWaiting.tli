@@ -39,7 +39,7 @@ int mThreadWaiting<T>::mThread_pos_front;
 template<typename T>
 int mThreadWaiting<T>::mThread_pos_back;
 template<typename T>
-vector<T> mThreadWaiting<T>::mThread_waiting;
+deque<T> mThreadWaiting<T>::mThread_waiting;
 
 template<typename T>
 bool mThreadWaiting<T>::mThread_run = true;
@@ -53,29 +53,29 @@ mutex mThreadWaiting<T>::mThread_stop_controler;
 template <typename T>
 bool mThreadWaiting<T>::run()
 {
-	unique_lock<mutex> lk(mThread_run_controler);
+	unique_lock<mutex> lk(mThread_onebyone);
 	return mThread_run;
 }
 
 template <typename T>
 void mThreadWaiting<T>::set_run(bool run)
 {
-	unique_lock<mutex> lk(mThread_run_controler);
+	unique_lock<mutex> lk(mThread_onebyone);
 	mThread_run = run;
-	mThread_empty_cond.notify_all();
+	mThread_empty_cond.notify_one();
 }
 
 template <typename T>
 bool mThreadWaiting<T>::stop()
 {
-	unique_lock<mutex> lk(mThread_stop_controler);
+	unique_lock<mutex> lk(mThread_onebyone);
 	return mThread_stop_signal;
 }
 
 template <typename T>
 void mThreadWaiting<T>::set_stop(bool run)
 {
-	unique_lock<mutex> lk(mThread_stop_controler);
+	unique_lock<mutex> lk(mThread_onebyone);
 	mThread_stop_signal = run;
 	mThread_empty_cond.notify_one();
 }
@@ -118,12 +118,12 @@ void mThreadWaiting<T>::add(T const & x)
 	try
 	{
 		unique_lock<mutex> full(mThread_full);
-	
+		
 		while(mThreadWaiting<T>::size() >= mThread_size - 1)
 		{
 			mThread_full_cond.wait(full);
 		}
-	
+		
 		mThreadWaiting<T>::push_back(x);
 	}
 	catch(exception const& e)
@@ -134,26 +134,18 @@ void mThreadWaiting<T>::add(T const & x)
 }
 
 template<typename T>
-T mThreadWaiting<T>::get()
+T* mThreadWaiting<T>::get()
 {
 	try
 	{
 		unique_lock<mutex> empty(mThread_empty);
 		
-		while(mThreadWaiting<T>::size() <= 0 && mThreadWaiting<T>::run())
+		while(mThreadWaiting<T>::size() <= 0)
 		{
 			mThread_empty_cond.wait(empty);
 		}
 		
-		T value = mThreadWaiting<T>::pop_front();
-		
-		if(mThreadWaiting<T>::stop() && mThreadWaiting<T>::size() <= 0)
-		{
-			mThreadWaiting<T>::set_run(false);
-			value();
-		}
-		
-		return value;
+		return mThreadWaiting<T>::pop_front();
 	}
 	catch(exception const& e)
 	{
@@ -166,56 +158,52 @@ template<typename T>
 void mThreadWaiting<T>::push_back(T const & x)
 {
 	unique_lock<mutex> lk(mThread_onebyone);
-	if(mThread_waiting.size() < mThread_size)
-	{
-		mThread_pos_back = mThread_waiting.size();
-		mThread_waiting.push_back(x);
-	}
-	else
-	{
-		if(mThread_pos_back + 1 < mThread_size)
-		{
-			mThread_pos_back++;
-		}
-		else
-		{
-			mThread_pos_back = 0;
-		}
-		mThread_waiting[mThread_pos_back] = x;
-	}
+	mThread_waiting.push_back(x);
 	mThread_empty_cond.notify_one();
 }
 
 template<typename T>
-T mThreadWaiting<T>::pop_front()
+T* mThreadWaiting<T>::pop_front()
 {
-	unique_lock<mutex> lk(mThread_onebyone);
-	if(mThread_pos_front + 1 < mThread_size)
+	try
 	{
-		mThread_pos_front++;
+		unique_lock<mutex> lk(mThread_onebyone);
+		
+		if(mThread_stop_signal)
+		{
+			mThread_run = false;
+			mThread_full_cond.notify_all();
+		}
+		
+		T* value;
+		
+		if(mThread_waiting.size() <= 0)
+		{
+			value = nullptr;
+		}
+		else
+		{
+			value = new T(mThread_waiting.front());
+			mThread_waiting.pop_front();
+		}
+		mThread_full_cond.notify_one();
+		
+		return value;
 	}
-	else
+	catch(exception const& e)
 	{
-		mThread_pos_front = 0;
+		cerr << "ERROR : " << e.what() << " in : T mThreadWaiting<T>::pop_front()" << endl;
+		exit(-1);
 	}
-	mThread_full_cond.notify_one();
-	return mThread_waiting.at(mThread_pos_front);
 }
 
 template<typename T>
 int mThreadWaiting<T>::size()
 {
 	unique_lock<mutex> lk(mThread_onebyone);
-	if(mThread_pos_front == -1 &&  mThread_pos_back == -1)
-		return 0;
-	
-	if(mThread_pos_front <= mThread_pos_back)
-	{
-		return mThread_pos_back - mThread_pos_front;
-	}
+	if(mThread_run)
+		return mThread_waiting.size();
 	else
-	{
-		return mThread_size - mThread_pos_front + mThread_pos_back;
-	}
+		return 1;
 }
 

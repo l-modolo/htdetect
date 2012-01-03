@@ -26,10 +26,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <algorithm>
 #include <utility>
 #include <array>
+#include <cstring>
 #include "../HitList/HitList.hpp"
 #include "../Fasta/Fasta.hpp"
 #include "../ProgressBar/ProgressBar.hpp"
-#include "../Alignement/Alignement.hpp"
+#include "../Alignement/AlignementGet.hpp"
+#include "../Alignement/AlignementWrite.hpp"
 #include "../pTest/pTest.hpp"
 #include "../mThread/mThread.hpp"
 #include "../PathWalker/PathWalker.hpp"
@@ -45,6 +47,7 @@ class BlastModel
 	
 	void sav();
 	void restore(string const & file, Fasta* fasta_a, Fasta* fasta_b);
+	void restore(string const & name, string const & file, Fasta* fasta_a, Fasta* fasta_b);
 	void load(string const & name, string const & file, Fasta* fasta1, Fasta* fasta2);
 	
 	string name() const;
@@ -69,6 +72,7 @@ class BlastModel
 	
 	protected:
 	void read();
+	vector<string> split(string const & str, char * spliter);
 	
 	Fasta* Blast_fasta_a;
 	Fasta* Blast_fasta_b;
@@ -87,13 +91,35 @@ class BlastModel
 	vector<double> Blast_statistic;
 	
 	friend class Alignement;
+	friend class AlignementGet;
+	friend class AlignementWrite;
 	friend class pTest;
 	friend class Path;
 	friend class PathWalker;
+	
 	friend class mThread<class Path>;
+	friend class mThreadRunning<class Path>;
+	friend class mThreadWaiting<class Path>;
+	
 	friend class mThread<class PathWalker>;
+	friend class mThreadRunning<class PathWalker>;
+	friend class mThreadWaiting<class PathWalker>;
+	
 	friend class mThread<class Alignement>;
+	friend class mThreadRunning<class Alignement>;
+	friend class mThreadWaiting<class Alignement>;
+	
+	friend class mThread<class AlignementGet>;
+	friend class mThreadRunning<class AlignementGet>;
+	friend class mThreadWaiting<class AlignementGet>;
+	
+	friend class mThread<class AlignementWrite>;
+	friend class mThreadRunning<class AlignementWrite>;
+	friend class mThreadWaiting<class AlignementWrite>;
+	
 	friend class mThread<class pTest>;
+	friend class mThreadRunning<class pTest>;
+	friend class mThreadWaiting<class pTest>;
 };
 
 #endif

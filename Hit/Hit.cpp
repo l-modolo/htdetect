@@ -42,27 +42,27 @@ Hit::Hit(int id, string const & name, int start, int stop) : HitControler::HitCo
 
 Hit::~Hit()
 {
-	for(auto & it : Hit_holes)
-	{
-		delete it;
-	}
+//	for(auto & it : Hit_holes)
+//	{
+//		delete it;
+//	}
 	Hit_number--;
 }
 
-bool Hit::hole(int start, int stop)
-{
-	if(Hit_start <= start && stop <= Hit_stop)
-	{
-		for(auto hole : Hit_holes)
-		{
-			if(hole->over(start, stop))
-			{
-				return true;
-			}
-		}
-	}
-	return false;
-}
+//bool Hit::hole(int start, int stop)
+//{
+//	if(Hit_start <= start && stop <= Hit_stop)
+//	{
+//		for(auto hole : Hit_holes)
+//		{
+//			if(hole->over(start, stop))
+//			{
+//				return true;
+//			}
+//		}
+//	}
+//	return false;
+//}
 
 Hit Hit::operator+(Hit const& Hitbis)
 {
@@ -79,34 +79,34 @@ Hit Hit::operator+(Hit const& Hitbis)
 		stop = Hit_stop;
 	
 	Hit result = Hit(name(), start, stop);
-	auto it = Hit_holes.begin();
-	auto itbis = Hitbis.Hit_holes.begin();
-	
-	if(!Hit_holes.empty() || Hitbis.Hit_holes.empty())
-	{
-		while(it != Hit_holes.end() && itbis != Hitbis.Hit_holes.end())
-		{
-			while((**itbis) < (**it) && itbis != Hitbis.Hit_holes.end())
-			{
-				itbis++;
-			}
-			if((**itbis).in(**it) || (**it).in(**itbis))
-			{
-				if((**it).start() < (**itbis).start())
-					hole_start = (**itbis).start();
-				else
-					hole_start = (**it).start();
-				
-				if((**it).stop() < (**itbis).stop())
-					hole_stop = (**it).stop();
-				else
-					hole_stop = (**itbis).stop();
-				
-				result.add_hole(HitControler("", hole_start, hole_stop));
-			}
-			it++;
-		}
-	}
+//	auto it = Hit_holes.begin();
+//	auto itbis = Hitbis.Hit_holes.begin();
+//	
+//	if(!Hit_holes.empty() || Hitbis.Hit_holes.empty())
+//	{
+//		while(it != Hit_holes.end() && itbis != Hitbis.Hit_holes.end())
+//		{
+//			while((**itbis) < (**it) && itbis != Hitbis.Hit_holes.end())
+//			{
+//				itbis++;
+//			}
+//			if((**itbis).in(**it) || (**it).in(**itbis))
+//			{
+//				if((**it).start() < (**itbis).start())
+//					hole_start = (**itbis).start();
+//				else
+//					hole_start = (**it).start();
+//				
+//				if((**it).stop() < (**itbis).stop())
+//					hole_stop = (**it).stop();
+//				else
+//					hole_stop = (**itbis).stop();
+//				
+//				result.add_hole(HitControler("", hole_start, hole_stop));
+//			}
+//			it++;
+//		}
+//	}
 	return result;
 }
 
@@ -117,20 +117,20 @@ Hit Hit::operator-(Hit const& Hitbis)
 	
 	Hit result = Hit(name(), Hit_start, Hit_stop);
 	
-	for(auto & it : Hit_holes)
-	{
-		result.Hit_holes.push_back(new HitControler(*it));
-	}
-	
-	if(!Hit_holes.empty() || Hitbis.Hit_holes.empty())
-	{
-		for(auto hole: Hitbis.Hit_holes)
-		{
-			hole_stop = hole->start();
-			result.add_hole(new HitControler("", hole_start, hole_stop));
-			hole_start = hole->stop();
-		}
-	}
+//	for(auto & it : Hit_holes)
+//	{
+//		result.Hit_holes.push_back(new HitControler(*it));
+//	}
+//	
+//	if(!Hit_holes.empty() || Hitbis.Hit_holes.empty())
+//	{
+//		for(auto hole: Hitbis.Hit_holes)
+//		{
+//			hole_stop = hole->start();
+//			result.add_hole(new HitControler("", hole_start, hole_stop));
+//			hole_start = hole->stop();
+//		}
+//	}
 	
 	return result;
 }
@@ -145,45 +145,45 @@ Hit& Hit::operator+=(Hit const& Hitbis)
 	if(Hit_stop < Hitbis.stop())
 		Hit_stop = Hitbis.stop();
 	
-	auto it = Hit_holes.begin();
-	auto itbis = Hitbis.Hit_holes.begin();
-	
-	if(!Hit_holes.empty() && !Hitbis.Hit_holes.empty())
-	{
-		while(it != Hit_holes.end() && itbis != Hitbis.Hit_holes.end())
-		{
-			while((**itbis) < (**it) && itbis != Hitbis.Hit_holes.end())
-			{
-				itbis++;
-			}
-			if((**itbis).in(**it) || (**it).in(**itbis))
-			{
-				if((**it).start() < (**itbis).start())
-					hole_start = (**itbis).start();
-				else
-					hole_start = (**it).start();
-				
-				if((**it).stop() < (**itbis).stop())
-					hole_stop = (**it).stop();
-				else
-					hole_stop = (**itbis).stop();
-				
-				add_hole(new HitControler("", hole_start, hole_stop));
-			}
-			it++;
-		}
-	}
-	else
-	{
-		if(Hit_holes.empty() && !Hitbis.Hit_holes.empty())
-		{
-			Hit_holes = Hitbis.Hit_holes;
-			for(auto & it : Hitbis.Hit_holes)
-			{
-				Hit_holes.push_back(new HitControler(*it));
-			}
-		}
-	}
+//	auto it = Hit_holes.begin();
+//	auto itbis = Hitbis.Hit_holes.begin();
+//	
+//	if(!Hit_holes.empty() && !Hitbis.Hit_holes.empty())
+//	{
+//		while(it != Hit_holes.end() && itbis != Hitbis.Hit_holes.end())
+//		{
+//			while((**itbis) < (**it) && itbis != Hitbis.Hit_holes.end())
+//			{
+//				itbis++;
+//			}
+//			if((**itbis).in(**it) || (**it).in(**itbis))
+//			{
+//				if((**it).start() < (**itbis).start())
+//					hole_start = (**itbis).start();
+//				else
+//					hole_start = (**it).start();
+//				
+//				if((**it).stop() < (**itbis).stop())
+//					hole_stop = (**it).stop();
+//				else
+//					hole_stop = (**itbis).stop();
+//				
+//				add_hole(new HitControler("", hole_start, hole_stop));
+//			}
+//			it++;
+//		}
+//	}
+//	else
+//	{
+//		if(Hit_holes.empty() && !Hitbis.Hit_holes.empty())
+//		{
+//			Hit_holes = Hitbis.Hit_holes;
+//			for(auto & it : Hitbis.Hit_holes)
+//			{
+//				Hit_holes.push_back(new HitControler(*it));
+//			}
+//		}
+//	}
 	
 	return *this;
 }
@@ -219,20 +219,20 @@ Hit& Hit::operator-=(Hit const& Hitbis)
 	
 	Hit result = Hit(name(), Hit_start, Hit_stop);
 	
-	for(auto & it : Hit_holes)
-	{
-		result.Hit_holes.push_back(new HitControler(*it));
-	}
-	
-	if(!Hit_holes.empty() || Hitbis.Hit_holes.empty())
-	{
-		for(auto hole: Hitbis.Hit_holes)
-		{
-			hole_stop = hole->start();
-			result.add_hole(HitControler("", hole_start, hole_stop));
-			hole_start = hole->stop();
-		}
-	}
+//	for(auto & it : Hit_holes)
+//	{
+//		result.Hit_holes.push_back(new HitControler(*it));
+//	}
+//	
+//	if(!Hit_holes.empty() || Hitbis.Hit_holes.empty())
+//	{
+//		for(auto hole: Hitbis.Hit_holes)
+//		{
+//			hole_stop = hole->start();
+//			result.add_hole(HitControler("", hole_start, hole_stop));
+//			hole_start = hole->stop();
+//		}
+//	}
 	
 	*this = result;
 	return *this;
@@ -245,62 +245,62 @@ bool Hit::operator()(const HitControler* a, const HitControler* b)
 
 void Hit::sort()
 {
-	Hit_holes.sort(Hit());
+//	Hit_holes.sort(Hit());
 }
 
-void Hit::add_hole(HitControler hole)
-{
-	if(hole.start() <= Hit_start)
-	{
-		Hit_start = hole.stop();
-	}
-	else
-	{
-		if(Hit_stop <= hole.stop())
-		{
-			Hit_stop = hole.start();
-		}
-		else
-		{
-			try
-			{
-				Hit_holes.push_back(new HitControler(hole));
-				Hit::sort();
-			}
-			catch(exception const& e)
-			{
-				cerr << "ERROR : " << e.what() << " in : void Hit::add_hole(HitControler hole)" << endl;
-			}
-		}
-	}
-}
+//void Hit::add_hole(HitControler hole)
+//{
+//	if(hole.start() <= Hit_start)
+//	{
+//		Hit_start = hole.stop();
+//	}
+//	else
+//	{
+//		if(Hit_stop <= hole.stop())
+//		{
+//			Hit_stop = hole.start();
+//		}
+//		else
+//		{
+//			try
+//			{
+//				Hit_holes.push_back(new HitControler(hole));
+//				Hit::sort();
+//			}
+//			catch(exception const& e)
+//			{
+//				cerr << "ERROR : " << e.what() << " in : void Hit::add_hole(HitControler hole)" << endl;
+//			}
+//		}
+//	}
+//}
 
-void Hit::add_hole(HitControler* hole)
-{
-	if(hole->start() <= Hit_start)
-	{
-		Hit_start = hole->stop();
-	}
-	else
-	{
-		if(Hit_stop <= hole->stop())
-		{
-			Hit_stop = hole->start();
-		}
-		else
-		{
-			try
-			{
-				Hit_holes.push_back(hole);
-				Hit::sort();
-			}
-			catch(exception const& e)
-			{
-				cerr << "ERROR : " << e.what() << " in : void Hit::add_hole(HitControler* hole)" << endl;
-			}
-		}
-	}
-}
+//void Hit::add_hole(HitControler* hole)
+//{
+//	if(hole->start() <= Hit_start)
+//	{
+//		Hit_start = hole->stop();
+//	}
+//	else
+//	{
+//		if(Hit_stop <= hole->stop())
+//		{
+//			Hit_stop = hole->start();
+//		}
+//		else
+//		{
+//			try
+//			{
+//				Hit_holes.push_back(hole);
+//				Hit::sort();
+//			}
+//			catch(exception const& e)
+//			{
+//				cerr << "ERROR : " << e.what() << " in : void Hit::add_hole(HitControler* hole)" << endl;
+//			}
+//		}
+//	}
+//}
 
 void Hit::display(ostream &stream) const
 {

@@ -30,9 +30,11 @@ mThread<T>::mThread(int number) : mThread_waiting(number*2)
 template <typename T>
 mThread<T>::~mThread()
 {
+	mThreadWaiting<T>::set_stop(true);
 	for(int i = 0; i < mThread_running.size(); i++)
 	{
-		mThread_running.at(i).join();
+		if(mThread_running.at(i).joinable())
+			mThread_running.at(i).join();
 	}
 }
 
@@ -46,5 +48,9 @@ template <typename T>
 void mThread<T>::stop()
 {
 	mThreadWaiting<T>::set_stop(true);
+	for(int i = 0; i < mThread_running.size(); i++)
+	{
+		mThread_running.at(i).join();
+	}
 }
 
