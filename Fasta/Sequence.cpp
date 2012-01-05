@@ -92,6 +92,11 @@ long long int Sequence::pos(int from) const
 {
 	try
 	{
+		if(!Sequence::in(from))
+		{
+			from = 0;
+			throw logic_error("Position not in the sequence");
+		}
 		if(Sequence_line_size != 0)
 		{
 			return Sequence_start+from+(from/Sequence_line_size)+1;

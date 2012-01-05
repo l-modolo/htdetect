@@ -75,18 +75,20 @@ string* FastaThread::find()
 {
 	Sequence s = FastaThread::findSeq();
 	string* seq = new string();
-	long long int stop;
-	if(s.stop() < s.pos(FastaThread_hit.stop()))
-	{
-		stop = s.stop();
-	}
-	else
-	{
-		stop = s.pos(FastaThread_hit.stop());
-	}
-	
 	try
 	{
+		long long int stop;
+		if(s.stop() < s.pos(FastaThread_hit.stop()))
+		{
+			throw logic_error("Hit not strictly in Sequence");
+			stop = s.stop();
+		}
+		else
+		{
+			stop = s.pos(FastaThread_hit.stop());
+		}
+		
+		
 		ifstream fFasta(FastaThread_fasta.Fasta_file);
 		
 		if(fFasta)

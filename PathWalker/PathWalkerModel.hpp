@@ -43,9 +43,10 @@ class PathWalkerModel
 	int query_id_size();
 	int query_number_size(int i);
 	int query_id_size(int i);
+	
+	
 	vector<unsigned int> & query_number(int i);
 	vector<unsigned int> & query_id(int i);
-	
 	bool PathWalker_verbose;
 	
 	double PathWalker_chromosome_identity;

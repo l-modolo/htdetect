@@ -55,7 +55,7 @@ void PathWalkerControler::rm_overlapping_Path(int thread_number)
 	{
 		overallsize += PathWalker_PathList.at(i).size();
 	}
-	cout << "size " << overallsize << "/" << PathWalker_PathList.size() << "/" << query_number_size() << endl;
+//	cout << "size " << overallsize << "/" << PathWalker_PathList.size() << "/" << query_number_size() << endl;
 	
 	
 	for(int i = 0; i < query_number_size(); i++)
@@ -100,7 +100,7 @@ void PathWalkerControler::rm_overlapping_Path(int thread_number)
 	{
 		overallsize += PathWalker_PathList.at(i).size();
 	}
-	cout << "size " << overallsize << "/" << PathWalker_PathList.size() << "/" << query_number_size() << endl;
+//	cout << "size " << overallsize << "/" << PathWalker_PathList.size() << "/" << query_number_size() << endl;
 	
 	for(int i = query_number_size()-1; 0 <= i; i--)
 	{
@@ -144,6 +144,6 @@ void PathWalkerControler::rm_overlapping_Path(int thread_number)
 	{
 		overallsize += PathWalker_PathList.at(i).size();
 	}
-	cout << "size " << overallsize << "/" << PathWalker_PathList.size() << "/" << query_number_size() << endl;
+//	cout << "size " << overallsize << "/" << PathWalker_PathList.size() << "/" << query_number_size() << endl;
 }
 
