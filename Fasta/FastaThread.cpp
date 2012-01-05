@@ -80,8 +80,10 @@ string* FastaThread::find()
 		long long int stop;
 		if(s.stop() < s.pos(FastaThread_hit.stop()))
 		{
-			throw logic_error("Hit not strictly in Sequence");
+			stringstream ss;
+			ss << "Hit : " << FastaThread_hit << " not strictly in Sequence : "<< s;
 			stop = s.stop();
+			throw logic_error(ss.str());
 		}
 		else
 		{
@@ -113,6 +115,7 @@ string* FastaThread::find()
 	catch(exception const& e)
 	{
 		cerr << "ERROR : " << e.what() << " in string* FastaThread::find()" << endl;
+		exit(-1);
 	}
 	
 	if(!FastaThread_hit.sens())

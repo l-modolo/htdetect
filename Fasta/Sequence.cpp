@@ -85,21 +85,16 @@ int Sequence::lines()
 
 long long int Sequence::size() const
 {
-	return Sequence_stop-Sequence_start;
+	return Sequence_stop-Sequence_start-(Sequence_stop-Sequence_start)/Sequence_line_size;
 }
 
 long long int Sequence::pos(int from) const
 {
 	try
 	{
-		if(!Sequence::in(from))
-		{
-			from = 0;
-			throw logic_error("Position not in the sequence");
-		}
 		if(Sequence_line_size != 0)
 		{
-			return Sequence_start+from+(from/Sequence_line_size)+1;
+			return Sequence_start+from+(from/Sequence_line_size);
 		}
 		else
 		{
@@ -109,13 +104,13 @@ long long int Sequence::pos(int from) const
 	catch(exception const& e)
 	{
 		cerr << "ERROR : " << e.what() << " in long long int Sequence::pos(int from) const" << endl;
-		return Sequence_start+from+(from/50)+1;
+		return Sequence_start+from+(from/50);
 	}
 }
 
 bool Sequence::in(long long int pos) const
 {
-	if(1 <= pos && pos <= Sequence::size())
+	if(0 <= pos && pos <= Sequence::size())
 	{
 		return true;
 	}

@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define DEF_FastaThread
 
 #include "../Hit/Hit.hpp"
+#include <sstream>
 #include "Fasta.hpp"
 
 using namespace std;

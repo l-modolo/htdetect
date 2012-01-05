@@ -49,6 +49,8 @@ class Hit : public HitControler
 	Hit& operator+=(Hit const& Hitbis);
 	Hit& operator-=(Hit const& Hitbis);
 	void merge(Hit const& hitbis);
+	void flip();
+	
 	
 	bool neighbor(Hit const&  hitbis) const;
 	

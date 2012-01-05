@@ -99,4 +99,12 @@ void HitListControler::remove_overlapping()
 	}
 }
 
+void HitListControler::flip_all()
+{
+	for(auto & it : HitList_hits)
+	{
+		it->flip();
+	}
+}
+
 

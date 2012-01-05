@@ -197,6 +197,14 @@ void Hit::merge(Hit const& hitbis)
 		Hit_stop = hitbis.stop();
 }
 
+void Hit::flip()
+{
+	if(Hit_sens)
+		Hit_sens = false;
+	else
+		Hit_sens = true;
+}
+
 bool Hit::neighbor(Hit const& hitbis) const
 {
 	if(this != &hitbis)

@@ -54,8 +54,12 @@ void BlastControler::remove_overlapping()
 	{
 		if((*it)->over(**it_next))
 		{
-			(*it)->merge(**it_next);
+			if((*it)->sens() != (*it_next)->sens())
+			{
+				Blast_target.at((*it_next)->id())->flip_all();
+			}
 			
+			(*it)->merge(**it_next);
 			Blast_target.at((*it)->id())->merge(*Blast_target.at((*it_next)->id()));
 			
 			Blast_target.at((*it_next)->id())->clear_nodelete();
@@ -95,7 +99,7 @@ void BlastControler::remove_overlapping()
 		
 		progress.inc();
 	}
-	if(Blast_verbose){ cout << "Hits number : " << size() << endl;}
+	if(Blast_verbose){ cout << endl << "Hits number : " << size() << endl;}
 }
 
 void parallel_remove_overlapping()

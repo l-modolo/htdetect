@@ -39,6 +39,8 @@ class HitListControler : public HitListModel
 	bool operator()(const Hit* a, const Hit* b);
 	void sort();
 	void remove_overlapping();
+	
+	void flip_all();
 };
 
 

@@ -78,7 +78,7 @@ FastaControler.o: Fasta/FastaControler.cpp FastaModel.o
 FastaModel.o: Fasta/FastaModel.cpp Sequence.o
 	$(CC) -c Fasta/FastaModel.cpp $(CFLAGS)
 
-FastaThread.o: Fasta/FastaThread.cpp Sequence.o
+FastaThread.o: Fasta/FastaThread.cpp Sequence.o Hit.o
 	$(CC) -c Fasta/FastaThread.cpp $(CFLAGS)
 
 Sequence.o: Fasta/Sequence.cpp
