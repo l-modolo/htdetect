@@ -73,6 +73,13 @@ bool mThreadWaiting<T>::stop()
 }
 
 template <typename T>
+bool mThreadWaiting<T>::stop_all()
+{
+	mThread_full_cond.notify_all();
+	mThread_empty_cond.notify_all();
+}
+
+template <typename T>
 void mThreadWaiting<T>::set_stop(bool run)
 {
 	unique_lock<mutex> lk(mThread_onebyone);
@@ -204,6 +211,6 @@ int mThreadWaiting<T>::size()
 	if(mThread_run)
 		return mThread_waiting.size();
 	else
-		return 1;
+		return mThread_size;
 }
 

@@ -22,7 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 AlignementWrite::AlignementWrite(Fasta* fasta_a, Hit* hit_a, Fasta* fasta_b, Hit* hit_b, string* first_seq, string* second_seq, string* muscle_path, int thread_id , string* tmp_rep, mutex* controler) : Alignement(fasta_a, hit_a, fasta_b, hit_b, muscle_path, thread_id , tmp_rep)
 {
 	Alignement_controler = controler;
-	Alignement_controler->lock();
+//	Alignement_controler->lock();
 	
 	Alignement_first_seq = first_seq;
 	Alignement_second_seq = second_seq;

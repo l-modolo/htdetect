@@ -152,9 +152,12 @@ double AlignementGet::compute_identity()
 	{
 		for(int i = 0 ; i < size ; i++)
 		{
-			if(Alignement_first_seq->at(i) == 'N' || Alignement_second_seq->at(i) == 'N' || Alignement_first_seq->at(i) == '-' || Alignement_second_seq->at(i) == '-'){
+			if(Alignement_first_seq->at(i) == 'N' || Alignement_second_seq->at(i) == 'N' || Alignement_first_seq->at(i) == '-' || Alignement_second_seq->at(i) == '-')
+			{
 				gap++;
-			}else{
+			}
+			else
+			{
 				if(Alignement_first_seq->at(i) != Alignement_second_seq->at(i)){
 					diff++;
 				}
@@ -171,9 +174,11 @@ double AlignementGet::compute_identity()
 	}
 	catch(exception const& e)
 	{
+		cerr << endl;
 		cerr << "ERROR : " << e.what() << " in double AlignementGet::identity()" << endl;
-		cerr << *Alignement_first_seq << endl;
-		cerr << *Alignement_second_seq << endl;
+		cerr << *Alignement_hit_a << "\t" << *Alignement_hit_b << endl;
+//		cerr << *Alignement_first_seq << endl;
+//		cerr << *Alignement_second_seq << endl;
 	}
 	delete Alignement_first_seq;
 	delete Alignement_second_seq;

@@ -45,9 +45,10 @@ void HitListControler::remove_overlapping()
 {
 	if(size() > 1)
 	{
-		map<string, list<Hit*>* > by_chromo;
 		try
 		{
+			map<string, list<Hit*>* > by_chromo;
+			
 			for(auto & it : HitList_hits)
 			{
 				if(by_chromo.find(it->name()) == by_chromo.end())
@@ -65,7 +66,7 @@ void HitListControler::remove_overlapping()
 				hit_next++;
 				while(hit != (*it).second->end() && hit_next != (*it).second->end())
 				{
-					if((*hit)->over(**hit_next))
+					if((*hit)->over(**hit_next) && (*hit)->sens() == (*hit_next)->sens())
 					{
 						(*hit)->merge(**hit_next);
 						delete *hit_next;
@@ -79,22 +80,22 @@ void HitListControler::remove_overlapping()
 					}
 				}
 			}
+			for(auto & it : by_chromo)
+			{
+				for(auto & itbis : *(it.second))
+				{
+					if(itbis != nullptr)
+					{
+						add_hit(itbis);
+						itbis = nullptr;
+					}
+				}
+				delete it.second;
+			}
 		}
 		catch(exception const& e)
 		{
 			cerr << "ERROR : " << e.what() << " in void HitListControler::remove_overlapping()" << endl;
-		}
-		for(auto & it : by_chromo)
-		{
-			for(auto & itbis : *(it.second))
-			{
-				if(itbis != nullptr)
-				{
-					add_hit(itbis);
-					itbis = nullptr;
-				}
-			}
-			delete it.second;
 		}
 	}
 }

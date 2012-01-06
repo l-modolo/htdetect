@@ -50,9 +50,7 @@ writeSeq::writeSeq(string output)
 			writeSeq_qoutputf.open(writeSeq_output+".query");
 			writeSeq_toutputf.open(writeSeq_output+".target");
 			
-			if(writeSeq_qoutputf && writeSeq_toutputf)
-			{}
-			else
+			if(!writeSeq_qoutputf || !writeSeq_toutputf)
 				throw logic_error("Can not open "+writeSeq_output+".query"+" or "+writeSeq_output+".target");
 			
 			writeSeq::run();
@@ -71,7 +69,8 @@ writeSeq::writeSeq(string output)
 writeSeq::~writeSeq()
 {
 	set_run(false);
-	writeSeq_thread.join();
+	if(writeSeq_thread.joinable())
+		writeSeq_thread.join();
 	
 	writeSeq_qoutputf.close();
 	writeSeq_toutputf.close();
@@ -80,6 +79,7 @@ writeSeq::~writeSeq()
 
 void writeSeq::stop()
 {
+//	cout << writeSeq_qhit.size() << "\t" << writeSeq_thit.size() << "\t" << writeSeq_query.size() << "\t" << writeSeq_target.size() << "\t" << writeSeq_controler.size();
 	set_run(false);
 	writeSeq_thread.join();
 }
@@ -90,7 +90,7 @@ void writeSeq::add(Hit* qhit, string* query, Hit* thit, string* target, mutex* c
 	{
 		unique_lock<mutex> full(writeSeq_full);
 		
-		while(writeSeq::size() >= 30)
+		while(writeSeq::size() >= 1000)
 		{
 			writeSeq_full_cond.wait(full);
 		}
@@ -125,12 +125,12 @@ void writeSeq::write()
 		
 		unique_lock<mutex> empty(writeSeq_empty);
 		
-		while(writeSeq::size() <= 0 && writeSeq::get_run())
+		while(writeSeq_query.size() <= 0 && writeSeq::get_run())
 		{
 			writeSeq_empty_cond.wait(empty);
 		}
 		
-		if(writeSeq::size() > 0)
+		if(writeSeq_query.size() > 0)
 		{
 			writeSeq::pop_front();
 		}
@@ -197,7 +197,7 @@ void writeSeq::thread_run()
 {
 	try
 	{
-		while(writeSeq::get_run() || writeSeq::size() > 0)
+		while(writeSeq::get_run() || writeSeq_query.size() > 0)
 		{
 			writeSeq::write();
 		}

@@ -41,6 +41,7 @@ class mThreadWaiting
 	T* get();
 	
 	static bool stop();
+	static bool stop_all();
 	static void set_stop(bool run);
 	static bool run();
 	

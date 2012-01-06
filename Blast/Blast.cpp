@@ -54,6 +54,7 @@ void Blast::toFasta(string output, int thread_number, string tmp_rep)
 			t_number = thread_number;
 		}
 		mThread<AlignementWrite> alignements_run(t_number);
+		writeSeq writing_run(output);
 		
 		string* qseq;
 		string* tseq;
@@ -73,14 +74,18 @@ void Blast::toFasta(string output, int thread_number, string tmp_rep)
 				tseq = new string;
 				controler = new mutex;
 				
+				controler->lock();
+				
 //				cout << i << "/" << size() << " " << j << "/" << hit_target_size(i) << endl;
 				
 				alignements_run.add(AlignementWrite(Blast_fasta_a, qhit, Blast_fasta_b, thit, qseq, tseq, &Blast_muscle_path, thit->id(), &tmp_rep, controler));
+				writing_run.add(qhit, qseq, thit, tseq, controler);
 				
 				progress.inc();
 			}
 		}
 		alignements_run.stop();
+		writing_run.stop();
 	}
 }
 
