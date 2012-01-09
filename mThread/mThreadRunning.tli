@@ -54,16 +54,9 @@ void mThreadRunning<T>::thread_run()
 		
 		while(x != nullptr && x != x_prev)
 		{
-			if(x != nullptr && x != x_prev)
-			{
-				(*x)();
-			}
+			(*x)();
 			x_prev = x;
 			x = mThread_todo->get(); // mThread_todo->get() is supposed to block until todo is not empty
-		}
-		if(x != nullptr && x != x_prev)
-		{
-			(*x)();
 		}
 	}
 	catch(exception const& e)

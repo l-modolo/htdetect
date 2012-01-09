@@ -179,7 +179,7 @@ T* mThreadWaiting<T>::pop_front()
 		if(mThread_stop_signal)
 		{
 			mThread_run = false;
-			mThread_full_cond.notify_all();
+			mThread_empty_cond.notify_all();
 		}
 		
 		T* value;
