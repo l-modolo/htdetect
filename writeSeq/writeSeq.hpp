@@ -43,7 +43,7 @@ class writeSeq
 	~writeSeq();
 	
 	void add(Hit* qhit, string* query, Hit* thit, string* target, mutex* controler);
-	void write();
+	bool write();
 	
 	void stop();
 	
@@ -51,13 +51,12 @@ class writeSeq
 	
 	protected:
 	void push_back(Hit qhit, string* query, Hit thit, string* target, mutex* controler);
-	void pop_front();
+	bool pop_front();
 	
 	void run();
 	void thread_run();
 	
 	void set_run(bool run);
-	bool get_run();
 	
 	static bool writeSeq_init;
 	static bool writeSeq_run;

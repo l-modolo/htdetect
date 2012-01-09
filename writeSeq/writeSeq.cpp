@@ -84,6 +84,38 @@ void writeSeq::stop()
 	writeSeq_thread.join();
 }
 
+void writeSeq::set_run(bool run)
+{
+	unique_lock<mutex> lk(writeSeq_onebyone);
+	writeSeq_run = run;
+	if(!run)
+		writeSeq_empty_cond.notify_all();
+}
+
+void writeSeq::run()
+{
+	try
+	{
+		writeSeq_thread = thread(&writeSeq::thread_run, this );
+	}
+	catch(exception const& e)
+	{
+		cerr << "ERROR : " << e.what() << " in : void writeSeq::run()" << endl;
+	}
+}
+
+void writeSeq::thread_run()
+{
+	try
+	{
+		while(writeSeq::write()){}
+	}
+	catch(exception const& e)
+	{
+		cerr << "ERROR : " << e.what() << " in : void writeSeq::thread_run()" << endl;
+	}
+}
+
 void writeSeq::add(Hit* qhit, string* query, Hit* thit, string* target, mutex* controler)
 {
 	try
@@ -104,6 +136,29 @@ void writeSeq::add(Hit* qhit, string* query, Hit* thit, string* target, mutex* c
 	}
 }
 
+bool writeSeq::write()
+{
+	try
+	{
+//		cout << "w" << writeSeq_thit.front().id() << endl;
+		
+		unique_lock<mutex> empty(writeSeq_empty);
+		
+		while(writeSeq::size() <= 0)
+		{
+			writeSeq_empty_cond.wait(empty);
+		}
+		if(!writeSeq_query.empty())
+			writeSeq_controler.front()->lock();
+		return writeSeq::pop_front();
+	}
+	catch(exception const& e)
+	{
+		cerr << "ERROR : " << e.what() << " in : T writeSeqWaiting<T>::get()" << endl;
+		exit(-1);
+	}
+}
+
 void writeSeq::push_back(Hit qhit, string* query, Hit thit, string* target, mutex* controler)
 {
 	unique_lock<mutex> lk(writeSeq_onebyone);
@@ -114,113 +169,55 @@ void writeSeq::push_back(Hit qhit, string* query, Hit thit, string* target, mute
 	writeSeq_target.push_back(target);
 	writeSeq_controler.push_back(controler);
 	
-	writeSeq_empty_cond.notify_one();
+	writeSeq_empty_cond.notify_all();
 }
 
-void writeSeq::write()
-{
-	try
-	{
-//		cout << "w" << writeSeq_thit.front().id() << endl;
-		
-		unique_lock<mutex> empty(writeSeq_empty);
-		
-		while(writeSeq_query.size() <= 0 && writeSeq::get_run())
-		{
-			writeSeq_empty_cond.wait(empty);
-		}
-		
-		if(writeSeq_query.size() > 0)
-		{
-			writeSeq::pop_front();
-		}
-	}
-	catch(exception const& e)
-	{
-		cerr << "ERROR : " << e.what() << " in : T writeSeqWaiting<T>::get()" << endl;
-		exit(-1);
-	}
-}
-
-void writeSeq::pop_front()
+bool writeSeq::pop_front()
 {
 	unique_lock<mutex> lk(writeSeq_onebyone);
 	try
 	{
-			writeSeq_controler.front()->lock();
+			if(!writeSeq_query.empty())
+			{
+				writeSeq_qoutputf << ">" << writeSeq_qhit.front() << "\t" << writeSeq_thit.front() << endl;
+				writeSeq_qoutputf << *(writeSeq_query.front()) << endl;
+				
+				writeSeq_toutputf << ">" << writeSeq_qhit.front() << "\t" << writeSeq_thit.front() << endl;
+				writeSeq_toutputf << *(writeSeq_target.front()) << endl;
+				
+				delete writeSeq_query.front();
+				delete writeSeq_target.front();
+				
+				writeSeq_controler.front()->unlock();
+				delete writeSeq_controler.front();
+				
+				writeSeq_qhit.pop_front();
+				writeSeq_thit.pop_front();
+				writeSeq_query.pop_front();
+				writeSeq_target.pop_front();
+				writeSeq_controler.pop_front();
+			}
+			writeSeq_full_cond.notify_all();
 			
-			writeSeq_qoutputf << ">" << writeSeq_qhit.front() << "\t" << writeSeq_thit.front() << endl;
-			writeSeq_qoutputf << *(writeSeq_query.front()) << endl;
-			
-			writeSeq_toutputf << ">" << writeSeq_qhit.front() << "\t" << writeSeq_thit.front() << endl;
-			writeSeq_toutputf << *(writeSeq_target.front()) << endl;
-			
-			delete writeSeq_query.front();
-			delete writeSeq_target.front();
-			
-			writeSeq_controler.front()->unlock();
-			delete writeSeq_controler.front();
-			
-			writeSeq_qhit.pop_front();
-			writeSeq_thit.pop_front();
-			writeSeq_query.pop_front();
-			writeSeq_target.pop_front();
-			writeSeq_controler.pop_front();
+			if(writeSeq_query.empty() && !writeSeq_run)
+				return false;
+			else
+				return true;
 	}
 	catch(exception const& e)
 	{
 		cerr << "ERROR : " << e.what() << endl;
 	}
-	
-	writeSeq_full_cond.notify_one();
+	return false;
 }
 
 int writeSeq::size()
 {
 	unique_lock<mutex> lk(writeSeq_onebyone);
-	return writeSeq_query.size();
-}
-
-void writeSeq::run()
-{
-	try
-	{
-		writeSeq_thread = thread(&writeSeq::thread_run, this );
-	}
-	catch(exception const& e)
-	{
-		cerr << "ERROR : " << e.what() << " in : void writeSeq::run()" << endl;
-	}
-}
-
-void writeSeq::thread_run()
-{
-	try
-	{
-		while(writeSeq::get_run() || writeSeq_query.size() > 0)
-		{
-			writeSeq::write();
-		}
-	}
-	catch(exception const& e)
-	{
-		cerr << "ERROR : " << e.what() << " in : void writeSeq::thread_run()" << endl;
-	}
-}
-
-void writeSeq::set_run(bool run)
-{
-	unique_lock<mutex> lk(writeSeq_onebyone);
-	writeSeq_run = run;
-	if(!run)
-	{
-		writeSeq_empty_cond.notify_one();
-	}
-}
-bool writeSeq::get_run()
-{
-	unique_lock<mutex> lk(writeSeq_onebyone);
-	return writeSeq_run;
+	if(writeSeq_run)
+		return writeSeq_query.size();
+	else
+		return 10;
 }
 
 

@@ -62,7 +62,8 @@ void mThreadWaiting<T>::set_run(bool run)
 {
 	unique_lock<mutex> lk(mThread_onebyone);
 	mThread_run = run;
-	mThread_empty_cond.notify_one();
+	if(!run)
+		mThread_empty_cond.notify_one();
 }
 
 template <typename T>
