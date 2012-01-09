@@ -37,6 +37,7 @@ PathWalker::~PathWalker()
 
 vector<HitList*>* PathWalker::result()
 {
+	// we transform the pathwalker object to a hitlist vector
 	vector<HitList*>* result;
 	result = new vector<HitList*>;
 	for(int i = 0; i < query_number_size(); i++)

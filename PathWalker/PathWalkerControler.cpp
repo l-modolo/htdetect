@@ -25,9 +25,10 @@ void PathWalkerControler::compute_pvalue(int thread_number)
 {
 	try
 	{
+		// we compute the p-value for each path (as an hit sequences)
 		mThread<Path> alignements_run(thread_number);
 		ProgressBar progress(1, 3, 0,PathWalker_PathList.size(), PathWalker_verbose);
-	
+		
 		for(int i = 0; i< PathWalker_PathList.size(); i++)
 		{
 			alignements_run.add(PathWalker_PathList.at(i));
@@ -55,14 +56,16 @@ void PathWalkerControler::rm_overlapping_Path(int thread_number)
 	{
 		overallsize += PathWalker_PathList.at(i).size();
 	}
-//	cout << "size " << overallsize << "/" << PathWalker_PathList.size() << "/" << query_number_size() << endl;
 	
-	
+	// for a giver position we only keep the path with the loest p-value
 	for(int i = 0; i < query_number_size(); i++)
 	{
 		if(query_number_size(i) > 1)
 		{
 			min_pvalue = 2.0;
+			// we use the p-value and not the statistic because we work on many différent poisson distribution
+			// as p-value are borned to 1 in case of multiples path with a p-value = 1, we choose the first one (which can change between différent runs)
+			// but is does't mater for the study as by definition we are going to discard the hit with a p-value egal to one.
 			query_to_keep.clear();
 			id_to_keep.clear();
 			
@@ -100,8 +103,8 @@ void PathWalkerControler::rm_overlapping_Path(int thread_number)
 	{
 		overallsize += PathWalker_PathList.at(i).size();
 	}
-//	cout << "size " << overallsize << "/" << PathWalker_PathList.size() << "/" << query_number_size() << endl;
 	
+	// we do the same thing in reverse order to be sure to have no doublon left
 	for(int i = query_number_size()-1; 0 <= i; i--)
 	{
 		if(query_number_size(i) > 1)
@@ -144,6 +147,5 @@ void PathWalkerControler::rm_overlapping_Path(int thread_number)
 	{
 		overallsize += PathWalker_PathList.at(i).size();
 	}
-//	cout << "size " << overallsize << "/" << PathWalker_PathList.size() << "/" << query_number_size() << endl;
 }
 

@@ -26,6 +26,8 @@ void PathControler::compute_pvalue()
 	{
 		if(set())
 		{
+			// as we already have the identity and the size of each hit in the path
+			// we can easylly compute the p-value for the whole path
 			Path_size = 0.0;
 			double identity_total = 0.0;
 			

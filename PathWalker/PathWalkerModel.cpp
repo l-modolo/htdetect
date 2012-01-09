@@ -32,6 +32,8 @@ PathWalkerModel::~PathWalkerModel()
 
 void PathWalkerModel::add(unsigned int query, Hit* hit_query, Hit* hit_target)
 {
+	// we try to add the hit to a previous path if possible
+	// elsewise we add it to a new path
 	int id = test_to_path(query, hit_query, hit_target);
 	add_to_path(id, query, hit_query, hit_target);
 }

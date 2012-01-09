@@ -1,6 +1,6 @@
 CC = g++
-#CFLAGS = -std=c++0x -pthread -I/usr/local/include -L/usr/local/lib
-CFLAGS = -std=c++0x -pthread -I/usr/local/include -L/usr/local/lib -g -DNDEBUG
+CFLAGS = -std=c++0x -pthread -I/usr/local/include -L/usr/local/lib
+#CFLAGS = -std=c++0x -pthread -I/usr/local/include -L/usr/local/lib -g -DNDEBUG
 
 all: htdetect getseq
 
