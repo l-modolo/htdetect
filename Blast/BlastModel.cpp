@@ -340,6 +340,7 @@ void BlastModel::read()
 	catch(exception const& e)
 	{
 		cerr << "ERROR : " << e.what()  << " in : void BlastModel::read()" << endl;
+		exit(-1);
 	}
 }
 
@@ -532,6 +533,7 @@ void BlastModel::restore(string const & file, Fasta* fasta_a, Fasta* fasta_b)
 	catch(exception const& e)
 	{
 		cerr << "ERROR : " << e.what()  << " in : void BlastModel::restore(string const & file, Fasta* fasta_a, Fasta* fasta_b)" << endl;
+		exit(-1);
 	}
 }
 
@@ -648,6 +650,7 @@ void BlastModel::restore(string const & blastname, string const & file, Fasta* f
 	catch(exception const& e)
 	{
 		cerr << "ERROR : " << e.what()  << " in : void BlastModel::restore(string const & blastname, string const & file, Fasta* fasta_a, Fasta* fasta_b)" << endl;
+		exit(-1);
 	}
 }
 
