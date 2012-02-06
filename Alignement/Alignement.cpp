@@ -143,3 +143,28 @@ void Alignement::read(string* Fasta_file)
 		throw logic_error("Can not open file : "+(*Fasta_file)+" in void Alignement::read(string* Fasta_file)");
 	}
 }
+
+void Alignement::complementary(string * seq)
+{
+	for(size_t i=0; i < seq->length(); i++)
+	{
+		switch(tolower(seq->at(i)))
+		{
+			case 'a':
+			seq->at(i) = 'T';
+			break;
+			
+			case 't':
+			seq->at(i) = 'A';
+			break;
+			
+			case 'c':
+			seq->at(i) = 'G';
+			break;
+			
+			case 'g':
+			seq->at(i) = 'C';
+			break;
+		}
+	}
+}

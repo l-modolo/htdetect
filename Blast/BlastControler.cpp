@@ -192,8 +192,23 @@ void BlastControler::remove_overlapping_2(double chromosome_identity, int thread
 				progress.inc();
 			}
 		}
+		
 		progress.clear();
-		paths.compute_pvalue(thread_number);
+		
+		int t_number;
+		if(thread_number > size())
+		{
+			if(size() > 1)
+				t_number = size()-1;
+			else
+				t_number = 1;
+		}
+		else
+		{
+			t_number = thread_number;
+		}
+		
+		paths.compute_pvalue(t_number);
 		paths.rm_overlapping_Path(thread_number);
 		paths.rm_overlapping_Path(thread_number);
 		paths.rm_overlapping_Path(thread_number);

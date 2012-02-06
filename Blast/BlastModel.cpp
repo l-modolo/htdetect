@@ -269,59 +269,49 @@ void BlastModel::read()
 		{
 			// for each line of the Blast file
 			string line;
+			column_number = 0;
+			column_start = 0;
+			
+			start = -1;
+			stop = -1;
+			qstart = -1;
+			qstop = -1;
+			string name;
+			string qname;
+			size_t found1;
+			size_t found2;
+			
+			
+			getline(fBlast, line);
+			
+			int i = 0;
 			while(getline(fBlast, line))
 			{
-				column_number = 0;
-				column_start = 0;
-				
-				start = -1;
-				stop = -1;
-				qstart = -1;
-				qstop = -1;
-				string name;
-				string qname;
-				size_t found1;
-				size_t found2;
-				
-				for(int i = 0; i < line.length(); i++)
+				if(line.size() >= 10)
 				{
-					if(isspace((int)line[i]))
+					i++;
+					vector<string> line_columns = split(line, (char*)"\t");
+					if(line_columns.size() >= 9)
 					{
-						string sub (line.begin()+column_start, line.begin()+i);
+						qname = line_columns.at(0);
+						name = line_columns.at(1);
 						
-						switch(column_number)
+						qstart = atoi(line_columns.at(6).c_str());
+						qstop = atoi(line_columns.at(7).c_str());
+						
+						start =  atoi(line_columns.at(8).c_str());
+						stop =  atoi(line_columns.at(9).c_str());
+						
+						if(start != -1 && stop != -1 && qstart != -1 && qstop != -1)
 						{
-							case 0:
-								qname = sub.substr((size_t)0, sub.find_first_of(' '));
-							break;
-							case 1:
-								name = sub.substr((size_t)1, sub.find_first_of(' '));
-							break;
-							case 6:
-								qstart = atoi(sub.c_str());
-							break;
-							case 7:
-								qstop = atoi(sub.c_str());
-							break;
-							case 8:
-								start = atoi(sub.c_str());
-							break;
-							case 9:
-								stop = atoi(sub.c_str());
-							break;
+							Blast_query.add_hit(name, start, stop);
+							
+							Blast_target.push_back(new HitList());
+							Blast_target.back()->add_hit(Blast_query.last_hit()->id(), qname, qstart, qstop);
 						}
-						column_number++;
-						column_start = i;
 					}
 				}
 				
-				if(start != -1 && stop != -1 && qstart != -1 && qstop != -1)
-				{
-					Blast_query.add_hit(name, start, stop);
-					
-					Blast_target.push_back(new HitList());
-					Blast_target.back()->add_hit(Blast_query.last_hit()->id(), qname, qstart, qstop);
-				}
 			}
 			
 			Blast_identity = vector<double>(Blast_query.size(), -1.0);
@@ -607,15 +597,15 @@ void BlastModel::restore(string const & blastname, string const & file, Fasta* f
 						identity = atof(line_columns.at(13).c_str());
 						pvalue = atof(line_columns.at(14).c_str());
 						statistic = atof(line_columns.at(15).c_str());
-				
-		//				[0]number	[1]target	[2]tsens	[3]tstart	[4]tstop	[5]tsize	[6]dist_prev	[7]dist_next	
-		//				[8]query	[9]qsens	[10]qstart	[11]qstop	[12]qsize	[13]id	[14]pvalue	[15]statistic
-				
+						
+//						[0]number	[1]target	[2]tsens	[3]tstart	[4]tstop	[5]tsize	[6]dist_prev	[7]dist_next	
+//						[8]query	[9]qsens	[10]qstart	[11]qstop	[12]qsize	[13]id	[14]pvalue	[15]statistic
+						
 						if(Blast_query.size() == 0)
 						{
 							if(prev_hit.sens() == (start < stop) && prev_hit.start() == start &&  prev_hit.stop() == stop && prev_hit.name().compare(name) == 0)
 							{
-					
+							
 							}
 							else
 							{

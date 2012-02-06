@@ -28,6 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <fstream>
 #include <stdio.h>
 #include <cstdlib>
+#include <ctype.h>
 #include <mutex>
 #include <thread>
 #include <future>
@@ -65,6 +66,8 @@ class Alignement {
 	static string Alignement_salt;
 	
 	bool Alignement_init;
+	
+	void complementary(string * seq);
 	
 	friend class writeSeq;
 };

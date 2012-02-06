@@ -43,22 +43,20 @@ void HitModel::init(int id, string const & name, int start, int stop)
 	{
 		if( start >= 0 && stop >= 0)
 		{
-			int tmp;
 			if(start > stop)
 			{
-				tmp = start;
-				start = stop;
-				stop = tmp;
+				Hit_start = stop;
+				Hit_stop = start;
 				Hit_sens = false;
 			}
 			else
 			{
+				Hit_start = start;
+				Hit_stop = stop;
 				Hit_sens = true;
 			}
 			Hit_id = id;
 			Hit_name = HitModel::add_name(name);
-			Hit_start = start;
-			Hit_stop = stop;
 		}
 		else
 		{

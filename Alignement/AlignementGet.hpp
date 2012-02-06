@@ -38,7 +38,7 @@ class AlignementGet : public Alignement {
 	vector<double>* Alignement_identity;
 	
 	private:
-	double compute_identity();
+	double compute_identity(bool reverse);
 };
 
 

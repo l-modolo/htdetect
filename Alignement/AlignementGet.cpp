@@ -97,11 +97,27 @@ void AlignementGet::run()
 			{
 				FastaThread seqa(*Alignement_fasta_a, *Alignement_hit_a);
 				FastaThread seqb(*Alignement_fasta_b, *Alignement_hit_b);
-			
+				
 				Alignement_first_seq = seqa.find();
 				Alignement_second_seq = seqb.find();
-			
-				Alignement_identity->at(Alignement_hit_b->id()) = compute_identity();
+				
+				double identity = compute_identity(false);
+				
+				if(identity <= 50.0)
+				{
+					delete Alignement_first_seq;
+					delete Alignement_second_seq;
+					Alignement_first_seq = seqa.find();
+					Alignement_second_seq = seqb.find();
+					Alignement_identity->at(Alignement_hit_b->id()) = compute_identity(true);
+				}
+				if(Alignement_identity->at(Alignement_hit_b->id()) <= identity)
+				{
+					Alignement_identity->at(Alignement_hit_b->id()) = identity;
+				}
+				
+				delete Alignement_first_seq;
+				delete Alignement_second_seq;
 			}
 		}
 	}
@@ -136,8 +152,12 @@ void AlignementGet::operator()(Fasta* fasta_a, Hit* hit_a, Fasta* fasta_b, Hit* 
 	AlignementGet::run();
 }
 
-double AlignementGet::compute_identity()
+double AlignementGet::compute_identity(bool reverse)
 {
+	if(reverse)
+	{
+		complementary(Alignement_second_seq);
+	}
 	if(Alignement_first_seq->length() != Alignement_second_seq->length())
 	{
 		AlignementGet::align();
@@ -152,13 +172,13 @@ double AlignementGet::compute_identity()
 	{
 		for(int i = 0 ; i < size ; i++)
 		{
-			if(Alignement_first_seq->at(i) == 'N' || Alignement_second_seq->at(i) == 'N' || Alignement_first_seq->at(i) == '-' || Alignement_second_seq->at(i) == '-')
+			if(tolower(Alignement_first_seq->at(i)) == 'n' || tolower(Alignement_second_seq->at(i)) == 'n' || Alignement_first_seq->at(i) == '-' || Alignement_second_seq->at(i) == '-')
 			{
 				gap++;
 			}
 			else
 			{
-				if(Alignement_first_seq->at(i) != Alignement_second_seq->at(i)){
+				if(tolower(Alignement_first_seq->at(i)) != tolower(Alignement_second_seq->at(i))){
 					diff++;
 				}
 			}
@@ -180,8 +200,6 @@ double AlignementGet::compute_identity()
 //		cerr << *Alignement_first_seq << endl;
 //		cerr << *Alignement_second_seq << endl;
 	}
-	delete Alignement_first_seq;
-	delete Alignement_second_seq;
 	
 	return result;
 }
