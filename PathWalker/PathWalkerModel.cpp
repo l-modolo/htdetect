@@ -45,24 +45,29 @@ int PathWalkerModel::test_to_path(int query, Hit* hit_query, Hit* hit_target)
 		bool new_path = false;
 		if(query == 0)
 		{
+			//me add vector to stock the link bettween the query and the Paths
 			PathWalker_QueryToPath.push_back(vector<unsigned int>());
 			PathWalker_QueryIdToPath.push_back(vector<unsigned int>());
 			new_path = true;
 		}
 		while(query_number_size() <= query)
 		{
+			//me add vector to stock the link bettween the query and the Paths
 			PathWalker_QueryToPath.push_back(vector<unsigned int>());
 			PathWalker_QueryIdToPath.push_back(vector<unsigned int>());
 			new_path = true;
 		}
 		if(!new_path)
 		{
+			//for all the paths
 			for(int i = 0; i < query_number_size(query); i++)
 			{
+				// we try to add the hit to a path
 				if(PathWalker_PathList.at(query_number(query).at(i)).test(hit_query, hit_target))
 					return query_number(query).at(i);
 			}
 		}
+		//if we didnt find any path to add the hit
 		return -1;
 	}
 	catch(exception const& e)
@@ -75,14 +80,17 @@ void PathWalkerModel::add_to_path(int id, int query, Hit* hit_query, Hit* hit_ta
 {
 	try
 	{
-		if(id < PathWalker_PathList.size() && id != -1)
+		if(id < PathWalker_PathList.size() && id != -1) // if we found a path to add the hit
 		{
+			// we add it
 			PathWalker_PathList.at(id).add(hit_query, hit_target);
+			// we link the path to the query
 			query_number(query).push_back(id);
 			query_id(query).push_back(hit_query->id());
 		}
 		else
 		{
+			// else we build a new path
 			PathWalker_pvalue.push_back(-1.0);
 			PathWalker_PathList.push_back(Path(PathWalker_chromosome_identity, PathWalker_Hit_identity, &PathWalker_pvalue.back(), PathWalker_verbose));
 			PathWalker_PathList.back().add(hit_query, hit_target);

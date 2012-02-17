@@ -52,37 +52,33 @@ PathModel& PathModel::operator=(PathModel const& pathModel)
 	Path_hits_identity = pathModel.Path_hits_identity;
 }
 
-bool PathModel::test(Hit* hit_query, Hit* hit_target)
+bool PathModel::test(Hit* hit_query, Hit* hit_target) //test if the hit can be added to the path
 {
 	if(hit_query->set() && hit_target->set())
 	{
 		if(Path_query.size() > 0 && Path_target.size() > 0)
 		{
+			// target and hit must have the same chromosome
 			if(Path_query.at(0)->name().compare(hit_query->name()) != 0)
 				return false;
 			
 			if(Path_target.at(0)->name().compare(hit_target->name()) != 0)
 				return false;
 			
+			// target and hit must have the same sens
 			if(hit_query->sens() != Path_query.back()->sens())
-			{
 				return false;
-			}
-			
 			if(hit_target->sens() !=  Path_target.back()->sens())
-			{
 				return false;
-			}
 			
+			//target and hit must 
 			if(*hit_query < *(Path_query.back()))
-			{
 				return false;
-			}
-			
 			if(*hit_target < *(Path_target.back()))
-			{
 				return false;
-			}
+			
+			if(hit_query->start() - (Path_query.back())->stop() >= 50000)
+				return false;
 			
 			return true;
 		}
