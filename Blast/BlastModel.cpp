@@ -136,7 +136,7 @@ HitList* BlastModel::target(int i)
 	return nullptr;
 }
 
-double BlastModel::identity(int i, int j)
+pair<long int, long int> BlastModel::identity(int i, int j)
 {
 	try
 	{
@@ -144,8 +144,8 @@ double BlastModel::identity(int i, int j)
 	}
 	catch(exception const& e)
 	{
-		cerr << "ERROR : " << e.what() << " in : double BlastModel::identity(int i)" << endl;
-		return 0.0;
+		cerr << "ERROR : " << e.what() << " in : pair<long int, long int> BlastModel::identity(int i)" << endl;
+		return pair<long int, long int>(0,0);
 	}
 }
 
@@ -314,7 +314,7 @@ void BlastModel::read()
 				
 			}
 			
-			Blast_identity = vector<double>(Blast_query.size(), -1.0);
+			Blast_identity = vector<pair<long int, long int>>(Blast_query.size(), pair<long int, long int>(-1,-1));
 			Blast_neighbor_prev = vector<bool>(Blast_query.size(), false);
 			Blast_neighbor_next = vector<bool>(Blast_query.size(), false);
 			Blast_pvalue = vector<double>(Blast_query.size(), -1.0);
@@ -353,7 +353,8 @@ void BlastModel::sav()
 				{
 					outputf << *hit_query(i);
 					outputf << "\t" << *hit_target(i, j);
-					outputf << "\t" << identity(i, j);
+					outputf << "\t" << identity(i, j).first;
+					outputf << "\t" << identity(i, j).second;
 					outputf << "\t" << pvalue(i, j) << endl;
 					outputf << "\t" << statistic(i, j) << endl;
 				}
@@ -388,7 +389,7 @@ void BlastModel::restore(string const & file, Fasta* fasta_a, Fasta* fasta_b)
 		int stop;
 		int qstart;
 		int qstop;
-		double identity;
+		pair<long int, long int> identity;
 		double pvalue;
 		double statistic;
 		bool sens;
@@ -471,12 +472,15 @@ void BlastModel::restore(string const & file, Fasta* fasta_a, Fasta* fasta_b)
 								}
 							break;
 							case 10:
-								identity = atof(sub.c_str());
+								identity.first = atof(sub.c_str());
 							break;
 							case 11:
-								pvalue = atof(sub.c_str());
+								identity.second = atof(sub.c_str());
 							break;
 							case 12:
+								pvalue = atof(sub.c_str());
+							break;
+							case 13:
 								statistic = atof(sub.c_str());
 							break;
 						}
@@ -545,7 +549,7 @@ void BlastModel::restore(string const & blastname, string const & file, Fasta* f
 		int qstop;
 		string name;
 		string qname;
-		double identity;
+		pair<long int, long int> identity;
 		double pvalue;
 		double statistic;
 		bool sens;
@@ -594,12 +598,13 @@ void BlastModel::restore(string const & blastname, string const & file, Fasta* f
 						qname = line_columns.at(8);
 						qstart = atoi(line_columns.at(10).c_str());
 						qstop = atoi(line_columns.at(11).c_str());
-						identity = atof(line_columns.at(13).c_str());
-						pvalue = atof(line_columns.at(14).c_str());
-						statistic = atof(line_columns.at(15).c_str());
+						identity.first = atof(line_columns.at(13).c_str());
+						identity.second = atof(line_columns.at(14).c_str());
+						pvalue = atof(line_columns.at(15).c_str());
+						statistic = atof(line_columns.at(16).c_str());
 						
 //						[0]number	[1]target	[2]tsens	[3]tstart	[4]tstop	[5]tsize	[6]dist_prev	[7]dist_next	
-//						[8]query	[9]qsens	[10]qstart	[11]qstop	[12]qsize	[13]id	[14]pvalue	[15]statistic
+//						[8]query	[9]qsens	[10]qstart	[11]qstop	[12]qsize	[13]diff	[14]gap	[15]pvalue	[16]statistic
 						
 						if(Blast_query.size() == 0)
 						{

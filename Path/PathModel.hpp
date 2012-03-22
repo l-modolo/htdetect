@@ -29,7 +29,7 @@ using namespace std;
 class PathModel
 {
 	public:
-	PathModel(double chromosome_identity, vector<double>* identity, double* pvalue, bool verbose);
+	PathModel(double chromosome_identity, vector<pair<long int, long int>>* identity, double* pvalue, bool verbose);
 	~PathModel();
 	PathModel& operator=(PathModel const& pathModelbis);
 	
@@ -41,7 +41,7 @@ class PathModel
 	Hit* target_hit(int id);
 	
 	unsigned int size() const;
-	double identity() const;
+	pair<long int, long int> identity() const;
 	double pvalue() const;
 	
 	bool set() const;
@@ -59,11 +59,11 @@ class PathModel
 	vector<Hit*> Path_target;
 	
 	unsigned int Path_size;
-	double Path_identity;
+	pair<long int, long int> Path_identity;
 	double* Path_pvalue;
 	
 	double Path_chromosome_identity;
-	vector<double>* Path_hits_identity;
+	vector<pair<long int, long int>>* Path_hits_identity;
 	
 	static int Path_error;
 	

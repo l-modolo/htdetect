@@ -112,7 +112,8 @@ void Blast::display(ostream &stream)
 				else
 					stream << "\t" << 0;
 				stream << "\t" << *hit_target(i, j);
-				stream << "\t" << identity(i, j);
+				stream << "\t" << identity(i, j).first;
+				stream << "\t" << identity(i, j).second;
 				stream << "\t" << pvalue(i, j);
 				stream << "\t" << statistic(i, j) << endl;
 			}

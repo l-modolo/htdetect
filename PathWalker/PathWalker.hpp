@@ -27,7 +27,7 @@ using namespace std;
 class PathWalker : public PathWalkerControler
 {
 	public:
-	PathWalker(double chromosome_identity, vector<double>* hit_identity, bool verbose);
+	PathWalker(double chromosome_identity, vector<pair<long int, long int>>* hit_identity, bool verbose);
 	~PathWalker();
 	
 	static int number();

@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "PathControler.hpp"
 
-PathControler::PathControler(double chromosome_identity, vector<double>* identity, double* pvalue, bool verbose) : PathModel::PathModel(chromosome_identity, identity,pvalue, verbose) {}
+PathControler::PathControler(double chromosome_identity, vector<pair<long int, long int>>* identity, double* pvalue, bool verbose) : PathModel::PathModel(chromosome_identity, identity,pvalue, verbose) {}
 
 void PathControler::compute_pvalue()
 {
@@ -29,14 +29,14 @@ void PathControler::compute_pvalue()
 			// as we already have the identity and the size of each hit in the path
 			// we can easylly compute the p-value for the whole path
 			Path_size = 0.0;
-			double identity_total = 0.0;
+			pair<long int, long int> identity_total(0,0);
 			
 			for(int i = 0; i< Path_target.size(); i++)
 			{
 				Path_size += Path_target.at(i)->size();
-				identity_total += (Path_target.at(i)->size()) * (Path_hits_identity->at(Path_target.at(i)->id()));
+				identity_total.first += (Path_hits_identity->at(Path_target.at(i)->id())).first;
+				identity_total.second += (Path_hits_identity->at(Path_target.at(i)->id())).second;
 			}
-			Path_identity = identity_total/Path_size;
 			
 			pTest test(Path_chromosome_identity, Path_identity, Path_size, Path_pvalue);
 			test();

@@ -20,12 +20,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 int PathModel::Path_error = 0;
 
-PathModel::PathModel(double chromosome_identity, vector<double>* identity, double* pvalue, bool verbose)
+PathModel::PathModel(double chromosome_identity, vector<pair<long int, long int>>* identity, double* pvalue, bool verbose)
 {
 	Path_verbose = verbose;
 	
 	Path_size = 0;
-	Path_identity = -1;
+	Path_identity.first = -1;
+	Path_identity.second = -1;
 	Path_pvalue = pvalue;
 	
 	Path_chromosome_identity = chromosome_identity;
@@ -233,7 +234,7 @@ unsigned int PathModel::size() const
 	return Path_query.size();
 }
 
-double PathModel::identity() const
+pair<long int, long int> PathModel::identity() const
 {
 	return Path_identity;
 }

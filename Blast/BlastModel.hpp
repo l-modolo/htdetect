@@ -59,7 +59,7 @@ class BlastModel
 	HitList* target(int i);
 	
 	int hit_target_size(int i);
-	double identity(int i, int j);
+	pair<long int, long int> identity(int i, int j);
 	double pvalue(int i, int j);
 	double statistic(int i, int j);
 	bool neighbor_prev(int i, int j);
@@ -86,7 +86,7 @@ class BlastModel
 	
 	vector<bool> Blast_neighbor_prev;
 	vector<bool> Blast_neighbor_next;
-	vector<double> Blast_identity;
+	vector<pair<long int, long int>> Blast_identity;
 	vector<double> Blast_pvalue;
 	vector<double> Blast_statistic;
 	

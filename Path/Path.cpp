@@ -25,7 +25,7 @@ int Path::number()
 	return Path_number;
 }
 
-Path::Path(double chromosome_identity, vector<double>* identity, double* pvalue, bool verbose) : PathControler::PathControler(chromosome_identity, identity, pvalue, verbose)
+Path::Path(double chromosome_identity, vector<pair<long int, long int>>* identity, double* pvalue, bool verbose) : PathControler::PathControler(chromosome_identity, identity, pvalue, verbose)
 {
 	Path_number++;
 }

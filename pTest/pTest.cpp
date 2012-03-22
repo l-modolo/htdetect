@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "pTest.hpp"
 
-pTest::pTest(double chromosome_identity, double identity, unsigned int target_size, double* pvalue)
+pTest::pTest(double chromosome_identity, pair<long int, long int> identity, unsigned int target_size, double* pvalue)
 {
 	pTest_chromosome_identity = chromosome_identity;
 	pTest_identity = identity;
@@ -27,7 +27,7 @@ pTest::pTest(double chromosome_identity, double identity, unsigned int target_si
 	pTest_statistic = nullptr;
 }
 
-pTest::pTest(double chromosome_identity, double identity, unsigned int target_size, double* pvalue, double* statistic)
+pTest::pTest(double chromosome_identity, pair<long int, long int> identity, unsigned int target_size, double* pvalue, double* statistic)
 {
 	pTest_chromosome_identity = chromosome_identity;
 	pTest_identity = identity;
@@ -49,13 +49,13 @@ void pTest::run()
 {
 	try
 	{
-		if(*pTest_pvalue == -1 && pTest_identity != -1.0)
+		if(*pTest_pvalue == -1 && pTest_identity.first != -1)
 		{
-			double x;
-			double T = pTest_target_size;
+			double x = pTest_identity.first;
+			double T = pTest_target_size - pTest_identity.second;
 			double r = 1.0-(pTest_chromosome_identity/100.0);;
 			
-			x = round((1.0-(pTest_identity/100.0))*T);
+			//x = round((1.0-(pTest_identity/100.0))*T);
 			
 			boost::math::poisson_distribution<> poisson(r*T);
 			*pTest_pvalue = boost::math::cdf(poisson, x);

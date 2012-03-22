@@ -26,7 +26,7 @@ using namespace std;
 class PathWalkerControler : public PathWalkerModel
 {
 	public:
-	PathWalkerControler(double chromosome_identity, vector<double>* hit_identity, bool verbose);
+	PathWalkerControler(double chromosome_identity, vector<pair<long int, long int>>* hit_identity, bool verbose);
 	
 	void compute_pvalue(int thread_number);
 	

@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "PathWalkerModel.hpp"
 
-PathWalkerModel::PathWalkerModel(double chromosome_identity, vector<double>* hit_identity, bool verbose)
+PathWalkerModel::PathWalkerModel(double chromosome_identity, vector<pair<long int, long int>>* hit_identity, bool verbose)
 {
 	PathWalker_verbose = verbose;
 	PathWalker_chromosome_identity = chromosome_identity;

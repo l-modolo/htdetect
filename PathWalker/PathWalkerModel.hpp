@@ -29,7 +29,7 @@ using namespace std;
 class PathWalkerModel
 {
 	public:
-	PathWalkerModel(double chromosome_identity, vector<double>* hit_identity, bool verbose);
+	PathWalkerModel(double chromosome_identity, vector<pair<long int, long int>>* hit_identity, bool verbose);
 	~PathWalkerModel();
 	
 	void add(unsigned int query_number, Hit* hit_query, Hit* hit_target);
@@ -50,7 +50,7 @@ class PathWalkerModel
 	bool PathWalker_verbose;
 	
 	double PathWalker_chromosome_identity;
-	vector<double>* PathWalker_Hit_identity;
+	vector<pair<long int, long int>>* PathWalker_Hit_identity;
 	
 	vector<Path> PathWalker_PathList;
 	vector<double> PathWalker_pvalue;

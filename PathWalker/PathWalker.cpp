@@ -25,7 +25,7 @@ int PathWalker::number()
 	return PathWalker_number;
 }
 
-PathWalker::PathWalker(double chromosome_identity, vector<double>* hit_identity, bool verbose) : PathWalkerControler::PathWalkerControler(chromosome_identity, hit_identity, verbose)
+PathWalker::PathWalker(double chromosome_identity, vector<pair<long int, long int>>* hit_identity, bool verbose) : PathWalkerControler::PathWalkerControler(chromosome_identity, hit_identity, verbose)
 {
 	PathWalker_number++;
 }

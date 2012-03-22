@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "AlignementGet.hpp"
 
-AlignementGet::AlignementGet(Fasta* fasta_a, Hit* hit_a, Fasta* fasta_b, Hit* hit_b, vector<double>* identity, string* muscle_path, int thread_id, string* tmp_rep) : Alignement(fasta_a, hit_a, fasta_b, hit_b, muscle_path, thread_id , tmp_rep)
+AlignementGet::AlignementGet(Fasta* fasta_a, Hit* hit_a, Fasta* fasta_b, Hit* hit_b, vector<pair<long int, long int>>* identity, string* muscle_path, int thread_id, string* tmp_rep) : Alignement(fasta_a, hit_a, fasta_b, hit_b, muscle_path, thread_id , tmp_rep)
 {
 	Alignement_identity = identity;
 	Alignement_first_seq = nullptr;
@@ -93,7 +93,7 @@ void AlignementGet::run()
 	{
 		if(Alignement_init)
 		{
-			if(Alignement_identity->at(Alignement_hit_b->id()) == -1)
+			if(Alignement_identity->at(Alignement_hit_b->id()).first == -1)
 			{
 				FastaThread seqa(*Alignement_fasta_a, *Alignement_hit_a);
 				FastaThread seqb(*Alignement_fasta_b, *Alignement_hit_b);
@@ -101,9 +101,9 @@ void AlignementGet::run()
 				Alignement_first_seq = seqa.find();
 				Alignement_second_seq = seqb.find();
 				
-				double identity = compute_identity(false);
+				pair<long int, long int> identity = compute_identity(false);
 				
-				if(identity <= 50.0)
+				if( (identity.first/Alignement_first_seq->size()) >= 50.0)
 				{
 					delete Alignement_first_seq;
 					delete Alignement_second_seq;
@@ -111,7 +111,7 @@ void AlignementGet::run()
 					Alignement_second_seq = seqb.find();
 					Alignement_identity->at(Alignement_hit_b->id()) = compute_identity(true);
 				}
-				if(Alignement_identity->at(Alignement_hit_b->id()) <= identity)
+				if(Alignement_identity->at(Alignement_hit_b->id()).first >= identity.first)
 				{
 					Alignement_identity->at(Alignement_hit_b->id()) = identity;
 				}
@@ -136,7 +136,7 @@ void AlignementGet::operator()()
 	}
 }
 
-void AlignementGet::operator()(Fasta* fasta_a, Hit* hit_a, Fasta* fasta_b, Hit* hit_b, vector<double>* identity, string* muscle_path, int thread_id, string* tmp_rep)
+void AlignementGet::operator()(Fasta* fasta_a, Hit* hit_a, Fasta* fasta_b, Hit* hit_b, vector<pair<long int, long int>>* identity, string* muscle_path, int thread_id, string* tmp_rep)
 {
 	Alignement_fasta_a = fasta_a;
 	Alignement_fasta_b = fasta_b;
@@ -152,7 +152,7 @@ void AlignementGet::operator()(Fasta* fasta_a, Hit* hit_a, Fasta* fasta_b, Hit* 
 	AlignementGet::run();
 }
 
-double AlignementGet::compute_identity(bool reverse)
+pair<long int, long int> AlignementGet::compute_identity(bool reverse)
 {
 	if(reverse)
 	{
@@ -166,7 +166,7 @@ double AlignementGet::compute_identity(bool reverse)
 	int size = Alignement_first_seq->length();
 	int diff = 0;
 	int gap = 0;
-	double result = 0.0;
+	pair<long int, long int> result (-1, -1);
 	
 	try
 	{
@@ -185,7 +185,9 @@ double AlignementGet::compute_identity(bool reverse)
 		}
 		if(size-gap != 0)
 		{
-			result = ((double)(size-diff-gap)/(double)(size-gap))*100.0;
+			//result = ((double)(size-diff-gap)/(double)(size-gap))*100.0;
+			result.first = diff;
+			result.second = gap;
 		}
 		else
 		{

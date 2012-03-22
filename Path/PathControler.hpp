@@ -27,7 +27,7 @@ using namespace std;
 class PathControler : public PathModel
 {
 	public:
-	PathControler(double chromosome_identity, vector<double>* identity, double* pvalue, bool verbose);
+	PathControler(double chromosome_identity, vector<pair<long int, long int>>* identity, double* pvalue, bool verbose);
 	
 	void operator()();
 	void compute_pvalue();

@@ -19,26 +19,27 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef DEF_AlignementGet
 #define DEF_AlignementGet
 
+#include <utility>
 #include "Alignement.hpp"
 
 using namespace std;
 
 class AlignementGet : public Alignement {
 	public:
-	AlignementGet(Fasta* fasta_a, Hit* hit_a, Fasta* fasta_b, Hit* hit_b, vector<double>* identity, string* muscle_path, int thread_id, string* tmp_rep);
+	AlignementGet(Fasta* fasta_a, Hit* hit_a, Fasta* fasta_b, Hit* hit_b, vector<pair<long int, long int>>* identity, string* muscle_path, int thread_id, string* tmp_rep);
 	
 	AlignementGet& operator=(AlignementGet const& alignementbis);
 	
 	void operator()();
-	void operator()(Fasta* fasta_a, Hit* hit_a, Fasta* fasta_b, Hit* hit_b, vector<double>* identity, string* muscle_path, int thread_id, string* tmp_rep);
+	void operator()(Fasta* fasta_a, Hit* hit_a, Fasta* fasta_b, Hit* hit_b, vector<pair<long int, long int>>* identity, string* muscle_path, int thread_id, string* tmp_rep);
 	
 	protected:
 	void run();
 	
-	vector<double>* Alignement_identity;
+	vector< pair<long int, long int> >* Alignement_identity;
 	
 	private:
-	double compute_identity(bool reverse);
+	pair<long int, long int> compute_identity(bool reverse);
 };
 
 

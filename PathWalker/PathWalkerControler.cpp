@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "PathWalkerControler.hpp"
 
 
-PathWalkerControler::PathWalkerControler(double chromosome_identity, vector<double>* hit_identity, bool verbose) : PathWalkerModel::PathWalkerModel(chromosome_identity, hit_identity, verbose) {}
+PathWalkerControler::PathWalkerControler(double chromosome_identity, vector<pair<long int, long int>>* hit_identity, bool verbose) : PathWalkerModel::PathWalkerModel(chromosome_identity, hit_identity, verbose) {}
 
 void PathWalkerControler::compute_pvalue(int thread_number)
 {
