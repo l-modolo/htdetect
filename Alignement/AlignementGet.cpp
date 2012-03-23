@@ -93,7 +93,7 @@ void AlignementGet::run()
 	{
 		if(Alignement_init)
 		{
-			if(Alignement_identity->at(Alignement_hit_b->id()).first == -1)
+			if( (Alignement_identity->at(Alignement_hit_b->id())).first == -1)
 			{
 				FastaThread seqa(*Alignement_fasta_a, *Alignement_hit_a);
 				FastaThread seqb(*Alignement_fasta_b, *Alignement_hit_b);
@@ -103,7 +103,7 @@ void AlignementGet::run()
 				
 				pair<long int, long int> identity = compute_identity(false);
 				
-				if( (identity.first/Alignement_first_seq->size()) >= 50.0)
+				if( (identity.first/(Alignement_first_seq->length() - identity.second)) >= 0.5)
 				{
 					delete Alignement_first_seq;
 					delete Alignement_second_seq;
@@ -111,7 +111,7 @@ void AlignementGet::run()
 					Alignement_second_seq = seqb.find();
 					Alignement_identity->at(Alignement_hit_b->id()) = compute_identity(true);
 				}
-				if(Alignement_identity->at(Alignement_hit_b->id()).first >= identity.first)
+				if( (Alignement_identity->at(Alignement_hit_b->id())).first > identity.first || (Alignement_identity->at(Alignement_hit_b->id())).first == -1)
 				{
 					Alignement_identity->at(Alignement_hit_b->id()) = identity;
 				}
@@ -183,15 +183,14 @@ pair<long int, long int> AlignementGet::compute_identity(bool reverse)
 				}
 			}
 		}
-		if(size-gap != 0)
+		
+		result.first = diff;
+		result.second = gap;
+		
+		if(size - gap < 0)
 		{
-			//result = ((double)(size-diff-gap)/(double)(size-gap))*100.0;
-			result.first = diff;
-			result.second = gap;
-		}
-		else
-		{
-			throw logic_error("Can not make a null division in double AlignementGet::identity()");
+			cerr << *Alignement_first_seq << endl;
+			cerr << *Alignement_second_seq << endl;
 		}
 	}
 	catch(exception const& e)

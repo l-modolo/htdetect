@@ -53,9 +53,7 @@ void pTest::run()
 		{
 			double x = pTest_identity.first;
 			double T = pTest_target_size - pTest_identity.second;
-			double r = 1.0-(pTest_chromosome_identity/100.0);;
-			
-			//x = round((1.0-(pTest_identity/100.0))*T);
+			double r = 1.0-(pTest_chromosome_identity/100.0);
 			
 			boost::math::poisson_distribution<> poisson(r*T);
 			*pTest_pvalue = boost::math::cdf(poisson, x);
@@ -66,7 +64,8 @@ void pTest::run()
 	catch(exception const& e)
 	{
 		cerr << "ERROR : " << e.what() << " in : void pTest::run()" << endl;
-		exit(-1);
+		cout << "diff = " << pTest_identity.first << "\t size-gap = " << pTest_target_size - pTest_identity.second << "\tsize = " << pTest_target_size << "\t gap = " << pTest_identity.second << endl;
+		*pTest_pvalue = 1;
 	}
 }
 

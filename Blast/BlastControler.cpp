@@ -167,7 +167,7 @@ void BlastControler::compute_test(double chromosome_identity, int thread_number)
 	{
 		for(unsigned int j = 0; j < hit_target_size(i); j++)
 		{
-			alignements_run.add(pTest(chromosome_identity, identity(i,j), hit_target(i,j)->size(), &(Blast_pvalue.at(hit_target(i,j)->id())), &(Blast_statistic.at(hit_target(i,j)->id()))));
+			alignements_run.add(pTest(chromosome_identity, identity(i,j), hit_query(i)->size(), &(Blast_pvalue.at(hit_target(i,j)->id())), &(Blast_statistic.at(hit_target(i,j)->id()))));
 			
 			progress.inc();
 		}
