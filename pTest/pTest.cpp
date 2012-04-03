@@ -61,10 +61,15 @@ void pTest::run()
 			}
 			else
 			{
-				boost::math::poisson_distribution<> poisson(r*T);
-				*pTest_pvalue = boost::math::cdf(poisson, x);
+//				boost::math::poisson_distribution<> poisson(r*T);
+                boost::math::negative_binomial_distribution<> NB(T, r);
+//				*pTest_pvalue = boost::math::cdf(poisson, x);
+                *pTest_pvalue = boost::math::cdf(NB, x);
 				if(pTest_statistic != nullptr)
-					*pTest_statistic = boost::math::pdf(poisson, x);
+                {
+//					*pTest_statistic = boost::math::pdf(poisson, x);
+                    *pTest_statistic = boost::math::pdf(NB, x);
+                }
 			}
 		}
 	}
