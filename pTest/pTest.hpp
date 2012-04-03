@@ -29,6 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <cstdlib>
 #include <vector>
 #include <boost/math/distributions/poisson.hpp>
+#include <boost/math/distributions/negative_binomial.hpp>
 #include <boost/math/special_functions/round.hpp>
 #include "../Hit/Hit.hpp"
 
