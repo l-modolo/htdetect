@@ -103,19 +103,21 @@ void AlignementGet::run()
 				
 				pair<long int, long int> identity = compute_identity(false);
 				
-				if( (identity.first/(Alignement_first_seq->length() - identity.second)) >= 0.5)
+				if((Alignement_first_seq->length() - identity.second) > 0)
 				{
-					delete Alignement_first_seq;
-					delete Alignement_second_seq;
-					Alignement_first_seq = seqa.find();
-					Alignement_second_seq = seqb.find();
-					Alignement_identity->at(Alignement_hit_b->id()) = compute_identity(true);
+					if( (identity.first/(Alignement_first_seq->length() - identity.second)) >= 0.5)
+					{
+						delete Alignement_first_seq;
+						delete Alignement_second_seq;
+						Alignement_first_seq = seqa.find();
+						Alignement_second_seq = seqb.find();
+						Alignement_identity->at(Alignement_hit_b->id()) = compute_identity(true);
+					}
+					if( (Alignement_identity->at(Alignement_hit_b->id())).first > identity.first || (Alignement_identity->at(Alignement_hit_b->id())).first == -1)
+					{
+						Alignement_identity->at(Alignement_hit_b->id()) = identity;
+					}
 				}
-				if( (Alignement_identity->at(Alignement_hit_b->id())).first > identity.first || (Alignement_identity->at(Alignement_hit_b->id())).first == -1)
-				{
-					Alignement_identity->at(Alignement_hit_b->id()) = identity;
-				}
-				
 				delete Alignement_first_seq;
 				delete Alignement_second_seq;
 			}
