@@ -74,7 +74,7 @@ void pTest::run()
 		}
 		if(*pTest_pvalue == -1)
 		{
-			*pTest_pvalue == 1
+			*pTest_pvalue == 1;
 		}
 	}
 	catch(exception const& e)
