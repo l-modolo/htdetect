@@ -403,119 +403,83 @@ void BlastModel::restore(string const & file, Fasta* fasta_a, Fasta* fasta_b)
 		{
 			// for each line of the Blast file
 			string line;
+			column_number = 0;
+			column_start = 0;
+			
+			start = -1;
+			stop = -1;
+			qstart = -1;
+			qstop = -1;
+			string name;
+			string qname;
+			size_t found1;
+			size_t found2;
+			
+			
 			getline(fBlast, Blast_name);
 			getline(fBlast, Blast_file);
 			getline(fBlast, Blast_muscle_path);
 			
+			int i = 0;
 			while(getline(fBlast, line))
 			{
-				column_number = 0;
-				column_start = 0;
-				
-				start = -1;
-				stop = -1;
-				qstart = -1;
-				qstop = -1;
-				string name;
-				string qname;
-				size_t found1;
-				size_t found2;
-				
-				for(int i = 0; i < line.length(); i++)
+				if(line.size() >= 11)
 				{
-					if(isspace((int)line[i]))
+					i++;
+					vector<string> line_columns = split(line, (char*)"\t");
+					if(line_columns.size() >= 11)
 					{
-						string sub (line.begin()+column_start, line.begin()+i);
+						name = line_columns.at(1);
 						
-						switch(column_number)
+						if(line_columns.at(2).c_str()[0] == '-')
+							sens = false;
+						else
+							sens = true;
+						
+						start =  atoi(line_columns.at(3).c_str());
+						stop =  atoi(line_columns.at(5).c_str());
+						
+						if(!sens)
 						{
-							case 0:
-								name = sub.substr((size_t)0, sub.find_first_of(' '));
-							break;
-							case 1:
-								if(sub.c_str()[0] == '-')
-									sens = false;
-								else
-									sens = true;
-							break;
-							case 2:
-								start = atoi(sub.c_str());
-							break;
-							case 3:
-								stop = atoi(sub.c_str());
-								if(!sens)
-								{
-									tmp = start;
-									start = stop;
-									stop = tmp;
-								}
-							break;
-							case 5:
-								qname = sub.substr((size_t)1, sub.find_first_of(' '));
-							break;
-							case 6:
-								if(sub.c_str()[0] == '-')
-									sens = false;
-								else
-									sens = true;
-							break;
-							case 7:
-								qstart = atoi(sub.c_str());
-							break;
-							case 8:
-								qstop = atoi(sub.c_str());
-								if(!sens)
-								{
-									tmp = qstart;
-									qstart = qstop;
-									qstop = tmp;
-								}
-							break;
-							case 10:
-								identity.first = atof(sub.c_str());
-							break;
-							case 11:
-								identity.second = atof(sub.c_str());
-							break;
-							case 12:
-								pvalue = atof(sub.c_str());
-							break;
-							case 13:
-								statistic = atof(sub.c_str());
-							break;
+							tmp = start;
+							start = stop;
+							stop = tmp;
 						}
-						column_number++;
-						column_start = i;
+						
+						qname = line_columns.at(8);
+						
+						if(line_columns.at(9).c_str()[0] == '-')
+							sens = false;
+						else
+							sens = true;
+						
+						qstart = atoi(line_columns.at(10).c_str());
+						qstop = atoi(line_columns.at(11).c_str());
+						
+						if(!sens)
+						{
+							tmp = start;
+							start = stop;
+							stop = tmp;
+						}
+						
+						if(start != -1 && stop != -1 && qstart != -1 && qstop != -1)
+						{
+							Blast_query.add_hit(name, start, stop);
+							
+							Blast_target.push_back(new HitList());
+							Blast_target.back()->add_hit(Blast_query.last_hit()->id(), qname, qstart, qstop);
+						}
 					}
 				}
 				
-				if(Blast_query.size() == 0)
-				{
-					if(prev_hit.sens() == (start < stop) && prev_hit.start() == start &&  prev_hit.stop() == stop && prev_hit.name().compare(name) == 0)
-					{
-					
-					}
-					else
-					{
-						Blast_query.add_hit(name, start, stop);
-						prev_hit = Hit(name, start, stop);
-					}
-				}
-				else
-				{
-					Blast_query.add_hit(name, start, stop);
-					prev_hit = Hit(name, start, stop);
-				}
-				
-				Blast_target.push_back(new HitList());
-				Blast_target.back()->add_hit(Blast_query.last_hit()->id(), qname, qstart, qstop);
-				Blast_identity.push_back(identity);
-				Blast_pvalue.push_back(pvalue);
-				Blast_statistic.push_back(statistic);
 			}
 			
+			Blast_identity = vector<pair<long int, long int>>(Blast_query.size(), pair<long int, long int>(-1,-1));
 			Blast_neighbor_prev = vector<bool>(Blast_query.size(), false);
 			Blast_neighbor_next = vector<bool>(Blast_query.size(), false);
+			Blast_pvalue = vector<double>(Blast_query.size(), -1.0);
+			Blast_statistic = vector<double>(Blast_query.size(), -1.0);
 			
 			fBlast.close();
 		}
