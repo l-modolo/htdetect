@@ -133,7 +133,7 @@ void BlastControler::compute_identity(int thread_number, string tmp_rep)
 		{
 			for(unsigned int j = 0; j < hit_target_size(i); j++)
 			{
-				alignements_run.add(AlignementGet(Blast_fasta_a, &hit_query(i), Blast_fasta_b, &hit_target(i, j), &Blast_identity, &Blast_muscle_path, hit_target(i, j)->id(), &tmp_rep));
+				alignements_run.add(AlignementGet(Blast_fasta_a, &(hit_query(i)), Blast_fasta_b, &(hit_target(i, j)), &Blast_identity, &Blast_muscle_path, hit_target(i, j)->id(), &tmp_rep));
 				
 				progress.inc();
 			}
