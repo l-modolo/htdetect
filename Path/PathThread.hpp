@@ -28,7 +28,6 @@ class PathThread
 {
 	public:
 	PathThread(Path data);
-	~PathThread();
 	
 	void operator()();
 	void compute_pvalue();
