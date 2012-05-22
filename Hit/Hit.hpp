@@ -23,6 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <string>
 #include <list>
 #include <algorithm>
+#include <map>
 #include "HitControler.hpp"
 
 using namespace std;
@@ -50,7 +51,6 @@ class Hit : public HitControler
 	Hit& operator-=(Hit const& Hitbis);
 	void merge(Hit const& hitbis);
 	void flip();
-	
 	
 	bool neighbor(Hit const&  hitbis) const;
 	

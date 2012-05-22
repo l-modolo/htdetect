@@ -25,6 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <iostream>
 #include <map>
 #include <mutex>
+#include <vector>
 
 using namespace std;
 
@@ -44,6 +45,9 @@ class HitModel {
 	string name() const;
 	bool set() const;
 
+	void set_attr(int key, int value);
+	int get_attr(int key);
+
 	protected:
 	// attributes
 	int Hit_id;
@@ -51,6 +55,7 @@ class HitModel {
 	int Hit_name;
 	int Hit_start;
 	int Hit_stop;
+	vector<int> Hit_attr;
 
 	static mutex Hit_names_lock;
 	static map<unsigned int, string> Hit_id_names;

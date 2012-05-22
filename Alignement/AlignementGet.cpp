@@ -168,6 +168,12 @@ pair<long int, long int> AlignementGet::compute_identity(bool reverse)
 	int size = Alignement_first_seq->length();
 	int diff = 0;
 	int gap = 0;
+	
+	int first_n_number = 0;
+	int second_n_number = 0;
+	int first_GC = 0;
+	int second_GC = 0;
+	
 	pair<long int, long int> result (-1, -1);
 	
 	try
@@ -184,10 +190,33 @@ pair<long int, long int> AlignementGet::compute_identity(bool reverse)
 					diff++;
 				}
 			}
+			
+			if(tolower(Alignement_first_seq->at(i)) == 'n')
+			{
+				first_n_number++;
+			}
+			if(tolower(Alignement_second_seq->at(i)) == 'n')
+			{
+				second_n_number++;
+			}
+			
+			if(tolower(Alignement_first_seq->at(i)) == 'g' || tolower(Alignement_first_seq->at(i)) == 'c')
+			{
+				first_GC++;
+			}
+			if(tolower(Alignement_second_seq->at(i)) == 'g' || tolower(Alignement_second_seq->at(i)) == 'c')
+			{
+				second_GC++;
+			}
 		}
 		
 		result.first = diff;
 		result.second = gap;
+		
+//		Alignement_hit_a->set_attr(0, first_GC);
+//		Alignement_hit_a->set_attr(1, first_n_number);
+//		Alignement_hit_b->set_attr(0, second_GC);
+//		Alignement_hit_b->set_attr(1, second_n_number);
 		
 		if(size - gap < 0)
 		{

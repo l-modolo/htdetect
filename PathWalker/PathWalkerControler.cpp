@@ -16,6 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "../Path/PathThread.hpp"
 #include "PathWalkerControler.hpp"
 
 
@@ -26,12 +27,12 @@ void PathWalkerControler::compute_pvalue(int thread_number)
 	try
 	{
 		// we compute the p-value for each path (as an hit sequences)
-		mThread<Path> alignements_run(thread_number);
+		mThread<PathThread> alignements_run(thread_number);
 		ProgressBar progress(1, 3, 0,PathWalker_PathList.size(), PathWalker_verbose);
 		
 		for(int i = 0; i< PathWalker_PathList.size(); i++)
 		{
-			alignements_run.add(PathWalker_PathList.at(i));
+			alignements_run.add(PathThread(PathWalker_PathList.at(i)));
 			progress.inc();
 		}
 		alignements_run.stop();

@@ -1,19 +1,19 @@
 CC = g++
-CFLAGS = -std=c++0x -pthread -I/usr/local/include -L/usr/local/lib
-#CFLAGS = -std=c++0x -pthread -I/usr/local/include -L/usr/local/lib -g -DNDEBUG
+#CFLAGS = -std=c++0x -pthread -I/usr/local/include -L/usr/local/lib
+CFLAGS = -std=c++0x -pthread -I/usr/local/include -L/usr/local/lib -g -DNDEBUG
 
 all: htdetect getseq
 
-htdetect: htdetect.o Hit.o HitControler.o HitModel.o HitList.o HitListControler.o HitListModel.o Blast.o BlastControler.o BlastModel.o Fasta.o FastaThread.o FastaControler.o FastaModel.o Sequence.o Alignement.o ProgressBar.o ProgressBarThread.o pTest.o Path.o PathControler.o PathModel.o PathWalker.o PathWalkerControler.o PathWalkerModel.o  writeSeq.o  AlignementWrite.o AlignementGet.o 
-	$(CC) htdetect.o Hit.o  HitControler.o HitModel.o HitList.o HitListControler.o HitListModel.o Blast.o BlastControler.o BlastModel.o Fasta.o FastaThread.o FastaControler.o FastaModel.o Sequence.o Alignement.o ProgressBar.o ProgressBarThread.o pTest.o Path.o PathControler.o PathModel.o PathWalker.o PathWalkerControler.o PathWalkerModel.o  writeSeq.o  AlignementWrite.o AlignementGet.o  -o htdetect $(CFLAGS)
+htdetect: htdetect.o Hit.o HitControler.o HitModel.o HitList.o HitListControler.o HitListModel.o Blast.o BlastControler.o BlastModel.o Fasta.o FastaThread.o FastaControler.o FastaModel.o Sequence.o Alignement.o ProgressBar.o ProgressBarThread.o pTest.o Path.o PathControler.o PathModel.o PathWalker.o PathThread.o PathWalkerControler.o PathWalkerModel.o  writeSeq.o  AlignementWrite.o AlignementGet.o 
+	$(CC) htdetect.o Hit.o  HitControler.o HitModel.o HitList.o HitListControler.o HitListModel.o Blast.o BlastControler.o BlastModel.o Fasta.o FastaThread.o FastaControler.o FastaModel.o Sequence.o Alignement.o ProgressBar.o ProgressBarThread.o pTest.o Path.o PathControler.o PathModel.o PathWalker.o PathThread.o PathWalkerControler.o PathWalkerModel.o  writeSeq.o  AlignementWrite.o AlignementGet.o  -o htdetect $(CFLAGS)
 
-getseq: getseq.o Hit.o HitControler.o HitModel.o HitList.o HitListControler.o HitListModel.o Blast.o BlastControler.o BlastModel.o Fasta.o FastaThread.o FastaControler.o FastaModel.o Sequence.o Alignement.o ProgressBar.o ProgressBarThread.o pTest.o Path.o PathControler.o PathModel.o PathWalker.o PathWalkerControler.o PathWalkerModel.o  writeSeq.o  AlignementWrite.o AlignementGet.o 
-	$(CC) getseq.o Hit.o  HitControler.o HitModel.o HitList.o HitListControler.o HitListModel.o Blast.o BlastControler.o BlastModel.o Fasta.o FastaThread.o FastaControler.o FastaModel.o Sequence.o Alignement.o ProgressBar.o ProgressBarThread.o pTest.o Path.o PathControler.o PathModel.o PathWalker.o PathWalkerControler.o PathWalkerModel.o  writeSeq.o  AlignementWrite.o AlignementGet.o  -o getseq $(CFLAGS)
+getseq: getseq.o Hit.o HitControler.o HitModel.o HitList.o HitListControler.o HitListModel.o Blast.o BlastControler.o BlastModel.o Fasta.o FastaThread.o FastaControler.o FastaModel.o Sequence.o Alignement.o ProgressBar.o ProgressBarThread.o pTest.o Path.o PathControler.o PathModel.o PathWalker.o PathThread.o PathWalkerControler.o PathWalkerModel.o  writeSeq.o  AlignementWrite.o AlignementGet.o 
+	$(CC) getseq.o Hit.o  HitControler.o HitModel.o HitList.o HitListControler.o HitListModel.o Blast.o BlastControler.o BlastModel.o Fasta.o FastaThread.o FastaControler.o FastaModel.o Sequence.o Alignement.o ProgressBar.o ProgressBarThread.o pTest.o Path.o PathControler.o PathModel.o PathWalker.o PathThread.o PathWalkerControler.o PathWalkerModel.o  writeSeq.o  AlignementWrite.o AlignementGet.o  -o getseq $(CFLAGS)
 
-getseq.o: getseq.cpp  Hit.o HitControler.o HitModel.o HitList.o HitListControler.o HitListModel.o Blast.o BlastControler.o BlastModel.o Fasta.o FastaThread.o FastaControler.o FastaModel.o Sequence.o Alignement.o ProgressBar.o ProgressBarThread.o pTest.o Path.o PathControler.o PathModel.o PathWalker.o PathWalkerControler.o PathWalkerModel.o  writeSeq.o  AlignementWrite.o AlignementGet.o 
+getseq.o: getseq.cpp  Hit.o HitControler.o HitModel.o HitList.o HitListControler.o HitListModel.o Blast.o BlastControler.o BlastModel.o Fasta.o FastaThread.o FastaControler.o FastaModel.o Sequence.o Alignement.o ProgressBar.o ProgressBarThread.o pTest.o Path.o PathControler.o PathModel.o PathWalker.o PathThread.o PathWalkerControler.o PathWalkerModel.o  writeSeq.o  AlignementWrite.o AlignementGet.o 
 	$(CC) -c getseq.cpp $(CFLAGS)
 	
-htdetect.o: htdetect.cpp Hit.o HitControler.o HitModel.o HitList.o HitListControler.o HitListModel.o Blast.o BlastControler.o BlastModel.o Fasta.o FastaThread.o FastaControler.o FastaModel.o Sequence.o Alignement.o ProgressBar.o ProgressBarThread.o pTest.o Path.o PathControler.o PathModel.o PathWalker.o PathWalkerControler.o PathWalkerModel.o  writeSeq.o
+htdetect.o: htdetect.cpp Hit.o HitControler.o HitModel.o HitList.o HitListControler.o HitListModel.o Blast.o BlastControler.o BlastModel.o Fasta.o FastaThread.o FastaControler.o FastaModel.o Sequence.o Alignement.o ProgressBar.o ProgressBarThread.o pTest.o Path.o PathControler.o PathModel.o PathWalker.o PathThread.o PathWalkerControler.o PathWalkerModel.o  writeSeq.o
 	$(CC) -c htdetect.cpp $(CFLAGS)
 
 # Blast
@@ -52,6 +52,8 @@ PathWalkerModel.o: PathWalker/PathWalkerModel.cpp Path.o ProgressBar.o
 	$(CC) -c PathWalker/PathWalkerModel.cpp $(CFLAGS)
 
 # Path
+PathThread.o: Path/PathThread.cpp Path.o
+	$(CC) -c Path/PathThread.cpp $(CFLAGS)
 Path.o: Path/Path.cpp PathControler.o
 	$(CC) -c Path/Path.cpp $(CFLAGS)
 

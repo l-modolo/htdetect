@@ -149,3 +149,43 @@ unsigned int HitModel::add_name(string name)
 	}
 	return id;
 }
+
+void HitModel::set_attr(int key, int value)
+{
+	try
+	{
+		if(Hit_attr.size() > key)
+		{
+			Hit_attr.at(key) = value;
+		}
+		else
+		{
+			Hit_attr.push_back(value);
+		}
+	}
+	catch(exception const& e)
+	{
+		cerr << "ERROR : " << e.what() << " in void HitModel::set_attr(string key, int value)" << endl;
+	}
+}
+
+int HitModel::get_attr(int key)
+{
+	try
+	{
+		if( Hit_attr.size() > key)
+		{
+			return(Hit_attr.at(key));
+		}
+		else
+		{
+			throw logic_error("attr not found");
+		}
+	}
+	catch(exception const& e)
+	{
+		cerr << "ERROR : " << e.what() << " in void HitModel::get_attr(string key)" << endl;
+		return(-1);
+	}
+}
+

@@ -51,5 +51,65 @@ class mThreadRunning
 	thread mThread_thread;
 };
 
-#include "mThreadRunning.tli"
+//#include "mThreadRunning.tli"
+
+template <typename T>
+mThreadRunning<T>::mThreadRunning(mThreadWaiting<T>* todo)
+{
+	mThread_todo = todo;
+	mThreadRunning<T>::run();
+}
+
+template <typename T>
+mThreadRunning<T>::~mThreadRunning()
+{
+	
+}
+
+template <typename T>
+void mThreadRunning<T>::run()
+{
+	try
+	{
+		mThread_thread = thread( &mThreadRunning<T>::thread_run, this );
+	}
+	catch(exception const& e)
+	{
+		cerr << "ERROR : " << e.what() << " in : void mThreadRunning<T>::run()" << endl;
+	}
+}
+
+template <typename T>
+void mThreadRunning<T>::thread_run()
+{
+	try
+	{
+		T* x_prev = nullptr;
+		T* x = mThread_todo->get();
+		
+		while(x != nullptr && x != x_prev)
+		{
+			(*x)();
+			x_prev = x;
+			x = mThread_todo->get(); // mThread_todo->get() is supposed to block until todo is not empty
+		}
+	}
+	catch(exception const& e)
+	{
+		cerr << "ERROR : " << e.what() << " in : void mThreadRunning<T>::thread_run()" << endl;
+	}
+}
+
+template <typename T>
+void mThreadRunning<T>::join()
+{
+	mThread_thread.join();
+}
+
+template <typename T>
+bool mThreadRunning<T>::joinable()
+{
+	mThread_thread.joinable();
+}
+
 #endif

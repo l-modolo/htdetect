@@ -47,6 +47,43 @@ class mThread
 	vector< mThreadRunning<T> > mThread_running;
 };
 
-#include "mThread.tli"
+//#include "mThread.tli"
+
+template <typename T>
+mThread<T>::mThread(int number) : mThread_waiting(number*2)
+{
+	for(int i = 0; i < number; i++)
+	{
+		mThread_running.push_back(mThreadRunning<T>(&mThread_waiting));
+	}
+}
+
+template <typename T>
+mThread<T>::~mThread()
+{
+	mThreadWaiting<T>::set_stop(true);
+	for(int i = 0; i < mThread_running.size(); i++)
+	{
+		if(mThread_running.at(i).joinable())
+			mThread_running.at(i).join();
+	}
+}
+
+template <typename T>
+void mThread<T>::add(T x)
+{
+	mThread_waiting.add(x);
+}
+
+template <typename T>
+void mThread<T>::stop()
+{
+	mThreadWaiting<T>::set_stop(true);
+	for(int i = 0; i < mThread_running.size(); i++)
+	{
+		mThread_running.at(i).join();
+	}
+}
+
 #endif
 

@@ -70,6 +70,205 @@ class mThreadWaiting
 	
 	static bool mThread_init;
 };
-#include "mThreadWaiting.tli"
+
+//#include "mThreadWaiting.tli"
+
+template <typename T>
+bool mThreadWaiting<T>::mThread_init = false;
+
+template<typename T>
+mutex mThreadWaiting<T>::mThread_onebyone;
+template<typename T>
+mutex mThreadWaiting<T>::mThread_empty;
+template<typename T>
+mutex mThreadWaiting<T>::mThread_full;
+template<typename T>
+condition_variable mThreadWaiting<T>::mThread_empty_cond;
+template<typename T>
+condition_variable mThreadWaiting<T>::mThread_full_cond;
+
+template<typename T>
+int mThreadWaiting<T>::mThread_size;
+template<typename T>
+int mThreadWaiting<T>::mThread_pos_front;
+template<typename T>
+int mThreadWaiting<T>::mThread_pos_back;
+template<typename T>
+deque<T> mThreadWaiting<T>::mThread_waiting;
+
+template<typename T>
+bool mThreadWaiting<T>::mThread_run = true;
+template<typename T>
+mutex mThreadWaiting<T>::mThread_run_controler;
+template<typename T>
+bool mThreadWaiting<T>::mThread_stop_signal = false;
+template<typename T>
+mutex mThreadWaiting<T>::mThread_stop_controler;
+
+template <typename T>
+bool mThreadWaiting<T>::run()
+{
+	unique_lock<mutex> lk(mThread_onebyone);
+	return mThread_run;
+}
+
+template <typename T>
+void mThreadWaiting<T>::set_run(bool run)
+{
+	unique_lock<mutex> lk(mThread_onebyone);
+	mThread_run = run;
+	if(!run)
+		mThread_empty_cond.notify_one();
+}
+
+template <typename T>
+bool mThreadWaiting<T>::stop()
+{
+	unique_lock<mutex> lk(mThread_onebyone);
+	return mThread_stop_signal;
+}
+
+template <typename T>
+bool mThreadWaiting<T>::stop_all()
+{
+	mThread_full_cond.notify_all();
+	mThread_empty_cond.notify_all();
+}
+
+template <typename T>
+void mThreadWaiting<T>::set_stop(bool run)
+{
+	unique_lock<mutex> lk(mThread_onebyone);
+	mThread_stop_signal = run;
+	mThread_empty_cond.notify_one();
+}
+
+template<typename T>
+mThreadWaiting<T>::mThreadWaiting(int size)
+{
+	try
+	{
+		if(!mThread_init)
+		{
+			mThreadWaiting<T>::mThread_init = true;
+			mThreadWaiting<T>::mThread_run = true;
+			mThreadWaiting<T>::mThread_stop_signal = false;
+			mThreadWaiting<T>::mThread_size = size;
+			mThreadWaiting<T>::mThread_pos_front = -1;
+			mThreadWaiting<T>::mThread_pos_back = -1;
+			mThreadWaiting<T>::mThread_waiting.clear();
+		}
+		else
+		{
+			throw logic_error("mThread is a static object");
+		}
+	}
+	catch(exception const& e)
+	{
+		cerr << "ERROR : " << e.what() << " in : mThreadWaiting<T>::mThreadWaiting(int size)" << endl;
+	}
+}
+
+template<typename T>
+mThreadWaiting<T>::~mThreadWaiting()
+{
+	mThread_init = false;
+}
+
+template<typename T>
+void mThreadWaiting<T>::add(T const & x)
+{
+	try
+	{
+		unique_lock<mutex> full(mThread_full);
+		
+		while(mThreadWaiting<T>::size() >= mThread_size - 1)
+		{
+			mThread_full_cond.wait(full);
+		}
+		
+		mThreadWaiting<T>::push_back(x);
+	}
+	catch(exception const& e)
+	{
+		cerr << "ERROR : " << e.what() << " in : void mThreadWaiting<T>::add(T const & x)" << endl;
+		exit(-1);
+	}
+}
+
+template<typename T>
+T* mThreadWaiting<T>::get()
+{
+	try
+	{
+		unique_lock<mutex> empty(mThread_empty);
+		
+		while(mThreadWaiting<T>::size() <= 0)
+		{
+			mThread_empty_cond.wait(empty);
+		}
+		
+		return mThreadWaiting<T>::pop_front();
+	}
+	catch(exception const& e)
+	{
+		cerr << "ERROR : " << e.what() << " in : T mThreadWaiting<T>::get()" << endl;
+		exit(-1);
+	}
+}
+
+template<typename T>
+void mThreadWaiting<T>::push_back(T const & x)
+{
+	unique_lock<mutex> lk(mThread_onebyone);
+	mThread_waiting.push_back(x);
+	mThread_empty_cond.notify_one();
+}
+
+template<typename T>
+T* mThreadWaiting<T>::pop_front()
+{
+	try
+	{
+		unique_lock<mutex> lk(mThread_onebyone);
+		
+		if(mThread_stop_signal)
+		{
+			mThread_run = false;
+			mThread_empty_cond.notify_all();
+		}
+		
+		T* value;
+		
+		if(mThread_waiting.size() <= 0)
+		{
+			value = nullptr;
+		}
+		else
+		{
+			value = new T(mThread_waiting.front());
+			mThread_waiting.pop_front();
+		}
+		mThread_full_cond.notify_one();
+		
+		return value;
+	}
+	catch(exception const& e)
+	{
+		cerr << "ERROR : " << e.what() << " in : T mThreadWaiting<T>::pop_front()" << endl;
+		exit(-1);
+	}
+}
+
+template<typename T>
+int mThreadWaiting<T>::size()
+{
+	unique_lock<mutex> lk(mThread_onebyone);
+	if(mThread_run)
+		return mThread_waiting.size();
+	else
+		return mThread_size;
+}
+
 #endif
 

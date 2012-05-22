@@ -34,6 +34,8 @@ class Path : public PathControler
 	
 	protected:
 	static int Path_number;
+	
+	friend class PathThread;
 };
 
 #endif

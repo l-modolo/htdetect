@@ -16,34 +16,35 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DEF_ProgressBarThread
-#define DEF_ProgressBarThread
+#ifndef DEF_PathThread
+#define DEF_PathThread
 
-#include <iostream>
-#include <mutex>
-#include <math.h>
-#include <sstream>
-#include <unistd.h>
+#include <utility>
+#include "Path.hpp"
 
 using namespace std;
 
-class ProgressBarThread
+class PathThread
 {
 	public:
-	ProgressBarThread(int step, int step_max, int* start, int stop);
+	PathThread(Path data);
+	~PathThread();
 	
 	void operator()();
+	void compute_pvalue();
 	
 	protected:
-	int* ProgressBar_start;
-	int ProgressBar_stop;
-	int ProgressBar_step;
-	int ProgressBar_step_max;
-	chrono::time_point<std::chrono::system_clock> ProgressBar_time;
-	int ProgressBar_text_size;
 	
-	private:
-	void display();
+	vector<Hit*>* Path_query;
+	vector<Hit*>* Path_target;
+	
+	pair<long int, long int>* Path_identity;
+	double** Path_pvalue;
+	
+	double Path_chromosome_identity;
+	vector<pair<long int, long int>>** Path_hits_identity;
+	
+	friend class pTest;
 };
 
 #endif

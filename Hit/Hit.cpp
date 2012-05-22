@@ -312,12 +312,27 @@ void Hit::sort()
 
 void Hit::display(ostream &stream) const
 {
-	stream << name() << "\t";
-	if(Hit_sens)
-		stream << "+";
-	else
-		stream << "-";
-	stream << "\t" << Hit_start << "\t" << Hit_stop << "\t" << Hit::size();
+	try
+	{
+		stream << name() << "\t";
+		if(Hit_sens)
+			stream << "+";
+		else
+			stream << "-";
+		stream << "\t" << Hit_start << "\t" << Hit_stop << "\t" << Hit::size();
+		
+		vector<int>::const_iterator it = Hit_attr.begin();
+		while(it != Hit_attr.end())
+		{
+			stream << "\t" << *it;
+			it++;
+		}
+	}
+	catch(exception const& e)
+	{
+		cerr << "ERROR : " << e.what() << " in : void Hit::display(ostream &stream) const" << endl;
+		exit(-1);
+	}
 }
 
 ostream &operator<<( ostream &stream, Hit const& h)
