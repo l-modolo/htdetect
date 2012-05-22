@@ -34,18 +34,18 @@ void PathThread::compute_pvalue()
 {
 	try
 	{
-		if(Path_query->size() != 0)
+		if(Path_query.size() != 0)
 		{
 			// as we already have the identity and the size of each hit in the path
 			// we can easylly compute the p-value for the whole path
 			double Path_size = 0.0;
 			pair<long int, long int> identity_total(0,0);
 			
-			for(int i = 0; i< Path_target->size(); i++)
+			for(int i = 0; i< Path_target.size(); i++)
 			{
-				Path_size += Path_target->at(i)->size();
-				identity_total.first += ((*Path_hits_identity)->at(Path_target->at(i)->id())).first;
-				identity_total.second += ((*Path_hits_identity)->at(Path_target->at(i)->id())).second;
+				Path_size += Path_target.at(i)->size();
+				identity_total.first += (Path_hits_identity->at(Path_target.at(i)->id())).first;
+				identity_total.second += (Path_hits_identity->at(Path_target.at(i)->id())).second;
 			}
 			
 			pTest test(Path_chromosome_identity, identity_total, Path_size, Path_pvalue);
