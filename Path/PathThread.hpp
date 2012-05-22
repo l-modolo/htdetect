@@ -34,14 +34,14 @@ class PathThread
 	
 	protected:
 	
-	vector<Hit*>* Path_query;
-	vector<Hit*>* Path_target;
+	vector<Hit*> Path_query;
+	vector<Hit*> Path_target;
 	
-	pair<long int, long int>* Path_identity;
-	double** Path_pvalue;
+	pair<long int, long int> Path_identity;
+	double* Path_pvalue;
 	
 	double Path_chromosome_identity;
-	vector<pair<long int, long int>>** Path_hits_identity;
+	vector<pair<long int, long int>>* Path_hits_identity;
 	
 	friend class pTest;
 };
