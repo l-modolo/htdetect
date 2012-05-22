@@ -20,14 +20,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 PathThread::PathThread(Path data)
 {
-	Path_query = &(data.Path_query);
-	Path_target = &(data.Path_target);
+	*Path_query = data.Path_query;
+	*Path_target = data.Path_target;
 	
-	Path_identity = &(data.Path_identity);
-	Path_pvalue = &(data.Path_pvalue);
+	*Path_identity = data.Path_identity;
+	*Path_pvalue = data.Path_pvalue;
 	
 	Path_chromosome_identity = data.Path_chromosome_identity;
-	Path_hits_identity = &(data.Path_hits_identity);
+	*Path_hits_identity = data.Path_hits_identity;
 }
 
 void PathThread::compute_pvalue()
