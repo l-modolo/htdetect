@@ -57,6 +57,8 @@ void HitModel::init(int id, string const & name, int start, int stop)
 			}
 			Hit_id = id;
 			Hit_name = HitModel::add_name(name);
+			Hit_attr.push_back(-1);
+			Hit_attr.push_back(-1);
 		}
 		else
 		{
@@ -77,8 +79,7 @@ HitModel::HitModel(HitModel const& Hitbis)
 	Hit_name = Hitbis.Hit_name;
 	Hit_start = Hitbis.start();
 	Hit_stop = Hitbis.stop();
-	Hit_attr.push_back(-1);
-	Hit_attr.push_back(-1);
+	Hit_attr = Hit_attr;
 }
 
 HitModel& HitModel::operator=(HitModel const& Hitbis)
@@ -90,6 +91,7 @@ HitModel& HitModel::operator=(HitModel const& Hitbis)
 		Hit_name = Hitbis.Hit_name;
 		Hit_start = Hitbis.start();
 		Hit_stop = Hitbis.stop();
+		Hit_attr = Hit_attr;
 	}
 	return *this;
 }
