@@ -213,10 +213,10 @@ pair<long int, long int> AlignementGet::compute_identity(bool reverse)
 		result.first = diff;
 		result.second = gap;
 		
-//		Alignement_hit_a->set_attr(0, first_GC);
-//		Alignement_hit_a->set_attr(1, first_n_number);
-//		Alignement_hit_b->set_attr(0, second_GC);
-//		Alignement_hit_b->set_attr(1, second_n_number);
+		Alignement_hit_a->set_attr(0, first_GC);
+		Alignement_hit_a->set_attr(1, first_n_number);
+		Alignement_hit_b->set_attr(0, second_GC);
+		Alignement_hit_b->set_attr(1, second_n_number);
 		
 		if(size - gap < 0)
 		{
