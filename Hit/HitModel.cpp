@@ -77,7 +77,8 @@ HitModel::HitModel(HitModel const& Hitbis)
 	Hit_name = Hitbis.Hit_name;
 	Hit_start = Hitbis.start();
 	Hit_stop = Hitbis.stop();
-	Hit_attr = vector<int>(-1,-1);
+	Hit_attr.push_back(-1);
+	Hit_attr.push_back(-1);
 }
 
 HitModel& HitModel::operator=(HitModel const& Hitbis)
