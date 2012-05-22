@@ -321,11 +321,9 @@ void Hit::display(ostream &stream) const
 			stream << "-";
 		stream << "\t" << Hit_start << "\t" << Hit_stop << "\t" << Hit::size();
 		
-		vector<int>::const_iterator it = Hit_attr.begin();
-		while(it != Hit_attr.end())
+		for(int i = 0; i < Hit_attr.size(); i++)
 		{
-			stream << "\t" << *it;
-			it++;
+			stream << "\t" << Hit_attr.at(i);
 		}
 	}
 	catch(exception const& e)
